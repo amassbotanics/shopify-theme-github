@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="19px" height="24px" viewBox="0 0 19 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>locator</title>
+    <desc>Created with Sketch.</desc>
+    <g id="AMASS-Final" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="HOME" transform="translate(-1438.000000, -38.000000)" stroke="#FFFFFF" stroke-width="2">
+            <g id="NAV-v1">
+                <g id="locator" transform="translate(1439.000000, 39.000000)">
+                    <path d="M8.4828629,5.58870968 C10.0444166,5.58870968 11.3104839,6.83988206 11.3104839,8.38306452 C11.3104839,9.92624698 10.0444166,11.1774194 8.4828629,11.1774194 C6.92130922,11.1774194 5.65524194,9.92624698 5.65524194,8.38306452 C5.65524194,6.83988206 6.92130922,5.58870968 8.4828629,5.58870968 Z" id="Stroke-1"></path>
+                    <path d="M16.9657258,8.16510484 C16.9657258,13.2033266 8.4828629,20.9576613 8.4828629,20.9576613 C8.4828629,20.9576613 0,13.2033266 0,8.16510484 C0,2.99834274 4.3828125,0 8.4828629,0 C12.5829133,0 16.9657258,2.99834274 16.9657258,8.16510484 Z" id="Stroke-3"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

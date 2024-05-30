@@ -1,0 +1,87 @@
+{%- assign border = section.settings.border -%}
+{%- assign showAwards = false -%}
+{%- assign pageIDString = page.id | downcase %}
+{% for block in section.blocks %}
+    {% assign pageArray = block.settings.pageId | split: "," %}
+    {% if product.handle == block.settings.productId or pageArray contains pageIDString or
+    collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+        {%- assign showAwards = true -%}
+    {% endif %}
+{% endfor %}
+{% if showAwards and section.blocks.size > 0 %}
+    <section class="awards-section {% if border %}show-border{% endif %}">
+        <div class="content-area ">
+            <ul class="awards-row">
+                {% for block in section.blocks %}
+                    {%- assign award = block.settings.award -%}
+                    {%- assign awardSvg = block.settings.awardSvg -%}
+                    {% assign pageArray = block.settings.pageId | split: "," %}
+                    {% if product.handle == block.settings.productId or pageArray contains pageIDString or collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+                        <li class="awards-column">
+                            {% if awardSvg != blank %}
+                                    {{awardSvg}}
+                            {% else %}
+                                    <img src="{{ award | img_url }}" alt="{{ award.alt }}">
+                            {% endif %}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Awards List",
+        "settings": [
+            {
+                "type": "checkbox",
+                "id": "border",
+                "label": "Show border",
+                "default": true
+            }
+        ],
+        "blocks": [
+            {
+                "type":"award",
+                "name":"Award",
+                "settings": [
+                 {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Title",
+                    "default": "Award"
+                  },
+                 {
+                    "type": "image_picker",
+                    "id": "award",
+                    "label": "Image",
+                    "info": "480 x 480px .jpg recommended"
+                  },
+                  {
+                    "type": "html",
+                    "id": "awardSvg",
+                    "label": "Image SVG"
+                  },
+                  {
+                    "type": "product",
+                    "id": "productId",
+                    "label": "Choose Product"
+                 },
+                 {
+                    "type": "collection",
+                    "id": "collectionId",
+                    "label": "Choose Collection"
+                 },
+                 {
+                    "type": "textarea",
+                    "id": "pageId",
+                    "label": "List Page Ids (Separated by Comma)"
+                 }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

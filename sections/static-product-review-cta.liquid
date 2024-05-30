@@ -1,0 +1,93 @@
+{%- assign pageIDString = page.id | downcase %}
+{% assign showReviews = false %}
+{% for block in section.blocks %}
+    {% assign pageArray = block.settings.pageId | split: "," %}
+    {% if product.handle == block.settings.productId or pageArray contains pageIDString %}
+        {% assign showReviews = true %}
+    {% endif %}
+{% endfor %}
+{% if section.settings.show_reviews and showReviews %}
+    <section class="product-review__section">
+        <div class="content-area">
+            {% for block in section.blocks %}
+                {% assign pageArray = block.settings.pageId | split: "," %}
+                {% if product.handle == block.settings.productId or pageArray contains pageIDString %}
+                    <div class="product-review__content">
+                        <div class="product-review__image-wrap">
+                            <img src="{{ 'five-stars.svg' | asset_url }}" alt="five white stars" width="146.79" height="20">
+                        </div>
+                        <h2 class="product-review__quote section-strong">{{ block.settings.quote }}</h2>
+                        <p class="product-review__author section-strong">— {{ block.settings.title }}</p>
+                        {% if template contains 'alternate' %}
+                        <a class="product-review__cta action-button js-product-review-cta"href="{{ block.settings.cta-url-product }}">{{ block.settings.cta-text-product }}</a>
+                        {% else %}
+                        <a class="product-review__cta action-button"href="{{ block.settings.cta-url }}">{{ block.settings.cta-text }}</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Review",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "show_reviews",
+            "label": "Show review",
+            "default": false
+        }
+    ],
+    "blocks": [
+        {
+            "type":"review",
+            "name":"Review",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Author"
+                },
+                {
+                    "type": "text",
+                    "id": "quote",
+                    "label": "Quote"
+                },
+                {
+                    "id": "cta-text",
+                    "type": "text",
+                    "label": "Button Text"
+                },
+                {
+                    "id": "cta-url",
+                    "type": "url",
+                    "label": "Button URL"
+                },
+                {
+                    "id": "cta-text-product",
+                    "type": "text",
+                    "label": "Button Text For PDP"
+                },
+                {
+                    "id": "cta-url-product",
+                    "type": "url",
+                    "label": "Button URL Redirect to PDP"
+                },
+                {
+                    "type": "product",
+                    "id": "productId",
+                    "label": "Choose Product"
+                },
+                {
+                    "type": "textarea",
+                    "id": "pageId",
+                    "label": "List Page Ids (Separated by Comma)"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

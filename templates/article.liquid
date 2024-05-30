@@ -1,0 +1,8 @@
+{% if blog.handle == 'cocktails' %}
+    {% render 'blog-filter-navigation' %}
+    {% section 'static-article-cocktail' %}    
+    {% section 'static-custom-product-recommendations' %}
+    {% section 'static-featured-blog' %}
+{% else %}
+    {% section 'static-article' %}
+{% endif %}

@@ -1,0 +1,44 @@
+{% for block in section.blocks %}
+  <div class="announcement-popup" data-top-modal data-modal-id={{ block.settings.announcement_id | downcase | replace: ' ', '-'}}>
+    <span class="popup-close" data-modal-close>X</span>
+    <h2>{{block.settings.heading}}</h2>
+    <div class="announcement-popup__content">
+      {{block.settings.text| newline_to_br}}
+    </div>
+  </div>
+{% endfor %}
+
+{% schema %}
+  {
+    "name": "Announcement Popup",
+    "blocks": [
+      {
+        "type": "announcement",
+        "name": "Announcement",
+        "settings": [
+          {
+            "type":"text",
+            "id":"heading",
+            "label":"Heading"
+          },
+          {
+            "type":"richtext",
+            "id":"text",
+            "label":"Text"
+          },
+          {
+            "type":"text",
+            "id":"announcement_id",
+            "label":"Announcement ID"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

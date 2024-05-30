@@ -1,0 +1,39 @@
+{% assign bannerImage = section.settings.image | img_url: "master" %}
+
+<section class="cta-banner__container" style="background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('{{ bannerImage }}')">
+        <div class="content-area cta-banner__content">
+            <h2 class="cta-banner__content-heading ">{{ section.settings.heading }}</h2>
+            <a class="landing-cta landing-cta--light" href="{{ section.settings.button-url }}">
+                {{ section.settings.button-text }}
+            </a>
+        </div>
+</section>
+
+
+{% schema %}
+{
+    "name": "CTA Banner",
+    "settings": [
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Banner Image"
+        },
+        {
+            "id": "button-text",
+            "type": "text",
+            "label": "Button Text"
+        },
+        {
+            "id": "button-url",
+            "type": "url",
+            "label": "Button URL"
+        }
+    ]
+}
+{% endschema %}

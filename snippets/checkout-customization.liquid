@@ -1,0 +1,371 @@
+<style>
+  .invalid-shipment {
+    background-color: rgba(255, 79, 79, 0.1);
+  }
+
+  .product-table {
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+  }
+
+  .product-table .product td {
+    padding: 0.5rem;
+  }
+
+  .product-table .product:first-child td {
+    padding-top: 0.5rem;
+  }
+
+  .notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+  }
+
+  .notice--error {
+    border-color: #b6b6b2;
+    background-color: rgba(255, 79, 79, 0.1);
+  }
+
+  .notice__icon {
+    margin: 0 0 1rem;
+  }
+
+  .notice--error .notice__icon {
+    color: #ff4f4f;
+  }
+
+  .notice__text {
+    font-family: "ITC Franklin Gothic", sans-serif;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 12px;
+    margin: 0;
+    line-height: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .notice--error .notice__text {
+    color: #ff4f4f;
+  }
+
+  .notice--error .notice__text a {
+    color: #ff4f4f;
+    text-decoration: underline;
+  }
+
+  .alcohol--warning {
+    color: black;
+    margin: 0.5rem 0;
+    font-weight: normal;
+  }
+
+  .alcohol--disclaimer {
+    color: black;
+    margin: 0.5rem 0 1rem;
+    font-weight: normal;
+    font-style: italic;
+    font-size: 8px;
+    text-transform: normal;
+  }
+
+  .step__warning {
+    display: flex;
+    margin: 2rem 1rem;
+  }
+
+  .step__warning .notice__icon {
+    color: black;
+    margin-right: 1rem;
+  }
+
+  .step__warning .notice__text {
+    margin: 0;
+  }
+</style>
+
+<script type="text/javascript">
+  var invalid_states = {
+    {% for line_item in checkout.line_items %}
+    '{{ line_item.variant_id}}': '{{ line_item.product.metafields.shipment.invalid_states }}',
+    {% endfor %}
+  };
+
+  var hasAlcohol = false;
+  {% for line_item in checkout.line_items %}
+    {% for collection in line_item.product.collections %}
+      {% if collection.title == 'Spirits' or collection.title == 'Hard Seltzer' %}
+        hasAlcohol = true;
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  var states = {
+    AL: "Alabama",
+    AZ: "Arizona",
+    AR: "Arkansas",
+    CA: "California",
+    CO: "Colorado",
+    CT: "Connecticut",
+    DE: "Delaware",
+    DC: "District Of Columbia",
+    FL: "Florida",
+    GA: "Georgia",
+    HI: "Hawaii",
+    ID: "Idaho",
+    IL: "Illinois",
+    IN: "Indiana",
+    IA: "Iowa",
+    KS: "Kansas",
+    KY: "Kentucky",
+    LA: "Louisiana",
+    ME: "Maine",
+    MD: "Maryland",
+    MA: "Massachusetts",
+    MI: "Michigan",
+    MN: "Minnesota",
+    MS: "Mississippi",
+    MO: "Missouri",
+    MT: "Montana",
+    NE: "Nebraska",
+    NV: "Nevada",
+    NH: "New Hampshire",
+    NJ: "New Jersey",
+    NM: "New Mexico",
+    NY: "New York",
+    WY: "Wyoming",
+    NC: "North Carolina",
+    ND: "North Dakota",
+    OH: "Ohio",
+    OK: "Oklahoma",
+    OR: "Oregon",
+    PA: "Pennsylvania",
+    RI: "Rhode Island",
+    SC: "South Carolina",
+    SD: "South Dakota",
+    TN: "Tennessee",
+    TX: "Texas",
+    UT: "Utah",
+    VT: "Vermont",
+    VA: "Virginia",
+    WA: "Washington",
+    WV: "West Virginia",
+    WI: "Wisconsin",
+  };
+
+  (function ($) {
+    function uuidv4() {
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    }
+
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(";");
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == " ") c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    function validateShipment(shippingProvince) {
+      let hasInvalidItem = false;
+
+      $(".product-table tr.product").each(function () {
+        const variantId = $(this).attr("data-variant-id");
+
+        if (invalid_states[variantId] !== '' && invalid_states[variantId].indexOf(shippingProvince) > -1) {
+          hasInvalidItem = true;
+          $(this).addClass("invalid-shipment");
+        } else {
+          $(this).removeClass("invalid-shipment");
+        }
+      });
+
+      if (hasInvalidItem) {
+        $("#continue_button").prop("disabled", true);
+        $("#continue_button").addClass("btn--disabled");
+
+        if ($(".notice--error").length === 0) {
+          $(".step__sections").append(
+            `
+                <div role="alert" data-shipping-warning="" data-banner="true" class="notice notice--error default-background" tabindex="-1" aria-atomic="true" aria-live="polite">
+                    <svg class="icon-svg icon-svg--size-24 notice__icon" aria-hidden="true" focusable="false">
+                        <use xlink:href="#error">
+                            <svg id="error"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm0-2c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm0-16c.552 0 1 .448 1 1v5c0 .552-.448 1-1 1s-1-.448-1-1V7c0-.552.448-1 1-1zm-1.5 10.5c0-.828.666-1.5 1.5-1.5.828 0 1.5.666 1.5 1.5 0 .828-.666 1.5-1.5 1.5-.828 0-1.5-.666-1.5-1.5z"></path></svg></svg>
+                        </use>
+                    </svg>
+                    <div class="notice__content">
+                        <p class="notice__text"></p>
+                    </div>
+                </div>
+            `
+          );
+        }
+
+        var userRegion = states[shippingProvince];
+        $(".notice__text").html(
+          `We're sorry, we currently do not ship alcohol to ${userRegion}. Please <a href="/cart?invalid-shipment=${shippingProvince}">go back to your cart</a> and remove the selected items to complete your order.`
+        );
+        $('a[href="https://amass.com/cart"]').attr('href', `https://amass.com/cart?invalid-shipment=${shippingProvince}`)
+      } else {
+        $("#continue_button").prop("disabled", false);
+        $("#continue_button").removeClass("btn--disabled");
+        $(".notice--error").remove();
+        $('a[href*="https://amass.com/cart?invalid-shipment"]').attr('href', 'https://amass.com/cart')
+      }
+    }
+
+    function displayServiceFee() {
+      const shippingPriceText = $('tr.total-line--shipping td.total-line__price span').attr('data-checkout-total-shipping-target');
+      if (shippingPriceText) {
+        const shippingPrice = parseInt(shippingPriceText)
+        if (shippingPrice) {
+          const serviceFee = 500;
+          const actualShippingPrice = shippingPrice - serviceFee;
+          const shippingPriceText = actualShippingPrice === 0 ? 'Free' : `$${(actualShippingPrice / 100).toFixed(2)}`;
+          $('tr.total-line--shipping td.total-line__price span').html(shippingPriceText);
+          $('div[data-review-section="shipping-cost"] .emphasis span').html(shippingPriceText);
+
+          $('form.edit_checkout .section.section--shipping-method .radio-wrapper').each(function() {
+            const o_shippingPriceText = $(this).find('input.input-radio').attr('data-checkout-total-shipping-cents');
+            const o_shippingPrice = parseInt(o_shippingPriceText)
+            const o_serviceFee = 500;
+            const o_actualShippingPrice = o_shippingPrice - o_serviceFee;
+            const o_alcShippingPriceText = o_actualShippingPrice === 0 ? 'Free' : `$${(o_actualShippingPrice / 100).toFixed(2)}`;
+            $(this).find('.radio__label span + span span').html(o_alcShippingPriceText)
+          });
+
+          if ($('tr.total-line--service-fee').length) {
+            $('tr.total-line--service-fee td.total-line__price span').attr('data-checkout-total-service-fee-target', serviceFee).html(`$${(serviceFee / 100).toFixed(2)}`);
+          } else {
+            $('tr.total-line--shipping').before(`
+              <tr class="total-line total-line--service-fee">
+                <th class="total-line__name" scope="row">
+                  <span>Service Fee</span>
+                </th>
+                <td class="total-line__price">
+                  <span class="skeleton-while-loading order-summary__emphasis" data-checkout-total-service-fee-target="${serviceFee}">$${(serviceFee / 100).toFixed(2)}</span>
+                </td>
+              </tr>
+            `);
+          }
+        }
+      }
+    }
+
+    function checkServiceFee() {
+      var shippingPriceLoaded = false;
+      var shippingPriceCheckTimer = setInterval(() => {
+        if (shippingPriceLoaded) {
+          clearInterval(shippingPriceCheckTimer);
+          return;
+        }
+
+        const shippingPriceText = $('tr.total-line--shipping td.total-line__price span').attr('data-checkout-total-shipping-target');
+        if (shippingPriceText) {
+          displayServiceFee();
+          shippingPriceLoaded = true;
+        }
+      }, 100);
+    }
+
+    $(document).on("page:load page:change", function () {
+      let shippingProvince;
+
+      try {
+        if (Shopify.Checkout.step === "contact_information") {
+          shippingProvince = $("#checkout_shipping_address_province").val();
+
+          $("#checkout_shipping_address_province").change(function () {
+            validateShipment($(this).val());
+          });
+        } else {
+          const address_items = Checkout.$("address.address").text().split(",");
+          const province_items =
+            address_items[address_items.length - 2].split(" ");
+          shippingProvince = province_items[province_items.length - 2];
+        }
+        validateShipment(shippingProvince);
+      } catch (err) {}
+
+      // Show notifications for alcohol products
+      if (hasAlcohol) {
+        if (!$('.main__footer .alcohol--warning').length) {
+          $('.main__footer').prepend(`
+            <p class="notice__text alcohol--warning">Amass is not a liquor retailer. All alcohol orders are sold and shipped by licensed retailers. Amass is not involved with the sale or delivery of alcohol products.</p>
+            <p class="notice__text alcohol--disclaimer">Due to state regulations, orders containing alcohol incur a service fee for shipping & handling.</p>
+          `)
+        }
+
+        if (Shopify.Checkout.step === "shipping_method") {
+          if (!$('form.edit_checkout .step__warning').length) {
+            $('.step__footer').before(`
+              <div class="step__warning">
+                <svg class="icon-svg icon-svg--size-24 notice__icon" aria-hidden="true" focusable="false">
+                  <use xlink:href="#alcohol-error">
+                    <svg id="alcohol-error"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm0-2c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm0-16c.552 0 1 .448 1 1v5c0 .552-.448 1-1 1s-1-.448-1-1V7c0-.552.448-1 1-1zm-1.5 10.5c0-.828.666-1.5 1.5-1.5.828 0 1.5.666 1.5 1.5 0 .828-.666 1.5-1.5 1.5-.828 0-1.5-.666-1.5-1.5z"></path></svg></svg>
+                  </use>
+                </svg>
+                <p class="notice__text alcohol--warning">Adult (21+) signature required upon delivery for all alcohol orders.</p>
+              </div>
+            `)
+          }
+        }
+      }
+
+      // Hide Paypal and Amazon Pay
+      if (hasAlcohol) {
+        let hide = 0;
+        const paypalExpressButtonInterval = setInterval(() => {
+          if ($("iframe.paypalLight").length) {
+            $("iframe.paypalLight").parent().hide();
+            hide += 1;
+          }
+          if ($("form[action='https://payments.amazon.com/checkout/signin']").length) {
+            $("form[action='https://payments.amazon.com/checkout/signin']").parent().hide();
+            hide += 1;
+          }
+
+          if (hide == 2) {
+            clearInterval(paypalExpressButtonInterval);
+          }
+        }, 1000);
+
+        $('.section--payment-method .radio-wrapper[data-gateway-name="paypal"]').hide();
+        $('.section--payment-method .radio-wrapper[data-gateway-name="amazon_pay"]').hide();
+      }
+
+      // Display Service Fee
+      if (hasAlcohol) {
+        checkServiceFee();
+      }
+
+      // Setup Event Listener for Shipping Method Changes
+      $('.section.section--shipping-method .radio-wrapper').click(function () {
+        if (hasAlcohol) {
+          setTimeout(() => {
+            displayServiceFee();
+          });
+        }
+      });
+    });
+  })(Checkout.$);
+</script>

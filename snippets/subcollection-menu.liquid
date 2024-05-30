@@ -1,0 +1,28 @@
+{% assign links = linklists[collection.handle].links %}
+
+<div
+  class="
+    subcollection
+    content-area
+  "
+>
+  <div
+    class="
+      subcollection-container
+      subcollection-menu-list-container
+      collections
+      row-of-3
+      menu-list-count-{{ links.size | modulo: 3 }}
+    "
+  >
+    {% if onboarding %}
+      {% for i in (1..6) %}
+        {% render 'subcollection-menu-list-item', onboarding: onboarding %}
+      {% endfor %}
+    {% else %}
+      {% for link in links %}
+        {% render 'subcollection-menu-list-item', onboarding: onboarding, link: link %}
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>

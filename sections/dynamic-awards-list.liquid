@@ -1,0 +1,72 @@
+
+  {%- assign border = section.settings.border -%}
+
+  <section class="awards-section {% if border %}show-border{% endif %} awards-section--no-padding">
+      <div class="content-area ">
+          {% if section.blocks.size > 0 %}
+          <ul class="awards-row">
+              {% for block in section.blocks %}
+              {%- assign award = block.settings.award -%}
+              {%- assign award_svg = block.settings.award_svg -%}
+  
+              <li class="awards-column">
+                  {% if award_svg != blank %}
+                          {{award_svg}}
+                  {% else %}
+                          <img src="{{ award | img_url }}" alt="{{ award.alt }}">
+                  {% endif %}
+              </li>
+  
+              {% endfor %}
+  
+          </ul>
+          {% endif %}
+      </div>
+  </section>
+  
+  
+  {% schema %}
+      {
+          "name": "Awards List",
+          "settings": [
+              {
+                  "type": "checkbox",
+                  "id": "border",
+                  "label": "Show border",
+                  "default": true
+              }
+          ],
+          "blocks": [
+              {
+                  "type":"award",
+                  "name":"Award",
+                  "settings": [
+                  {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Title",
+                    "default": "Award"
+                  },
+                  {
+                      "type": "image_picker",
+                      "id": "award",
+                      "label": "Image",
+                      "info": "480 x 480px .jpg recommended"
+                    },
+                    {
+                      "type": "html",
+                      "id": "award_svg",
+                      "label": "Image SVG"
+                    }
+                  ]
+              }
+          ],
+          "presets": [
+          {
+            "name": "Awards List",
+            "category": "Image"
+          }
+        ]
+      }
+  
+  {% endschema %}

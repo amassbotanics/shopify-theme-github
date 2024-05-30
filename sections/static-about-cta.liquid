@@ -1,0 +1,63 @@
+{%assign border = section.settings.border %}
+{% if section.settings.show_about_cta == true %}
+  {% assign aboutImage = section.settings.aboutImage %}
+  <div class="about-cta__wrap {% if border %}show-border{% endif %} ">
+      <div class="about-cta__image">
+        <div class="about-cta__image-wrap">
+          <img src="{{ aboutImage | img_url : "master" }}" alt="">
+        </div>
+      </div>
+      <div class="about-cta__content">
+          <h3> {{ section.settings.title }} </h3>
+          <p>{{ section.settings.aboutContent }}</p>
+          <a href="{{ section.settings.aboutLink }}" class="action-button">{{ section.settings.linktext }}</a>
+      </div>
+  </div>
+{% endif %}
+  
+  {% schema %}
+  {
+    "name": "About CTA",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "border",
+        "label": "Show border",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_about_cta",
+        "label": "Show about cta section",
+        "default": false
+      },
+      {
+        "id": "title",
+        "type": "text",
+        "label": "Heading",
+        "default": "Title"
+      },
+      {
+        "id": "aboutContent",
+        "type": "richtext",
+        "label": "text"
+      },
+      {
+        "id": "aboutLink",
+        "type": "url",
+        "label": "Button link"
+      },
+      {
+        "id": "linktext",
+        "type": "text",
+        "label": "Button text",
+        "default": "Click here"
+      },
+      {
+        "id": "aboutImage",
+        "type": "image_picker",
+        "label": "Choose Image"
+      }
+    ]
+  }
+  {% endschema %}

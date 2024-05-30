@@ -1,0 +1,65 @@
+{%- assign border = section.settings.border -%}
+{% if section.blocks.size > 0 %}
+    <section class="landing-product-description-faqs__section {% if border %}show-border{% endif %}">
+        <div class="landing-product-description-faqs__content-wrap content-area">
+                <div class="landing-product-description-faqs__title section-strong">
+                    {{ section.settings.title }}
+                </div>
+                <ul class="landing-product-description-faqs__item-wrap">
+                    {% for block in section.blocks %}
+                            <li class="landing-product-description-faqs__item js-toggle-content-wrap">
+                                <div class="landing-product-description-faqs__item-heading-wrap js-accordion-toggle-trigger">
+                                    <div class="landing-product-description-faqs__item-heading section-strong">
+                                        {{ block.settings.heading }}
+                                    </div>
+                                    <div class="accordion-button accordion-button--light js-accordion-button">
+                                        +
+                                    </div>
+                                </div>
+                                <div class="landing-product-description-faqs__item-content js-toggle-content">
+                                    {{ block.settings.content | newline_to_br }}
+                                </div>
+                            </li>
+                    {% endfor %}
+                </ul>
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Product FAQS",
+        "settings": [
+            {
+                "type": "checkbox",
+                "id": "border",
+                "label": "Show border",
+                "default": true
+            },
+            {
+                "id": "title",
+                "type": "text",
+                "label": "Title"
+            }
+        ],
+        "blocks": [
+            {
+                "type":"text",
+                "name":"Description",
+                "settings": [           
+                    {
+                        "id": "heading",
+                        "type": "text",
+                        "label": "Heading"
+                    },
+                    {
+                        "id": "content",
+                        "type": "textarea",
+                        "label": "Content"
+                    }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

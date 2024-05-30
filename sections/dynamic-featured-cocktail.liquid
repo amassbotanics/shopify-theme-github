@@ -1,0 +1,79 @@
+{%- assign sectionHeading = section.settings.title | escape -%}
+{%- assign border = section.settings.border -%}
+{%- assign cocktailBlogHandles = section.settings.cocktail-blog-handle | split: ","  -%}
+
+
+  <div data-section-id="{{ section.id }}" data-section-type="featured-blog">
+
+    <section class="
+        dynamic-feature-blog__section
+        {% if sectionHeading != blank %}has-heading{% endif %}
+        {% if border %}show-border{% endif %}">
+          <div class="content-area">
+              {% if sectionHeading != blank %}
+              <h2 class="section-title">{{ sectionHeading }}</h2>
+            {% endif %}
+
+            <div class="article-item__cocktail-wrap js-cocktail-blog-slider">
+                {% for cocktail_handle in cocktailBlogHandles limit: 4 %}
+                    {% assign cocktail_handle_stripped  =  cocktail_handle  | strip  %}
+                    {% render 'article-item-cocktail', article: articles[cocktail_handle_stripped] %}
+                {% endfor %}
+            </div>
+
+            <div class="cocktail-article__mobile-slider-arrow-wrap">
+                <div class="cocktail-article__mobile-slider-arrow js-cocktail-mobile-slider-arrow-prev">
+                    <img
+                    class="cocktail-article__mobile-slider-arrow-left"
+                    src="{{ 'Arrow_Left.svg' | asset_url }}"
+                    alt="left arrow"
+                    />
+                    <span class="section-strong">Last</span>
+                </div>
+                <div class="cocktail-article__mobile-slider-arrow js-cocktail-mobile-slider-arrow-next">
+                    <span class="section-strong">Next</span>
+                    <img
+                    class="cocktail-article__mobile-slider-arrow-right"
+                    src="{{ 'Arrow_Right.svg' | asset_url }}"
+                    alt="left arrow">
+                </div>
+            </div>
+
+          </div>
+
+    </section>
+
+  </div>
+
+
+  {% schema %}
+  {
+    "name": "Blog posts",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Blog posts"
+      },
+      {
+        "type": "checkbox",
+        "id": "border",
+        "label": "Show border",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "cocktail-blog-handle",
+        "label": "List Cocktail Blog Handle (Separated by Comma)"
+      }
+    ],
+    "presets": [
+    {
+      "category": "Blog",
+      "name": "Cocktail posts"
+    }
+  ]
+  }
+  
+  {% endschema %}

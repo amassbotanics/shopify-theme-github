@@ -1,0 +1,229 @@
+<style>
+  #shopify-section-pxs-announcement-bar{
+  background-color: #fff;
+  }
+</style>
+<script
+  type="application/json"
+  data-section-type="pxs-announcement-bar"
+  data-section-id="{{ section.id }}"
+></script>
+
+{% assign enable_announcement = section.settings.show_announcement %}
+{% assign homepage_only = section.settings.announcement_home_only %}
+{% assign show_announcement = false %}
+
+{% if enable_announcement and homepage_only == false %}
+  {% assign show_announcement = true %}
+{% endif %}
+
+{% if enable_announcement and homepage_only and template.name == 'index' %}
+  {% assign show_announcement = true %}
+{% endif %}
+
+{% if section.settings.announcement_text == blank %}
+  {% assign show_announcement = false %}
+{% endif %}
+
+{% unless show_announcement %}
+  {% break %}
+{% endunless %}
+
+
+  {% if section.settings.announcement_text_mobile != blank %}
+    <div class="pxs-announcement-bar pxs-announcement__wrap-mobile">
+      <div class="pxs-announcement-bar-slider">
+        <div class="pxs-announcement-banner pxs-announcement-bar-text-mobile"
+              style="color: {{ section.settings.announcement_color }};
+                background-color: {{ section.settings.announcement_background }}"
+        >
+          <a style="color: {{ section.settings.announcement_color }};" class="pxs-announcement-bar"
+            {% if section.settings.show_announcement_link %}
+            href="{{ section.settings.announcement_link }}"
+            {% endif %}
+          >
+            {{ section.settings.announcement_text_mobile | escape }}
+          </a>
+          <span data-modal-open id="free-domestic-shipping">Details</span> 
+        </div>
+        {% if section.settings.show_secondary_announcement == true %}
+          {% for block in section.blocks %}
+          {% assign isPopup = block.settings.pop_up %}
+            <div class="pxs-announcement-banner pxs-announcement-bar-text-mobile"
+                  style="color: {{ section.settings.announcement_color }};
+                        background-color: {{ section.settings.announcement_background }}"
+            >
+              <a style=" color: {{ section.settings.announcement_color }};"
+                id="{{ block.settings.title | downcase | replace: ' ', '-' }}"
+                {% if isPopup %}
+                class="js-announcement-banner-open"
+                data-modal-open
+                {% endif %}
+                {% if block.settings.secondary_banner_link %}
+                href="{{block.settings.secondary_banner_link}}"
+                {% endif %}
+              >
+                {{ block.settings.secondary_banner_text_mobile }}
+              </a>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.settings.announcement_text != blank %}
+    <div class="pxs-announcement-bar pxs-announcement__wrap-desktop">
+      <div class="pxs-announcement-bar-slider">
+        <div class="pxs-announcement-banner pxs-announcement-bar-text-desktop"
+              style="color: {{ section.settings.announcement_color }};
+                  background-color: {{ section.settings.announcement_background }}"
+        >
+          <a style="color: {{ section.settings.announcement_color }};"
+            {% if section.settings.show_announcement_link %}
+            href="{{ section.settings.announcement_link }}"
+            {% endif %}
+          >
+            {{ section.settings.announcement_text | escape }}
+          </a>
+          <span data-modal-open id="free-domestic-shipping">Details</span> 
+        </div>
+        {% if section.settings.show_secondary_announcement == true %}
+          {% for block in section.blocks %}
+            {% assign isPopup = block.settings.pop_up %}
+            <div class="pxs-announcement-banner pxs-announcement-bar-text-desktop"
+                  style="color: {{ section.settings.announcement_color }};
+                        background-color: {{ section.settings.announcement_background }}"
+            >
+              <a style=" color: {{ section.settings.announcement_color }};"
+              id="{{ block.settings.title | downcase | replace: ' ', '-' }}"
+              {% if isPopup %}
+              class="js-announcement-banner-open"
+              data-modal-open
+              {% endif %}
+              {% if block.settings.secondary_banner_link %}
+              href="{{block.settings.secondary_banner_link}}"
+              {% endif %}
+              >
+              {{ block.settings.secondary_banner_text }}
+              </a>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+<style>
+  .pxs-announcement-bar-text-desktop,.pxs-announcement-bar-text-mobile{
+    padding: 16px 15px;
+    position: relative;
+    z-index: 9999;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+  }
+  @media screen and (max-width:780px){
+    .pxs-announcement-bar-text-mobile {
+    	display:inherit;
+    }
+    .pxs-announcement-bar-text-mobile a{display:inline}
+  }
+</style>
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_announcement",
+      "label": "Show second announcement",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_home_only",
+      "label": "Show on home page only",
+      "default": false
+    },
+    {
+      "id": "announcement_text",
+      "type": "textarea",
+      "label": "Text",
+      "default": "Call attention to a special discount, feature, or promotion here."
+    },
+    {
+      "id": "announcement_text_mobile",
+      "type": "textarea",
+      "label": "Text (mobile)",
+      "default": "Use less text on mobile!",
+      "info": "Use this option if you want to display alternate text in mobile. Recommended for shortening announcement text to make suitable for mobile."
+    },
+    {
+      "id": "announcement_link",
+      "type": "url",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement_link",
+      "label": "Show announcement link",
+      "default": true
+    },
+    {
+      "id": "announcement_color",
+      "type": "color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "id": "announcement_background",
+      "type": "color",
+      "label": "Background color",
+      "default": "#000000"
+    }
+  ],
+  "blocks": [
+    {
+      "name":"Second Banner Text",
+      "type": "text",
+      "settings": [
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Promo Title"
+        },
+        {
+          "id": "secondary_banner_text",
+          "type": "richtext",
+          "label": "Secondary Banner Text"
+        },
+        {
+          "id": "secondary_banner_text_mobile",
+          "type": "richtext",
+          "label": "Secondary Banner Text (mobile)",
+          "info": "Use this option if you want to display alternate text in mobile. Recommended for shortening announcement text to make suitable for mobile."
+        },
+        {
+          "id": "secondary_banner_link",
+          "type": "url",
+          "label": "Secondary Banner Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "pop_up",
+          "label": "Opens a pop-up",
+          "default": false
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

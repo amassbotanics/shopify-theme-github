@@ -1,0 +1,165 @@
+{%- assign border = section.settings.border -%}
+{%- assign showCocktails = false -%}
+{% for block in section.blocks %}
+    {% if product.handle == block.settings.productId %}
+        {%- assign showCocktails = true -%}
+    {% endif %}
+{% endfor %}
+{% if showCocktails and section.blocks.size > 0 %}
+    <section class="cocktail-alternate__section {% if border %}show-border{% endif %}">
+        <div class="content-area">
+            <div class="cocktail-alternate__slider-container">
+                <div class="cocktail-alternate__slider-title-wrap">
+                    <h3 class="cocktail-alternate__slider-title">{{section.settings.title}}</h3>
+                </div>
+                <div class="cocktail-alternate__slider-content">
+                    <div class="js-cocktail-alternate-slider">
+                        {% for block in section.blocks %}
+                            {%- assign cocktailImage = block.settings.cocktailImage -%}
+                            {%- assign title = block.settings.title -%}
+                            {%- assign type = block.settings.cocktailType -%}
+                            {%- assign list = block.settings.ingredientList -%}
+                            {%- assign recipe = block.settings.cocktailRecipe -%}
+                            {%- assign isPartnership = block.settings.isPartnership %}
+                            {%- assign partnership = block.settings.partnershipText -%}
+                            {%- assign name = title | downcase | split: ' ' | join: '_' -%}
+                            {% if product.handle == block.settings.productId %}
+                                <div class="cocktail-alternate__slider-item-wrap{% if isPartnership %} partnership{% endif %}" name="{{ name }}">
+                                    <div class="cocktail-alternate__slider-item">
+                                        <div class="cocktail-alternate__slider-item-image-wrap">
+                                            <img class="cocktail-alternate__slider-item-image" data-lazy="{{ cocktailImage | img_url: "master" }}" alt="{{ cocktailImage.alt }}">
+                                        </div>
+                                        <div class="cocktail-alternate__slider-item-content-wrap">
+                                            <div class="cocktail-alternate__slider-item-content">
+                                                <div class="cocktail-alternate__slider-item-content-heading-wrap">
+                                                    {% if type != blank %}
+                                                        <div class="cocktail-alternate__slider-item-content-type section-heading section-heading--small">
+                                                            ({{type}})
+                                                        </div>
+                                                    {% endif %}
+                                                    <div class="cocktail-alternate__slider-item-content-heading section-heading">
+                                                        {{title}}
+                                                    </div>
+                                                </div>
+                                            
+                                                <div>
+                                                    <div class="section-heading section-heading--small">Ingredients</div>
+                                                    <div class="cocktail-alternate__slider-item-content-body">{{list}}</div>
+                                                </div>
+                                                <div>
+                                                    <div class="section-heading section-heading--small">Recipe</div>
+                                                    <div class="cocktail-alternate__slider-item-content-body">{{recipe}}</div>
+                                                </div>
+                                                {% if isPartnership %}
+                                                <div>
+                                                    <div class="cocktail-alternate__slider-item-content-body">{{partnership}}</div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="cocktail-alternate__slider-control-wrap">
+                        <div class="cocktail-alternate__slider-control js-cocktail-alternate-slider-previous">
+                            <div class="cocktail-alternate__slider-control-previous-arrow">
+                                <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="8.5" cy="8.64558" rx="8.5" ry="8.60759" transform="rotate(-180 8.5 8.64558)" fill="#222222"/>
+                                <path d="M8.57125 13.2026L12.5313 8.64567L8.57125 4.08871" stroke="#E4E3DE" stroke-width="2"/>
+                                <path d="M12.5312 8.64575L3.53125 8.64575" stroke="#E4E3DE" stroke-width="2"/>
+                                </svg>
+                            </div> 
+                            <div class="section-strong">Last Recipe</div>
+                        </div>
+                        <div class="cocktail-alternate__slider-control js-cocktail-alternate-slider-next">
+                            <div class="section-strong">Next Recipe</div>
+                            <div class="cocktail-alternate__slider-control-next-arrow">
+                                <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="8.5" cy="8.64558" rx="8.5" ry="8.60759" transform="rotate(-180 8.5 8.64558)" fill="#222222"/>
+                                <path d="M8.57125 13.2026L12.5313 8.64567L8.57125 4.08871" stroke="#E4E3DE" stroke-width="2"/>
+                                <path d="M12.5312 8.64575L3.53125 8.64575" stroke="#E4E3DE" stroke-width="2"/>
+                                </svg>
+                            </div> 
+                        </div>
+                    </div>
+                   
+                </div>   
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Cocktail Recipes Alt",
+        "settings": [
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Section Title"
+            },
+            {
+                "type": "checkbox",
+                "id": "border",
+                "label": "Show border",
+                "default": true
+            }
+        ],
+        "blocks": [
+            {
+                "type":"cocktail",
+                "name":"Cocktails",
+                "settings": [
+                 {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Cocktail Name",
+                    "default": "Cocktail"
+                  },
+                  {
+                    "type": "text",
+                    "id": "cocktailType",
+                    "label": "Type",
+                    "default": "type",
+                    "info": "Ex: Non-Alc, Lo-Alc"
+                  },
+                  {
+                    "type": "image_picker",
+                    "id": "cocktailImage",
+                    "label": "Image"
+                  },
+                  {
+                    "type": "richtext",
+                    "id": "ingredientList",
+                    "label": "Ingredients",
+                    "info": "Enter one ingredient per line"
+                  },
+                  {
+                    "type": "checkbox",
+                    "id": "isPartnership",
+                    "label": "Partnership"
+                  },
+                  {
+                    "type": "richtext",
+                    "id": "partnershipText",
+                    "label": "Partnership Text",
+                    "info": "Enter partnership text"
+                  },
+                  {
+                    "type": "textarea",
+                    "id": "cocktailRecipe",
+                    "label": "Recipe"
+                  },
+                  {
+                    "type": "product",
+                    "id": "productId",
+                    "label": "Choose Product"
+                 }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

@@ -1,0 +1,49 @@
+<div data-section-id="{{ section.id }}" data-section-type="dynamic-collection">
+  {%- assign productsToDisplay = section.settings.products_to_display -%}
+  {%- assign sectionHeading = section.settings.title | escape -%}
+
+  <section
+    class="
+      home-section
+      recently-viewed
+      clearfix
+      {% if sectionHeading != blank %}has-heading{% endif %}
+    "
+  >
+    {% if sectionHeading != blank %}
+      <h2 class="section-title">{{ sectionHeading}}</h2>
+    {% endif %}
+
+    {% include 'recently-viewed' productsToDisplay: productsToDisplay %}
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Recently Viewed"
+    },
+    {
+      "type": "range",
+      "id": "products_to_display",
+      "label": "Number of products to display",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "category": "Product",
+      "name": "Recently Viewed"
+    }
+  ]
+}
+
+{% endschema %}

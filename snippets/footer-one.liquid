@@ -1,0 +1,129 @@
+{% assign footerModules = 0 %}
+
+{% if footerMessage != blank %}
+  {% assign footerModules = footerModules | plus: 1 %}
+{% endif %}
+
+{% unless settings.twitter-url.size == 0 and settings.facebook-url.size == 0 and settings.pinterest-url.size == 0 and settings.instagram-url.size == 0 %}
+  {% assign footerModules = footerModules | plus: 1 %}
+{% endunless %}
+
+{% if mailingList %}
+  {% assign footerModules = footerModules | plus: 1 %}
+{% endif %}
+
+<footer class="main-footer content-area" id="main-footer">
+
+  <ul class="connect clearfix module-count-{{ footerModules }}">
+    {% if footerMessage != blank %}
+      <li class="contact first">
+        {% if section.settings.footer-message-title != blank %}
+          <h2 class="title">{{ section.settings.footer-message-title | escape }}</h2>
+        {% endif %}
+        <div class="footer-message">{{ footerMessage }}</div>
+      </li>
+    {% endif %}
+
+    {% unless settings.twitter-url.size == 0 and
+      settings.facebook-url.size == 0 and
+      settings.pinterest-url.size == 0 and
+      settings.instagram-url.size == 0 and
+      settings.tumblr-url.size == 0 and
+      settings.youtube-url.size == 0 and
+      settings.vimeo-url.size == 0
+    %}
+      <li class="social">
+        <h2 class="title">{{ 'layout.footer.social_title' | t }}</h2>
+        {% render 'social-links' %}
+      </li>
+    {% endunless %}
+
+    {% if mailingList %}
+      <li class="newsletter">
+        <h2 class="title">{{ 'layout.footer.newsletter_title' | t }}</h2>
+        <p>Sign up for our newsletter and get 10% off your next order</p>
+        {% form 'customer' %}
+          {% if form.posted_successfully? %}
+            <p class="alert-message success">{{ 'layout.footer.success' | t }}</p>
+          {% else %}
+            <div class="newsletter-wrap">
+              <input type="hidden" id="contact_tags" name="contact[tags]" value="prospect,newsletter"/>
+              <input class="email" name="contact[email]" type="email" placeholder="{{ 'layout.footer.email' | t }}" value="">
+              <input class="submit" name="subscribe" type="submit" value="{{ 'general.submit' | t }}">
+              <p class="alert-message success">{{ 'layout.footer.success' | t }}</p>
+            </div>
+          {% endif %}
+        {% endform %}
+      </li>
+    {% endif %}
+  </ul>
+
+  <div class="sub-footer">
+    <div class="sub-footer__section--left">
+      {% if linklists.footer.links.size > 0 %}
+      <nav class="footer-nav">
+        <ul>
+          {% for link in linklists.footer.links %}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+      {% endif %}
+
+      {% capture year %}{{ "now" | date: "%Y" }}{% endcapture %}
+      <p>{{ 'layout.footer.copyright_text_html' | t: year: year }}<br>{{ powered_by_link }}</p>
+    </div>
+    <div class="sub-footer__section--right">
+      {% if locale_selector == true or currency_selector == true %}
+        <div class="sub-footer__cross-border">
+          {% comment %}cross-border{% endcomment %}
+          {% form 'localization' %}
+            {% if locale_selector and form.available_locales.size > 1 %}
+              {% comment %}multi-language{% endcomment %}
+              <div class="selectors-form__item">
+                <div class="disclosure" data-disclosure-locale>
+                  <button type="button" class="disclosure__toggle" aria-expanded="false" aria-controls="lang-list" aria-describedby="lang-heading" data-disclosure-toggle>
+                    {{ form.current_locale.endonym_name }}
+                  </button>
+                  <ul id="lang-list" class="disclosure-list" data-disclosure-list>
+                    {% for locale in form.available_locales %}
+                      <li>
+                        <a class="disclosure-list__item {% if locale.iso_code == form.current_locale.iso_code %}disclosure-list__item--current{% endif %}" href="#" lang="{{ locale.iso_code }}" {% if locale.iso_code == form.current_locale.iso_code %}aria-current="true"{% endif %} data-value="{{ locale.iso_code }}" data-disclosure-option>
+                          <span class="disclosure-list__option">{{ locale.endonym_name }}</span>
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                  <input type="hidden" name="locale_code" id="LocaleSelector" value="{{ form.current_locale.iso_code }}" data-disclosure-input/>
+                </div>
+              </div>
+            {% endif %}
+          
+            {% if currency_selector and form.available_currencies.size > 1 %}
+              {% comment %}multi-currency{% endcomment %}
+              <div class="selectors-form__item">
+                <div class="disclosure" data-disclosure-currency>
+                  <button type="button" class="disclosure__toggle" aria-expanded="false" aria-controls="currency-list" aria-describedby="currency-heading" data-disclosure-toggle>
+                    {{ form.current_currency.iso_code }} {%- if form.current_currency.symbol -%}{{ form.current_currency.symbol }}{%- endif -%}
+                  </button>
+                  <ul id="currency-list" class="disclosure-list" data-disclosure-list>
+                    {% for currency in form.available_currencies %}
+                      <li>
+                        <a class="disclosure-list__item {% if currency.iso_code == form.current_currency.iso_code %}disclosure-list__item--current{% endif %}" href="#" {% if currency.iso_code == form.current_currency.iso_code %}aria-current="true"{% endif %} data-value="{{ currency.iso_code }}" data-disclosure-option>
+                          <span class="disclosure-list__option">{{ currency.iso_code }} {%- if currency.symbol -%}{{ currency.symbol }}{%- endif -%}</span>
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                  <input type="hidden" name="currency_code" id="CurrencySelector" value="{{ form.current_currency.iso_code }}" data-disclosure-input/>
+                </div>
+              </div>
+            {% endif %}
+          {% endform %}
+        </div>
+      {% endif %}
+      {% render 'footer-payments', paymentOptions: paymentOptions %}
+    </div>
+  </div>
+
+</footer>

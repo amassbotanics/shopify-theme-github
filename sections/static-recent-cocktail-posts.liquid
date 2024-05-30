@@ -1,0 +1,53 @@
+{% unless current_tags %}
+<div data-section-id="{{ section.id }}" data-section-type="featured-blog">
+
+    {%- assign sectionHeading = section.settings.title | escape -%}
+    {%- assign border = section.settings.border -%}
+    {%- assign featuredBlog = section.settings.blog -%}
+  
+    <section class="
+      static-recent-cocktail-posts__section
+      {% if sectionHeading != blank %}has-heading{% endif %}
+      {% if border %}show-border{% endif %}">
+        <div class="content-area">
+            {% if sectionHeading != blank %}
+            <h2 class="section-title">{{ sectionHeading }}</h2>
+          {% endif %}
+      
+          <div class="article-item__cocktail-wrap">
+             {% for article in blogs[featuredBlog].articles limit: 4 %}
+                {% render 'article-item-cocktail', article: article %}
+             {% endfor %}
+          </div>
+        </div>
+     
+    </section>
+  
+  </div>
+{% endunless %}
+  
+  {% schema %}
+  {
+    "name": "Recent posts",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Blog posts"
+      },
+      {
+        "type": "checkbox",
+        "id": "border",
+        "label": "Show border",
+        "default": true
+      },
+      {
+        "type": "blog",
+        "id": "blog",
+        "label": "Choose Blog"
+      }
+    ]
+  }
+  
+  {% endschema %}

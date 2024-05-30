@@ -1,0 +1,122 @@
+{% assign onboarding = true %}
+
+{% if linklists[collection.handle].links.size > 0 %}
+  {% assign onboarding = false %}
+{% endif %}
+
+{% assign collectionImage = 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' %}
+
+{% unless onboarding %}
+  {% assign collectionImage = collection.image %}
+{% endunless %}
+
+<div
+  data-section-id="{{ section.id }}"
+  data-section-type="static-subcollection"
+>
+  <header class="collection-title-header">
+    <div class="collection-title page-title">
+      {% render 'breadcrumbs' %}
+
+      <div class="subcollection-hero">
+        {% if collectionImage and section.settings.show-collection-image %}
+          {% if onboarding %}
+            <div class="subcollection-hero-image">
+              {{ collectionImage }}
+            </div>
+          {% else %}
+            {%
+              render 'rimg'
+              img: collectionImage,
+              class: 'subcollection-hero-image',
+              size: '1400x',
+              lazy: true
+            %}
+          {% endif %}
+        {% endif %}
+
+        <h1
+          class="
+            subcollection-heading
+            label
+          "
+        >
+          {{ collection.title }}
+        </h1>
+      </div>
+
+      {% if collection.description != blank %}
+        <div class="rte description">
+          {{ collection.description }}
+        </div>
+      {% endif %}
+    </div>
+  </header>
+
+  {% if section.settings.layout == 'showcase' %}
+    {%
+      render 'subcollection-showcase',
+      onboarding: onboarding
+    %}
+  {% elsif section.settings.layout == 'collection' %}
+    {% render 'subcollection-collection', onboarding: onboarding %}
+  {% else %}
+    {% render 'subcollection-menu', onboarding: onboarding %}
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Sub-collections list page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show-collection-image",
+      "label": "Show collection image"
+    },
+    {
+      "type": "header",
+      "content": "Collections"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "showcase",
+          "label": "Product Showcase"
+        },
+        {
+          "value": "collection",
+          "label": "Collections List"
+        },
+        {
+          "value": "menu",
+          "label": "Menu List"
+        }
+      ],
+      "default": "collection"
+    },
+    {
+      "type": "header",
+      "content": "Help"
+    },
+    {
+      "type": "paragraph",
+      "content": "[Learn how to add collections to your sub-collections list page](https://support.pixelunion.net/hc/en-us/articles/360026151974)."
+    }
+  ]
+}
+
+{% endschema %}

@@ -1,0 +1,35 @@
+{% comment %}
+@param itemType {Product}
+  Product to apply badge to.
+{% endcomment %}
+{% assign collection_tag_meta = itemType.metafields.global.collection_tag %}
+{% assign productBadge = itemType.metafields.global.product_badge_list | split: "," %}
+{% assign min_price_variant = itemType.variants | sort: 'price' | first %}
+{{collection_tag_meta}}
+<div class="badges-wrapper">
+  {% if itemType.available %}
+  {% comment %}
+    {% if itemType.compare_at_price_min > itemType.price_min %}
+      <span class="badge badge-sale">{{ 'products.product.on_sale' | t }}</span>
+    {% endif %}
+    {% endcomment %}
+    {% capture new-tag %}{{ 'products.product.new' | t }}{% endcapture %}
+    {% if product.tags contains new-tag %}
+      <span class="badge badge-new">{{ new-tag }}</span>
+    {% endif %}
+  {% else %}
+  {% unless min_price_variant.compare_at_price > min_price_variant.price %}
+  	{% if collection_tag_meta %}
+  		<span class="badge badge-soldout">{{collection_tag_meta}}</span>
+  	{% else %}
+    	<span class="badge badge-soldout">{{ 'products.product.sold_out' | t }}</span>
+  	{% endif %}
+  {% endunless %}
+  {% endif %}
+  {% if min_price_variant.compare_at_price > min_price_variant.price %}
+    <span class="badge badge-value"> {{ min_price_variant.compare_at_price | money }} Value</span>
+  {% endif %}
+  {% for badge in productBadge %}
+    <span class="badge badge-tag">{{ badge }}</span>
+  {% endfor %}
+</div>

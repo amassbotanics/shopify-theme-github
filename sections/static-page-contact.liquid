@@ -1,0 +1,106 @@
+<div data-section-id="{{ section.id }}" data-section-type="static-page-contact">
+
+  <main class="content content-area">
+
+    {% render 'breadcrumbs' %}
+
+    <div class="page-title">
+      <h1 class="label">{{ page.title }}</h1>
+    </div>
+
+    <div class="contact-info__wrap">
+      <div class="contact-info__content">{{section.settings.heading}}</div>
+      <div class="contact-info__content">{{section.settings.subheading}}</div>
+      <div class="contact-info__content">
+        <div> {{section.settings.contact-info}}</div>
+        <div id="chat-link">{{section.settings.customer-chat}}</div>
+      </div>
+      <div class="contact-info__content">{{section.settings.emails}}</div>
+      <div class="contact-info__content">{{section.settings.form-message}}</div>
+    </div>
+
+    <div class="text-content-wrap">
+      {% if page.content != blank %}
+        <div
+          class="
+            rte
+            text-content
+          "
+        >
+          {{ page.content }}
+        </div>
+      {% endif %}
+
+      <div
+        class="
+          rte
+          full-width-form
+        "
+      >
+        {% render 'contact-form'%}
+      </div>
+     
+    </div>
+
+  </main>
+
+</div>
+
+  <script type="text/javascript">
+
+    var chatLink = document.getElementById('chat-link');
+    chatLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      GorgiasChat.open();
+     });
+
+  </script>
+
+{% schema %}
+{
+  "name": "Contact page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "contact-info",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "customer-chat",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "emails",
+      "label": "Text"
+    },
+    {
+      "type": "richtext",
+      "id": "form-message",
+      "label": "Form Message"
+    }
+  ]
+}
+
+{% endschema %}

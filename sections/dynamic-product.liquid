@@ -1,0 +1,234 @@
+{% assign onboarding = true %}
+
+{% if section.settings.product %}
+  {% assign onboarding = false %}
+{% endif %}
+
+{% assign product = all_products[section.settings.product] %}
+
+<script
+  type="application/json"
+  data-section-type="dynamic-product"
+  data-section-id="{{ section.id }}"
+  data-section-data
+>
+  {
+    "product": {{ product | json }},
+    "settings": {
+      "enable_cart_redirect": {{ section.settings.enable_cart_redirect | json }},
+      "enable_history": false,
+      "gallery_enable_video_autoplay": {{ section.settings.gallery_enable_video_autoplay | json }},
+      "gallery_enable_video_looping": {{ section.settings.gallery_enable_video_looping | json }},
+      "money_format": {{ shop[settings.currency_display_format] | default: shop.money_format | strip_html | json }}
+    },
+    "locale": {
+      "add_to_cart": {{ 'products.product.add_to_cart' | t | json }},
+      "sold_out": {{ 'products.product.sold_out' | t | json }},
+      "unavailable": {{ 'products.product.unavailable' | t | json }}
+    }
+  }
+</script>
+
+<div class="content content-area">
+  {%
+    render 'product',
+    product: product,
+    onboarding: onboarding,
+    fitting_guide_icon: section.settings.fitting-guide-icon,
+    fitting_guide_url: section.settings.fitting-guide-link,
+    show_brand_names: settings.show-brand-names,
+    show_email_link: section.settings.product-email-link,
+    show_media_borders: settings.media_borders,
+    show_quantity: section.settings.product-quantity-option,
+    show_spb: section.settings.show_spb,
+    show_social_buttons: section.settings.social-sharing-buttons,
+    gallery_layout: section.settings.gallery_layout,
+    enable_image_zoom: section.settings.gallery_enable_image_zoom,
+    details_alignment: section.settings.details_alignment,
+    variant_options_style: section.settings.variant_options_style,
+    show_sku: section.settings.show_variant_sku,
+    show_description: false,
+    callout: true,
+  %}
+</div>
+
+{% schema %}
+{
+  "name": "Featured product",
+  "class": "featured-product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "details_alignment",
+      "label": "Product details alignment",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "select",
+      "id": "variant_options_style",
+      "label": "Variant options style",
+      "options": [
+        {
+          "value": "select",
+          "label": "Dropdowns"
+        },
+        {
+          "value": "radio",
+          "label": "Selectable boxes"
+        }
+      ],
+      "default": "select"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_sku",
+      "label": "Show variant SKU",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "product-quantity-option",
+      "label": "Show quantity selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "product-email-link",
+      "label": "Show email link",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spb",
+      "label": "Show dynamic checkout button",
+      "info": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cart_redirect",
+      "label": "Enable cart redirection",
+      "info": "Automatically sends users to the Cart page after adding a product.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "social-sharing-buttons",
+      "label": "Enable social sharing",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "paragraph",
+      "content": "Learn more about [media types](https://help.shopify.com/en/manual/products/product-media/product-media-types)"
+    },
+    {
+      "type": "select",
+      "id": "gallery_layout",
+      "label": "Layout",
+      "options": [
+        {
+          "group": "List",
+          "label": "No thumbnails",
+          "value": "list"
+        },
+        {
+          "group": "Gallery",
+          "label": "Thumbnails left of gallery",
+          "value": "gallery-left"
+        },
+        {
+          "group": "Gallery",
+          "label": "Thumbnails right of gallery",
+          "value": "gallery-right"
+        },
+        {
+          "group": "Gallery",
+          "label": "Thumbnails below gallery",
+          "value": "gallery-below"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_enable_image_zoom",
+      "label": "Enable image zoom",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_enable_video_autoplay",
+      "label": "Enable video autoplay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_enable_video_looping",
+      "label": "Enable video looping",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Fitting guide"
+    },
+    {
+      "type": "page",
+      "id": "fitting-guide-link",
+      "label": "Page"
+    },
+    {
+      "type": "select",
+      "id": "fitting-guide-icon",
+      "label": "Fitting guide icon",
+      "options": [
+        {
+          "value": "shirt",
+          "label": "Shirt"
+        },
+        {
+          "value": "ruler",
+          "label": "Ruler"
+        },
+        {
+          "value": "info",
+          "label": "Info"
+        }
+      ],
+      "default": "shirt"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Product",
+      "name": "Featured product"
+    }
+  ]
+}
+
+{% endschema %}

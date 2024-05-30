@@ -1,0 +1,35 @@
+{% assign filters = "Dry Gin,Botanic Vodka,Impeachment,Riverine,Hard Seltzer" | split: ',' %}
+{% assign activeFilterAllClass = "" %}
+
+{% unless current_tags.first %}
+    {% assign activeFilterAllClass = "blog-filter-nav__item-link--active" %}
+{% endunless %}
+
+<section>
+    <ul class="blog-filter-nav__wrap">
+        <li class="blog-filter-nav__item blog-filter-nav__all section-strong js-blog-filter-nav-item"> 
+            <a href="https://amass.com/blogs/cocktails" class="blog-filter-nav__item-link {{activeFilterAllClass}}">
+                All
+            </a> 
+        </li>
+        {% for filter in filters %}
+            {% assign filterKebabCase = filter | handleize %}
+            {% assign activeFilterClass = "" %}
+            {% if current_tags.first == filterKebabCase %}
+                {% assign activeFilterClass = "blog-filter-nav__item-link--active" %}
+            {% endif %}
+
+            {% if blog.all_tags contains filterKebabCase %} 
+                <li class="blog-filter-nav__item section-strong js-blog-filter-nav-item"> 
+                    <a href="https://amass.com/blogs/cocktails/tagged/{{filterKebabCase}}" class="blog-filter-nav__item-link {{activeFilterClass}}">
+                        {{filter}}
+                    </a> 
+                </li>
+            {% endif %}
+
+        {% endfor %}
+    </ul>
+</section>
+
+
+

@@ -1,0 +1,101 @@
+{%- assign sectionHeading = section.settings.title | escape -%}
+{%- assign border = section.settings.border -%}
+
+<div class="about-collection-list__wrap {% if border %}show-border{% endif %}">
+    <section class="home-section featured-collections content-area
+    {% if sectionHeading != blank %}has-heading{% endif %}">
+  
+    {% if sectionHeading != blank %}
+      <h2 class="section-title">{{ sectionHeading }}</h2>
+    {% endif %}
+  
+    <div class="wrap wrap--{{ section.blocks.size }}">
+      {% if section.blocks.size > 0 and section.blocks.size %}
+        {% for block in section.blocks %}
+          {%- assign featuredCollection = block.settings.collection -%}
+          {%- assign collectionImage = collections[featuredCollection].image.src -%}
+          {%- assign productImage = collections[featuredCollection].products.first.featured_media.preview_image -%}
+  
+          {% if featuredCollection and featuredCollection != empty %}
+            {% if collectionImage %}
+              {% assign imgSrc = collectionImage %}
+            {% else %}
+              {% assign imgSrc = productImage %}
+            {% endif %}
+  
+            <div class="collection-wrap">
+              <div class="collection">
+                <div
+                  class="collection-wrap-image"
+                  {%
+                    render 'rimg'
+                    img: imgSrc,
+                    size: '480x480',
+                    crop: 'center',
+                    background: true,
+                    lazy: true
+                  %}
+                ></div>
+  
+                <a href="{{ collections[featuredCollection].url }}">
+                  <span class="collection-overlay">
+                    <h3 class="label preload">
+                      {{ collections[featuredCollection].title }}
+                    </h3>
+  
+                    <span class="browse">
+                      {{ 'collections.collection.browse' | t }}
+                    </span>
+                  </span>
+                </a>
+              </div>
+            </div>
+          {% else %}
+            {% render 'collection-list-onboarding' %}
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        {% for i in (1..3) %}
+          {% render 'collection-list-onboarding' %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </section>
+</div>
+
+
+
+{% schema %}
+{
+  "name": "Collections list",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collection list"
+    },
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "Show border",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

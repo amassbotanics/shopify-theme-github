@@ -1,0 +1,88 @@
+{%- assign showFAQ = false -%}
+{% for block in section.blocks %}
+    {% if page.handle == block.settings.pageId %}
+        {%- assign showFAQ = true -%}
+    {% endif %}
+{% endfor %}
+
+<section class="page-faq__container">
+    <div class="content-area content-area--larger-padding">
+        <div class="page-faq__content-wrap">
+            <h1 class="page-faq__heading">{{ section.settings.heading }}</h1>
+            <div class="page-faq__item-wrap">
+                {% for block in section.blocks %}
+                    {% if page.handle == block.settings.pageId %}
+                    {% assign image = block.settings.image %}
+                        <div class="faq-custom__item">
+                            <div class="faq-custom__question-wrap js-page-faq-custom-button">
+                                <h3 class="faq-custom__question">{{ block.settings.question }}</h3>
+                                <div class="accordion-button"> + </div>
+                            </div>
+                            <div class="faq-custom__answer">
+                                {{ block.settings.answer }}
+                                {% if block.settings.image != blank %}
+                                  {%
+                                    render 'rimg'
+                                    img: image,
+                                    alt: image.alt,
+                                    size: '300x300',
+                                    lazy: true
+                                  %}
+                                {% endif %}
+                                {% if block.settings.embed != blank %}
+                                  {{ block.settings.embed }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% schema %}
+    {
+      "name": "FAQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        }
+    ],
+      "blocks": [
+        {
+          "type": "question",
+          "name": "Question",
+          "settings": [
+            {
+              "type": "text",
+              "id": "question",
+              "label": "Question"
+            },
+            {
+              "type": "richtext",
+              "id": "answer",
+              "label": "Answer"
+            },
+            {
+              "type": "image_picker",
+              "id": "image",
+              "label": "Image"
+            },
+            {
+              "type": "html",
+              "id": "embed",
+              "label": "HTML"
+            },
+            {
+              "type": "page",
+              "id": "pageId",
+              "label": "Choose Page"
+            }
+          ]
+        }
+      ]
+    }
+  {% endschema %}

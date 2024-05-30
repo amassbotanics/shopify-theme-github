@@ -1,0 +1,70 @@
+{%- assign showScentBanner = false -%}
+{% for block in section.blocks %}
+    {% if collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+        {%- assign showScentBanner = true -%}
+    {% endif %}
+{% endfor %}
+{% if showScentBanner and section.blocks.size > 0 %}
+    <section class="scent-banner__container">
+        <div class="content-area scent-banner__content-area">
+            {% for block in section.blocks %}
+                {% assign heroImage = block.settings.heroImage %}
+                {% assign heroTitle = block.settings.title %}
+                {% assign heroSubtitle = block.settings.subheading %}
+                {% assign heroDescription = block.settings.description %}
+                {% if collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+                    <div class="scent-banner__image-wrap">
+                        {{ heroImage }}
+                    </div>
+                    <div class="scent-banner__content-wrap">
+                        <h1 class="section-strong--large scent-banner__content-heading">{{ heroTitle }}</h1>
+                        <div class="section-strong scent-banner__content-subheading">{{ heroSubtitle }}</div>
+                        <p class="scent-banner__content-description">{{ heroDescription }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+
+{% schema %}
+    {
+        "name": "Collection Hero",
+        "blocks": [
+            {
+                "type":"hero",
+                "name":"Hero",
+                "settings": [
+                    {
+                        "id": "title",
+                        "type": "text",
+                        "label": "Title",
+                        "default": "Scent"
+                    },
+                    {
+                        "type": "html",
+                        "id": "heroImage",
+                        "label": "Image SVG"
+                    },
+                    {
+                        "id": "subheading",
+                        "type": "textarea",
+                        "label": "Subheading"
+                    },
+                    {
+                        "id": "description",
+                        "type": "textarea",
+                        "label": "Description"
+                    },
+                    {
+                        "type": "collection",
+                        "id": "collectionId",
+                        "label": "Choose Collection"
+                    }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

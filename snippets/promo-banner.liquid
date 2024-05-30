@@ -1,0 +1,18 @@
+{% assign bannerHeader = section.settings.textHeader %}
+{% assign bannerContent = section.settings.textContent %}
+{% assign bannerLink = section.settings.bannerLink %}
+{% assign bannerLinkText = section.settings.linktext %}
+{% assign bannerBorder = section.settings.border %}
+{% assign bannerPosition = section.settings.banner_position %}
+
+{% if bannerHeader != blank %}
+<div class="banner-container
+{% if bannerBorder %}show-border{% endif %}
+{% if template contains "about-custom" %}banner-container--margin-top{% endif %}
+{% if bannerPosition %}banner-container--margin-bottom{% endif %}">
+    <h3 class="section-heading--large">{{bannerHeader}}</h3>
+    <p class="section-strong">{{bannerContent}}</p>
+    <a class="action-button" href= "{{bannerLink.url}}">{{bannerLinkText}}</a>
+
+</div>
+{% endif %}

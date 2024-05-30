@@ -1,0 +1,97 @@
+{{product.metafields.shogun.above}}
+{% render 'shogun-products', content: product %}
+{{ product.metafields.shogun.above }}
+{% section 'static-product' %}
+{% section 'static-image-with-text--ab-test' %}
+{% section 'static-botanic-icons' %}
+{% section 'static-logo-list' %}
+{% section 'static-awards-list' %}
+{% section 'static-product-botanic-image-list' %}
+{% section 'static-cocktail-recipes-alternate'%}
+{% render 'okendo-reviews-widget', product: product %}
+{% section 'static-product-recommendations' %}
+
+{% assign location = product.metafields.global['location'] | strip %}
+{% if location != 'uk' %}
+<script>
+  if (localStorage.getItem('user-location') === 'uk') {
+    window.location.href = '/'
+  }
+</script>
+{% endif %}
+
+<script>
+  Theme.products["{{ product.id }}"] = {{ product | json }};
+  Theme.products["{{ product.id }}"].firstVariant = {{ product.selected_or_first_available_variant.id | json }};
+</script>
+
+<script type="text/javascript">
+  if (window.location.href.indexOf('gwp') > -1) {
+    window.location.href = '/'
+  }
+
+  window.addEventListener('load', async function () {
+    await new Promise((res) => {setTimeout(() => {res()}, 500)});
+
+    // Klaviyo Tracking
+    var _learnq = window._learnq || [];
+
+    var item = {
+      Name: {{ product.title|json }},
+      ProductID: {{ product.id|json }},
+      Categories: {{ product.collections|map:'title'|json }},
+      ImageURL: "https:{{ product.featured_image.src|img_url:'grande' }}",
+      URL: "{{ shop.secure_url }}{{ product.url }}",
+      Brand: {{ product.vendor|json }},
+      Price: {{ product.price|money|json }},
+      CompareAtPrice: {{ product.compare_at_price_max|money|json }},
+      ViewedAt: new Date(),
+      InStock: {% if product.available %} true {% else %} false {% endif %}
+    };
+
+    _learnq.push(['track', 'Viewed Product', item]);
+    _learnq.push(['trackViewedItem', {
+      Title: item.Name,
+      ItemId: item.ProductID,
+      Categories: item.Categories,
+      ImageUrl: item.ImageURL,
+      Url: item.URL,
+      Metadata: {
+        Brand: item.Brand,
+        Price: item.Price,
+        CompareAtPrice: item.CompareAtPrice,
+        ViewedAt: new Date(),
+        InStock: item.InStock
+      }
+    }]);
+    rdt('track', 'ViewContent');
+
+    $('form[action="/cart/add"] button.submit').click(function () {
+      _learnq.push(['track', 'Added to Cart', item]);
+      rdt('track', 'AddToCart');
+    });
+
+    // Mixpanel Tracking
+    // mixpanel.track("Product Viewed", {
+    //   ...item,
+    //   Variants:
+    //     "{% for variant in product.variants %}{{ variant.sku }},{% endfor %}",
+    // });
+
+    // $('form[action="/cart/add"] button.submit').click(function () {
+    //   mixpanel.track("Added to Cart", item);
+    // });
+  });
+</script>
+
+{{ product.metafields.shogun.below }}
+
+
+
+{{product.metafields.shogun.below}}
+
+
+{% if content_for_header contains 'stofind.s3-us-west-2.amazonaws.com' %}
+	{% render 'stofind' %}
+{% endif %}
+{{ product.metafields.shogun.optimizer }}

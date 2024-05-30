@@ -1,0 +1,32 @@
+<div class="botanical-glossary__container">
+    {% for article in blog.articles %}
+        {% assign scientific_name = article.metafields.global.scientific_name %}
+        <div class="js-botanical-toggle botanical-glossary__item">
+                <div class="botanical-glossary__item-image-wrap">
+                    {%
+                        render 'rimg'
+                        img: article.image,
+                        alt: article.title,
+                        size: '1024x1024',
+                        lazy: true,
+                    %}
+                </div>
+                <div class="botanical-glossary__item-details-wrap">
+                    <div class="botanical-glossary__item-details">
+                        <div class="botanical-glossary__item-title-wrap">
+                            <div class="botanical-glossary__item-title"> 
+                                <span class="section-strong">{{ article.title }}</span> 
+                                <span class="section-italic">({{ scientific_name }})</span>
+                            </div>
+                            <div class="accordion-button js-botanical-button"> + </div>
+                        </div>
+                        <div class="js-botanical-ignore botanical-glossary__item-description-wrap">
+                            <p>
+                                {{ article.content }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    {% endfor %}
+</div>

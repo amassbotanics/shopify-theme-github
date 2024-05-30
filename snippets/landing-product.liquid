@@ -1,0 +1,398 @@
+{% assign fitting_guide_icon = fitting_guide_icon | default: blank %}
+{% assign fitting_guide_url = fitting_guide_url | default: blank %}
+{% assign show_brand_names = show_brand_names | default: false %}
+{% assign show_email_link = show_email_link | default: false %}
+{% assign callout = callout | default: false %}
+{% assign show_quantity = show_quantity | default: false %}
+{% assign show_spb = show_spb | default: false %}
+{% assign show_social_buttons = show_social_buttons | default: false %}
+{% assign selected_variant = product.selected_or_first_available_variant %}
+{% assign is_default = product.has_only_default_variant %}
+{% assign enable_image_zoom = enable_image_zoom | default: false %}
+{% assign gallery_layout = gallery_layout | default: 'list' %}
+{% assign selected_media = selected_variant.featured_media | default: product.featured_media %}
+{% assign show_media_borders = show_media_borders | default: false %}
+{% assign onboarding = onboarding | default: false %}
+{% assign details_alignment = details_alignment | default: section.settings.details_alignment %}
+
+<script
+type="application/json"
+data-section-type="static-product"
+data-section-id="{{ section.id }}"
+data-section-data
+>
+  {
+    "product": {{ product | json }},
+    "settings": {
+      "enable_history": false,
+      "money_format": {{ shop[settings.currency_display_format] | default: shop.money_format | strip_html | json }}
+    },
+    "locale": {
+      "add_to_cart": {{ 'product.add_to_cart' | t | json }},
+      "sold_out": {{ 'product.sold_out' | t | json }},
+      "unavailable": {{ '.product.unavailable' | t | json }}
+    }
+  }
+</script>
+
+<section class="product-area clearfix landing-product">
+  {%
+  render 'landing-product-gallery',
+  product: product,
+  selected_media: selected_media,
+  gallery_layout: gallery_layout,
+  show_media_borders: show_media_borders,
+  enable_image_zoom: enable_image_zoom,
+  %}
+  <div class="product-details-wrapper">
+    
+    <div class="
+      product-details
+      product-details-alignment-{{ details_alignment }}
+      {% if product.media.size > 1 %} border{% endif %}
+      {% if is_default and show_quantity == false %} no-options{% endif %}
+    ">
+      <!-- HEADER -->
+      <div class="header">
+        {% if show_brand_names %}
+          <h3 class="brand">
+            {% if product != empty %}
+              {{ product.vendor }}
+            {% else %}
+              {{ 'onboarding.product_vendor' | t }}
+            {% endif %}
+          </h3>
+        {% endif %}
+
+        <h1 class="title">
+          {% if product != empty %}
+            {{ product.title }}
+          {% else %}
+            {{ 'onboarding.product_name' | t }}
+          {% endif %}
+        </h1>
+        
+        {% render 'okendo-reviews-product-rating-summary', product: product %}
+
+        {% if product.metafields.global.subtitle != blank %}
+          <p class="subtitle"><em>{{ product.metafields.global.subtitle }}</em></p>
+        {% endif %}
+
+        {% assign in_spirits_collection = false %}
+        {% for collection in product.collections %}
+          {% if in_spirits_collection == false and collection.title == 'Spirits'  %}
+            {% assign in_spirits_collection = true %}
+            {%elsif in_spirits_collection == false and collection.title == 'Hard Seltzer'  %}
+                {% assign in_spirits_collection = true %}
+                {% assign in_seltzer_collection = true %}
+          {% endif %}
+        {% endfor %}
+
+
+        <!-- PRODUCT PRICE -->
+        <div class="product-details__price sale {% if in_spirits_collection %} product-gin-price {% endif %}">
+          
+          {% if product != empty %}
+            <span class="money money--last no-margin">{{ selected_variant.price | money }}</span>
+            
+            {% if selected_variant.compare_at_price > selected_variant.price or product.has_only_default_variant == false %}
+              {% comment %} If product has variants, this will be dynamically hidden or shown {% endcomment %}
+              {% if selected_variant.compare_at_price != blank %}    
+                (<span class="original money">{{ selected_variant.compare_at_price | money }}</span> Value)
+              {% endif %}
+            {% endif %}
+          
+          {% else %}
+            <span class="money money--last">{{ 'onboarding.product_price' | t }}</span>
+          {% endif %}
+              {% capture total_quantity %}<span class="product-details__total-quantity" data-total-quantity>{{ selected_variant.unit_price_measurement.quantity_value }}{{ selected_variant.unit_price_measurement.quantity_unit }}</span>{% endcapture %}
+              {% capture unit_price %}<span class="product-details__unit-price-amount money" data-unit-price-amount>{{ selected_variant.unit_price | money }}</span>{% endcapture %}
+              {% capture unit_measure %}<span class="product-details__unit-price-measure" data-unit-price-measure>{%- if selected_variant.unit_price_measurement.reference_value != 1 -%}{{ selected_variant.unit_price_measurement.reference_value }}{%- endif %}{{ selected_variant.unit_price_measurement.reference_unit }}</span>{% endcapture %}
+
+              <div class=" product-details__unit-price {% unless selected_variant.unit_price_measurement %}hidden{% endunless %}" data-unit-price>
+                 {{ 'products.product.price_per_unit_html' | t: total_quantity: total_quantity, unit_price: unit_price, unit_measure: unit_measure | strip_newlines }}
+              </div>
+
+              {%- capture tax_text -%}
+                {{ 'products.product.tax_line_html' | t }}
+              {%- endcapture -%}
+
+              {%- if tax_text != blank -%}
+                <div class="
+                  product-details__tax
+                  {% unless selected_variant.taxable %}hidden{% endunless %}
+                  "
+                  data-tax-line
+                >
+                  {{ tax_text }}
+                </div>
+              {%- endif -%}
+
+        </div>
+        <!-- /PRODUCT PRICE -->
+
+        {% unless in_spirits_collection %}
+          {% if show_sku and selected_variant.sku != empty %}
+            <span class="product-variant-sku">
+              <strong>
+                {{ 'products.product.sku' | t }}
+              </strong>
+
+              <span
+                data-product-variant-sku
+              >
+                {{- selected_variant.sku | default: '' -}}
+              </span>
+            </span>
+          {% endif %}
+          </div>
+          <!-- /HEADER -->
+
+          <!-- OPTIONS -->
+          <div class="options {% unless show_quantity and product.variants.size > 0 %}has-no-variants{% endunless %} {% unless product.available %}unavailable{% endunless %}">
+            {% assign form_id = product.id %}
+
+            {% capture form_classes %}
+              product-form
+              {% if show_spb %}
+                product-form-has-spb
+              {% endif %}
+              {% if selected_variant.available == false %}
+                product-form-outofstock
+              {% endif %}
+            {% endcapture %}
+
+            {% if product != empty and product.available %}
+              
+              {%
+              form 'product',
+              product,
+              data-productid: product.id,
+              id: form_id,
+              class: form_classes,
+              data-product-form: ""
+              %}
+
+              <!-- PRODUCT FORM GRID -->
+              <div class="product-form-grid product-form-grid-{{ variant_options_style }}">
+                {% unless is_default %}
+
+                  {%
+                  render 'product-options',
+                  product: product,
+                  form_id: form_id,
+                  selected_variant: selected_variant,
+                  style: variant_options_style,
+                  %}
+                
+                {% else %}
+                
+                  <input
+                    class="product-select"
+                    name="id" data-productid="{{ product.id }}"
+                    data-productid="{{ product.id }}"
+                    value="{{ product.variants[0].id }}"
+                    type="hidden"
+                    data-variant-title="{{ product.variants[0].title }}"
+                  />
+
+                {% endunless %}
+
+                <div class="product-infiniteoptions js-required side-labels" id="infiniteoptions-container"></div>
+                <div class="product-uploadery js-required side-labels" id="uploadery-container"></div>
+              </div>
+              <!-- /PRODUCT FORM GRID -->
+              
+              <!-- PRODUCT BUTTON CONTAINER -->
+              <div class="product-button-container">
+                <!-- PRODUCT QUANTITY -->
+                <div class="product-quantity-container">
+                  {% unless product.handle contains "riverine" %}
+                    {% if show_quantity %}
+                      {% comment %}
+                      <input
+                        type="number"
+                        class="
+                          product-quantity-input
+                        "
+                        name="quantity"
+                        value="1"
+                        min="0"
+                        pattern="\d*"
+                      >
+                      {% endcomment %}
+                      <div class="qtydiv">
+                        <div class="qtybox">
+                          <span onclick="qtyClick(this);return false" class="btnqty qtyminus icon icon-minus">-</span>
+                          <span><input type="text" id="quantity" name="quantity" value="1" min="1" class="quantity-selector quantity-input" readonly=""></span>
+                          <span  onclick="qtyClick(this);return false" class="btnqty qtyplus icon icon-plus">+</span>
+                        </div>
+                      </div>
+                    {% else %}
+                      <input
+                        type="hidden"
+                        name="quantity"
+                        value="1"
+                      >
+                    {% endif %}
+                  {% endunless %}
+                </div>
+                <!-- /PRODUCT QUANTITY -->
+
+                <!-- Begin ReCharge Code -->
+                <!-- End ReCharge Code -->
+
+                <button
+                class="
+                  product-submit
+                  action-button
+                  submit
+                  {% if show_spb %} desaturated{% endif %}
+                "
+                  {% unless selected_variant.available %}
+                    disabled
+                  {% endunless %}
+                  {% if onboarding %}
+                    disabled
+                  {% endif %}
+                  data-product-submit
+                  data-product-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                >
+                  <span class="product-card-interaction-addtocart-available">
+                    {% if selected_variant.available %}
+                      {{ 'products.product_item.add_to_cart' | t }}
+                    {% else %}
+                      {{ 'products.product_item.sold_out' | t }}
+                    {% endif %}
+                  </span>
+
+                  <span class="product-card-interaction-addtocart-error">
+                    {{ 'products.product_item.unavailable' | t }}
+                  </span>
+
+                  <div class="product-card-interaction-addtocart-spinner">
+                    {% render 'icon' with 'spinner' %}
+                  </div>
+                </button>
+              </div>
+              <!-- /PRODUCT BUTTON CONTAINER -->
+                
+              {% if show_spb %}
+                {{ form | payment_button }}
+                  {% endif %}
+                {% endform %}
+              {% else %}
+                {%
+                form 'product',
+                product,
+                id: form_id,
+                class: form_classes,
+                data-product-form: ""
+                %}
+                  <button class="
+                    action-button
+                    back-in-stock
+                    submit
+                  "
+                    data-product-submit
+                  >
+                  Email me when available
+                  </button>
+                {% endform %}
+              {% endif %}
+          </div>
+          <!-- /OPTIONS -->
+
+        {% endunless %}
+              {% if in_spirits_collection %}
+                  {% if in_seltzer_collection %}
+                    {% render 'cta-links-gin-vodka', product:product %}
+                  {% else %}
+                    <div class="landing-product__cta-pdp-link">
+                      <a class="action-button action-button--full-width" href="{{ product.url | within: collection }}">	Shop Now </a>
+                    </div>
+                  {% endif %}
+                    {% assign show_social_buttons = false %}
+              {% endif %}
+
+              {% assign product_interaction_count = 0 %}
+              {% if fitting_guide_url != blank %}
+                {% assign product_interaction_count = product_interaction_count | plus: 1 %}
+              {% endif %}
+              {% if show_email_link %}
+                {% assign product_interaction_count = product_interaction_count | plus: 1 %}
+              {% endif %}
+              {% if show_social_buttons %}
+                {% assign product_interaction_count = product_interaction_count | plus: 1 %}
+              {% endif %}
+
+              {% if product_interaction_count > 0 %}
+                <div class="product-interactions product-interactions-{{ product_interaction_count }}">
+                  {% if fitting_guide_url != blank %}
+                    <a
+                      class="product-interaction fitting-guide"
+                      href="{{ pages[fitting_guide_url].url }}"
+                    >
+                      {% render 'icon' with fitting_guide_icon %}
+                      <span class="product-interaction-title">{{ 'products.product.fitting_guide' | t }}</span>
+                    </a>
+                  {% endif %}
+
+                  {% if show_email_link %}
+                    <a
+                      class="product-interaction email-us"
+                      href="mailto:{{ shop.email }}?Subject={{ product.title | escape }}"
+                    >
+                      {% render 'icon' with 'mail' %}
+                      <span class="product-interaction-title">{{ 'products.product.email_us' | t }}</span>
+                    </a>
+                  {% endif %}
+
+
+                  {% if show_social_buttons %}
+                    {% assign product_canonical_url = shop.url | append: product.url %}
+                    {% assign product_email_subject = 'products.product.share_email_subject' | t: product: product.title %}
+                    {% assign product_email_body = 'products.product.share_email_body' | t: product: product.title, product_url: product_canonical_url %}
+                    {% assign product_image = product.featured_media.preview_image | default: page_image | img_url: '1024x1024' %}
+                    {% assign product_description = product.title | escape %}
+
+                    <div class="product-interaction share-this">
+                      {%
+                        render 'share-this',
+                        share_canonical_url: product_canonical_url,
+                        email_subject: product_email_subject,
+                        email_body: product_email_body,
+                        image: product_image,
+                        description: product_description,
+                      %}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              {% if show_description and product.description.size > 0 %}
+                  <div class="description">
+                    <div class="rte js-nutrition-bind-click">
+                      {{ product.description }}
+                    </div>
+                  </div>
+              {% endif %}
+
+              {% if callout %}
+                <a class="product-callout" href="{{ product.url | within: collection }}">
+                  {{ 'products.product.visit_page' | t }}<span>→</span>
+                </a>
+              {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if product.metafields.global.nutrition_facts != blank %}
+  {% render 'nutrition-facts-popup', product: product %}
+{% endif %}
+
+{%
+  render 'product-back-in-stock',
+  product: product,
+  selected_variant: selected_variant
+%}

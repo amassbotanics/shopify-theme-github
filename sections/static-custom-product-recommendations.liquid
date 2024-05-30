@@ -1,0 +1,86 @@
+{%- assign productsPerRow = section.settings.products_per_row -%}
+{%- assign productsLimit = productsPerRow | times: section.settings.rows -%}
+{%- assign sectionHeading = section.settings.title | escape -%}
+{%- assign border = section.settings.border -%}
+
+{% if page %}
+{%- assign relatedProducts = page.metafields.global.related_products | split: ","  -%}
+{% elsif article %}
+{%- assign relatedProducts = article.metafields.global.related_products | split: ","  -%}
+{% elsif product %}
+{%- assign relatedProducts = product.metafields.global.related_products | split: ","  -%}
+{% endif %}
+
+
+{% if relatedProducts != blank %}
+<div class="landing-page-collection-section" data-section-id="{{ section.id }}" data-section-type="dynamic-collection">
+ 
+  <div class="about-featured-collection__wrap {% if border %}show-border{% endif %}">
+      <section
+      class="
+        home-section
+        featured-collection
+        clearfix
+        content-area
+        {% if sectionHeading != blank %}has-heading{% endif %}
+      "
+    >
+      {% if sectionHeading != blank %}
+        <h2 class="section-title">{{ sectionHeading}}</h2>
+      {% endif %}
+  
+      
+        <ul class="product-list row-of-{{ productsPerRow }}">
+          {% for related_product in relatedProducts limit: productsLimit %}
+            {% render 'product-item',
+              product: all_products[related_product],
+              forloop: forloop,
+              onboarding: false,
+            %}
+          {% endfor %}
+        </ul>
+
+    </section>
+  </div>
+</div>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured collection"
+    },
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "Show border",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "label": "Rows",
+      "min": 1,
+      "max": 11,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "label": "Number of products per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    }
+  ]
+}
+
+{% endschema %}

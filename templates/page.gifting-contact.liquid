@@ -1,0 +1,23 @@
+{% section 'static-page-hero' %}
+{% section 'static-page-gifting-contact'%}
+{% section 'static-list-personal-care' %}
+{% section 'static-list-spirits-seltzers' %}
+{% render 'customer-service-options' %}
+
+{% if page.handle contains 'amass-for-weddings' %}
+    {% section 'foursixty-wedding' %}
+{% endif %}
+
+{% if page.handle contains 'corporate-gifting' %}
+<!-- Event snippet for Corporate Gifting - Submit Lead Form conversion page In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. --> <script> function gtag_report_conversion(url) { var callback = function () { if (typeof(url) != 'undefined') { window.location = url; } }; gtag('event', 'conversion', { 'send_to': 'AW-737565405/GhPACLmH-swCEN212d8C', 'event_callback': callback }); return false; } </script>
+{% else %}
+<!-- Event snippet for Wedding - Submit Lead Form conversion page In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. --> <script> function gtag_report_conversion(url) { var callback = function () { if (typeof(url) != 'undefined') { window.location = url; } }; gtag('event', 'conversion', { 'send_to': 'AW-737565405/GFPpCL3W-swCEN212d8C', 'event_callback': callback }); return false; } </script>
+{% endif %}
+
+<script>
+window.addEventListener('load', function() {
+    $('#contact_form').submit(function(e) {
+        gtag_report_conversion(window.location.href);
+    })  
+});
+</script>

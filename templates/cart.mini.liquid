@@ -1,0 +1,293 @@
+{% layout none %}
+
+{% assign sample_product_sku = settings.sample_product_sku %}
+{% assign sample_product_limit = settings.sample_product_limit %}
+{% assign show_sample_product = settings.show_sample_product %}
+{% assign sample_product_threshold = settings.sample_product_threshold %}
+
+{% for collection in collections %}
+  {% for product in collection.products %}
+    {% for variant in product.variants %}
+      {% if variant.sku == sample_product_sku %}
+        {% assign sample_product = product %}
+        {% assign sample_variant = variant %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+
+<template data-options>
+  {}
+</template>
+
+<template data-html="content">
+  {% if cart.item_count > 0 %}
+    {% for item in cart.items %}
+      {%- assign item_has_discounts = false -%}
+      {%- if item.line_level_discount_allocations.size > 0 -%}
+        {%- assign item_has_discounts = true -%}
+      {%- endif -%}
+      <div
+        class="cart-mini-item
+        {% if item.id == sample_variant.id %}
+        cart-mini-item-sample
+        {% endif %}"
+        data-cart-mini-item="{{ item.id }}"
+        data-product-id=" {{ item.product.id }}"
+      >
+        <div class="cart-mini-item-row">
+          <div
+            class="
+              cart-mini-item-column
+              cart-mini-item-column-image
+            "
+          >
+            <figure class="cart-mini-item-image">
+              {%
+                render 'rimg'
+                img: item.image,
+                alt: item.image.alt,
+                size: '72x',
+                lazy: false
+              %}
+            </figure>
+          </div>
+
+          <div
+            class="
+              cart-mini-item-column
+              cart-mini-item-column-details
+            "
+          >
+            <div class="cart-mini-item-details">
+              {% if settings.show-brand-names %}<span class="cart-mini-item-vendor">{{ item.vendor }}</span>{% endif %}
+              <div class="cart-mini-item-details-basic">
+                <span class="cart-mini-item-title">
+                  <a href="{{ item.product.url }}">
+                    {{ item.product.title }}
+                  </a>
+                </span>
+                <div class="cart-mini-item-description">
+                  {% unless item.product.has_only_default_variant %}
+                  {% if item.variant.title %}
+                  <span class="cart-mini-item-variant">{{ item.variant.title }}</span>
+                  {% else %}
+                  <span class="cart-mini-item-variant"></span>
+                  {% endif %}
+                  {% endunless %}
+                  {% if item.product.id == 5757455401121 %}
+                  <span class="cart-mini-item-final-price cart-mini-item-price money">${{ item.final_line_price | divided_by: 100.0 | round: 2 }}</span>
+                  {% elsif item.final_line_price == 0 %}
+                  <span class="cart-mini-item-final-price cart-mini-item-price money">Free</span>
+                  {% else %}
+                  <span class="cart-mini-item-final-price cart-mini-item-price money">{{ item.final_line_price | money }}</span>
+                  {% endif %}
+                  {%- if item_has_discounts -%}
+                    <s class="cart-mini-item-original-price cart-mini-item-price money">{{ item.original_line_price | money }}</s>
+                  {%- endif -%}
+                  {% if item.unit_price_measurement %}
+                    {% capture total_quantity %}<span>{{ item.unit_price_measurement.quantity_value }}{{ item.unit_price_measurement.quantity_unit }}</span>{% endcapture %}
+                    {% capture unit_price %}<span>{{ item.unit_price | money }}</span>{% endcapture %}
+                    {% capture unit_measure %}<span>{%- if item.unit_price_measurement.reference_value != 1 -%}{{ item.unit_price_measurement.reference_value }}{%- endif %}{{ item.unit_price_measurement.reference_unit }}</span>{% endcapture %}
+
+                    <div class="cart-mini-item__unit-price">
+                      {{ 'products.product.price_per_unit_html' | t: total_quantity: total_quantity, unit_price: unit_price, unit_measure: unit_measure | strip_newlines }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="cart-mini-item__recharge-widget">
+                <select class="cart-mini-item__recharge-select"></select>
+              </div>
+              {% if item.selling_plan_allocation and item.selling_plan_allocation.selling_plan and item.selling_plan_allocation.selling_plan.name %}
+                <span class="cart-mini-item-properties" selling-plan-id="{{item.selling_plan_allocation.selling_plan.id}}"></span>
+              {% endif %}
+              {% comment %}
+              {%- if item_has_discounts -%}
+              <ul class="cart-mini-item-discounts">
+                {% for discount_allocation in item.line_level_discount_allocations %}
+                  <li>
+                    {% render 'icon' with 'sale-tag' %}
+                    {{ discount_allocation.discount_application.title }}
+                    (-<span class="money">{{ discount_allocation.amount | money }}</span>)
+                  </li>
+                {% endfor %}
+              </ul>
+              {%- endif -%}
+              {% endcomment %}
+            </div>
+  
+            <div class="cart-mini-item-details-footer">
+              <div class="cart-mini-item-quantity__wrap">
+                <button class="cart-mini-item-quantity__button js-cart-mini-item-adjust-quantity" data-cart-item-operator="minus"{% if item.quantity == 1 %} disabled{% endif %}>
+                  <svg width="6" height="8" viewBox="0 0 6 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.05999 7.06L2.00666 4L5.05999 0.94L4.11999 0L0.119995 4L4.11999 8L5.05999 7.06Z" fill="#A9A19B"/>
+                  </svg>
+                </button>
+                <div class="cart-mini-item-quantity" 
+                  data-cart-item-product-id="{{ item.id }}" 
+                >
+                 {{ item.quantity }}
+                </div>
+                <button class="cart-mini-item-quantity__button js-cart-mini-item-adjust-quantity" data-cart-item-operator="plus">
+                  <svg width="5" height="8" viewBox="0 0 5 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.0600004 0.94L3.11333 4L0.0600004 7.06L1 8L5 4L1 0L0.0600004 0.94Z" fill="#A9A19B"/>
+                  </svg>
+                </button>
+              </div>
+              <div
+                class="cart-mini-item-remove"
+                aria-label="remove"
+                role="button"
+                data-cart-mini-item-remove="{{ item.key }}"
+              >
+                  <!-- Cart Item Remove -->
+              </div>
+              <div class="cart-mini-item-remove-spinner">
+                {% render 'icon' with 'spinner' %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="cart-mini-empty">
+      {{ 'cart.empty' | t }}
+    </div>
+  {% endif %}
+</template>
+
+<template data-html="footer">
+
+  {% if cart.item_count > 0 %}
+    {%- if cart.cart_level_discount_applications.size > 0 -%}
+      <ul class="cart-mini-discounts" data-cart-discounts>
+        {% render 'cart-discounts' %}
+      </ul>
+    {%- endif -%}
+	  
+<!-- 	<div class="cart-mini-subtotal">
+  		<div class="instructions">
+          <p>{{ 'cart.note' | t }}</p>
+          <textarea class="field" name="note">{{- cart.note -}}</textarea>
+        </div>
+		
+  	  </div> -->
+    <div class="cart-mini-actions">
+      <form class="cart-mini-actions__checkout mini-cart" action="{{ routes.cart_url }}" method="POST">
+        <!-- <a class="cart-mini-actions-cart action-button desaturated" href="{{ routes.cart_url }}">
+          {{ 'layout.mini_cart.view_cart' | t }}
+        </a> -->
+        <div class="cart-mini-options">
+          {% if sample_variant and show_sample_product %}
+          <div class="cart-mini-sample" data-limit="{{ sample_product_limit }}" data-threshold="{{ sample_product_threshold }}">
+            <input class="cart-mini-sample__checkbox" type="checkbox" id="cartMiniSample"> 
+            <label class="cart-mini-sample__checkbox-label" for="cartMiniSample">
+              <div class="cart-mini-sample__checkbox-label-text">
+                <span class="cart-mini-sample__checkbox-label-title">Add a free sample</span>
+                <span class="cart-mini-sample__checkbox-label-description">Our gift to you.</span>
+              </div>
+            </label>
+            <div class="cart-mini-sample__product-wrap">
+              <div
+                class="cart-mini-item"
+                data-cart-mini-item="{{ sample_variant.id }}"
+              >
+                <div class="cart-mini-item-row">
+                  <div
+                    class="
+                      cart-mini-item-column
+                      cart-mini-item-column-image
+                    "
+                  >
+                    <figure class="cart-mini-item-image">
+                      {%
+                        render 'rimg'
+                        img: sample_product.featured_media.preview_image,
+                        alt: sample_product.featured_media.preview_image.alt,
+                        size: '72x',
+                        lazy: false
+                      %}
+                    </figure>
+                  </div>
+
+                  <div
+                    class="
+                      cart-mini-item-column
+                      cart-mini-item-column-details
+                    "
+                  >
+                    <div class="cart-mini-item-details">
+                      {% if settings.show-brand-names %}<span class="cart-mini-item-vendor">{{ sample_variant.vendor }}</span>{% endif %}
+                      <div class="cart-mini-item-details-basic">
+                        <span class="cart-mini-item-title">
+                          <a href="{{ sample_product.url }}">
+                            {{ sample_product.title }}
+                          </a>
+                        </span>
+                        <div class="cart-mini-item-description">
+                          {% if sample_variant.title %}
+                          <span class="cart-mini-item-variant">{{ sample_variant.title }}</span>
+                          {% else %}
+                          <span class="cart-mini-item-variant"></span>
+                          {% endif %}
+                          <span class="cart-mini-item-final-price cart-mini-item-price money">FREE!</span>
+                          <s class="cart-mini-item-original-price cart-mini-item-price money">{{ sample_variant.price | money }}</s>
+                        </div>
+                      </div>
+                    </div>
+          
+                    <div class="cart-mini-item-details-footer">
+                      <button class="cart-mini-item-add" data-cart-item-product-id="{{ sample_variant.id }}"><img src={{'plus.svg' | asset_url}} alt="Plus" /></button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          <div class="cart-mini-note">
+            <input class="cart-mini-note__checkbox" type="checkbox" id="cartMiniGiftNote"> 
+            <label class="cart-mini-note__checkbox-label" for="cartMiniGiftNote">
+              <div class="cart-mini-note__checkbox-label-text">
+                <span class="cart-mini-note__checkbox-label-title">Is this a gift?</span>
+                <span class="cart-mini-note__checkbox-label-description">Add a personalized gift note.</span>
+              </div>
+            </label>
+            <div class="cart-mini-note__message-wrap">
+              <div class="cart-mini-note__message">
+                <textarea name="note" id="CartNote" class="cart-mini-note__message-textarea" placeholder="Enter your gift note here..." maxlength="200">{{cart.note}}</textarea>
+                <div class="cart-mini-note__text-count">
+                  <span class="cart-mini-note__text-count-current">0</span>
+                  <span class="cart-mini-note__text-count-max">/200</span>
+                </div>
+              </div>
+              <a class="cart-mini-note__message-save section-strong js-note-message-save" href="#">Save Message</a>
+            </div>
+          </div> 
+        </div>
+        
+        <div class="cart-mini-checkout">
+          <div class="cart-mini-subtotal">
+            <span class="cart-mini-subtotal-heading">
+              <span class="section-strong">{{ 'layout.mini_cart.subtotal' | t }}</span>
+            </span>
+            <span class="cart-mini-subtotal-value money" data-cart-cents="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
+          </div>
+          <button class="cart-mini-actions__checkout-button action-button desaturated submit-button" type="submit" name="checkout">
+            {% if settings.enable_checkout_lock_icon %}
+              {% render 'icon' with 'checkout-lock' %}
+            {% endif %}
+            <span>{{ 'layout.mini_cart.checkout' | t }}</span>
+            <div class="cart-mini-actions__checkout-button-spinner">{% render 'icon' with 'spinner' %}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
+</template>
+

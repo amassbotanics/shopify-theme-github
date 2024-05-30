@@ -1,0 +1,66 @@
+{% comment %}
+@param onboarding {Boolean}
+@param collection
+@param link
+{% endcomment %}
+
+{% assign collectionImage = 'collection-4' | placeholder_svg_tag: 'placeholder-svg' %}
+{% assign collectionTitle = 'onboarding.collection_title' | t %}
+{% assign link = link | default: false %}
+{% assign collection = collection | default: nil %}
+{% assign onboarding = onboarding | default: false %}
+
+{% unless onboarding %}
+  {% if link %}
+    {% assign currentCollection = link.object %}
+  {% else %}
+    {% assign currentCollection = collection %}
+  {% endif %}
+
+
+  {% if currentCollection == blank %}
+    {% continue %}
+  {% endif %}
+
+  {% if currentCollection.image %}
+    {% assign collectionImage = currentCollection.image.src %}
+  {% else %}
+    {% assign collectionImage = currentCollection.products.first.featured_media.preview_image %}
+  {% endif %}
+  {% assign collectionTitle = currentCollection.title %}
+  {% assign collectionDescription = currentCollection.description %}
+{% endunless %}
+
+<a
+  href="{{ collection.url }}"
+  class="collection-wrap first"
+>
+  {% unless onboarding %}
+    <div
+      class="collection"
+      {%
+        render 'rimg'
+        img: collectionImage,
+        size: '480x480',
+        crop: 'center',
+        background: true,
+        lazy: true
+      %}
+    >
+      {%
+        render 'rimg'
+        img: collectionImage,
+        size: '480x480',
+        crop: 'center',
+        lazy: true
+      %}
+    </div>
+  {% else %}
+    <div class="collection collection-onboarding">
+      {{ collectionImage }}
+    </div>
+  {% endunless %}
+
+  <h2 class="label preload">{{ collectionTitle }}</h2>
+  <div class="rte clearfix">{{ collectionDescription }}</div>
+</a>

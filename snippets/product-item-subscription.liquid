@@ -1,0 +1,160 @@
+{% assign location = product.metafields.global['location'] %}
+{% assign selected_variant = product.selected_or_first_available_variant %}
+{% assign subscription_product_variant_id = "" %}
+{% assign subscription_product_price = "" %}
+{% assign product_has_subscription = false %}
+{% assign min_price_variant = product.variants | sort: 'price' | first %}
+    {% for variant in product.variants %}
+        {% if product.price_min >= variant.selling_plan_allocations[0].price %}
+            {% assign subscription_product_variant_id = variant.id  %}
+            {% assign subscription_product_variant_price = variant.selling_plan_allocations[0].price %}
+        {% endif %}
+    {% endfor %}
+    {% if product.selling_plan_groups.size > 0 %}
+        {% assign product_has_subscription = true %}
+    {% endif %}
+
+<li class="
+        product
+        product-{{ product.id }}
+        {% render 'for-looper', forloop: forloop %}
+        {{ cardType }}
+        {{ location }}"
+        data-product-item
+>
+    <div class="product-inner">
+        <figure class="product-card-figure">
+            {% if product.featured_media %}
+            {% if product.media.size > 1 %}
+                {% assign second_image = product.media[1].preview_image %}
+            {% else %}
+                {% assign second_image = product.featured_media.preview_image %}
+            {% endif %}
+            {%
+                render 'rimg',
+                img: second_image,
+                size: '600x',
+                lazy: true,
+            %}
+            {% if settings.show_product_secondary_image %}
+                {%
+                render 'rimg',
+                img: product.featured_media.preview_image,
+                size: '600x',
+                lazy: true,
+                %}
+            {% endif %}
+            {% else %}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+
+            <a href="{{ product.url | within: collection }}" class="{% if media_borders %}with-border{% endif %}"></a>
+
+            {% render 'product-badges', itemType: product %}
+        </figure>
+        
+
+        {% capture product_card_details %}
+            <div class="product-card-details">
+                <h2 class="title">
+                    <a href="{{ product.url | within: collection }}">
+                        {{ product.title }}
+                    </a>
+                </h2>
+                <div class="product-subscription__price-wrap">
+                    <div class="product-item__price">
+                        {% unless product_has_subscription %}
+                            <span>{{ product.price_min | round | money  }}</span>
+                        {% else %}
+                            <span>
+                                {{ subscription_product_variant_price | round | money }}
+                            </span>
+                        {% endunless%}
+                    </div>
+                    <div class="product-item__price">
+                        {% if product_has_subscription %}
+                            <span class="original">{{ product.price_min | money }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {%
+                form 'product',
+                product,
+                data-productid: product.id,
+                id: product.id,
+                data-product-form: "",
+                class:"subscription-product-form"
+            %}
+
+                <div class="product-subscription__button-wrap">
+                    {% unless product_has_subscription %}
+                        <input
+                            type="button"
+                            class="product-subscription__button"
+                            id="productSubscriptionButton"
+                            {% unless selected_variant.available %}
+                            disabled
+                            value="Sold Out"
+                            {% else %}
+                            value="Shop Now"
+                            {% endunless %}
+                            onClick="addItemToCart({{ product.selected_or_first_available_variant.id }}, 1)"
+                        />
+                    {% else %}
+                        <input
+                            type="button"
+                            class="product-subscription__button"
+                            id="productSubscriptionButton"
+                            {% unless selected_variant.available %}
+                            disabled
+                            value="Sold Out"
+                            {% else %}
+                            value="Subscribe"
+                            {% endunless %}
+                            onClick="addItemToCart({{ subscription_product_variant_id }}, 1, {{product.selling_plan_groups[0].selling_plans[0].id}})"
+                        />
+
+                    {% endunless %}
+                </div>
+            {% endform %}
+        {% endcapture %}
+
+        <div class="product-card-footer">
+            {{ product_card_details }}
+        </div>
+        <div class="product-card-footer-mobile">
+            {{ product_card_details }}
+        </div>
+    </div>
+
+</li>
+
+
+<script>
+
+function addItemToCart(variant_id, qty, selling_plan) {
+
+    data = {
+      "id": variant_id,
+      "quantity": qty,
+      "selling_plan": selling_plan
+    }
+    jQuery.ajax({
+      type: 'POST',
+      url: '/cart/add.js',
+      data: data,
+      dataType: 'json',
+      success: function() {
+        var url = window.location.href;    
+        if (url.indexOf('?') == -1){
+            url += '?openMiniCart=1'
+        }
+        window.location.href = url;
+      }
+    });
+  }
+
+
+</script>

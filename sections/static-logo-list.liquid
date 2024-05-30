@@ -1,0 +1,125 @@
+{%- assign border = section.settings.border -%}
+{%- assign showLogos = false -%}
+{%- assign productIDString = product.id | downcase %}
+{%- assign pageIDString = page.id | downcase %}
+{% for block in section.blocks %}
+  {% assign productArray = block.settings.productID | split: "," %}
+  {% assign pageArray = block.settings.pageId | split: "," %}
+  {% if productArray contains productIDString or pageArray contains pageIDString or
+  collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+    {%- assign showLogos = true -%}
+  {% endif %}
+{% endfor %}
+{% if showLogos and section.blocks.size > 0 %}
+  <section class="home-section logo-list clearfix {% if border %}show-border{% endif %}">
+    <div class="content-area">
+      <div class="js-press-quote-slides-static">
+          {% for block in section.blocks %}
+            {% assign productArray = block.settings.productID | split: "," %}
+            {% assign pageArray = block.settings.pageId | split: "," %}
+            {% if productArray contains productIDString or pageArray contains pageIDString or
+              collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+                {% if block.settings.content != blank %}
+                  <div class="logo-list-item-content">
+                    {{block.settings.content}} 
+                  </div>
+                {% endif %}
+            {% endif %} 
+          {% endfor %}
+      </div>
+      <div>
+        <div class="js-press-logo-slides-static">
+          {% for block in section.blocks %}
+            {% assign productArray = block.settings.productID | split: "," %}
+            {% assign pageArray = block.settings.pageId | split: "," %}
+            {%- assign logo = block.settings.logo -%}
+            {%- assign logo_svg = block.settings.logo_svg -%}
+              {% if productArray contains productIDString or pageArray contains pageIDString or
+              collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+                {% if logo or logo_svg %}
+                  <div class="logo-list-item">
+                    {% if logo_svg != blank %}
+                      <div class="logo-list-item-wrap">
+                        {{ logo_svg }}
+                      </div>
+                    {% else %}
+                      <div class="logo-list-item-wrap">
+                        {%
+                          render 'rimg'
+                          img: logo,
+                          size: '500x500',
+                          lazy: true
+                        %}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% else %}
+                  {% render 'logo-list-onboarding' %}
+                {% endif %}
+              {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Logo list",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "Show border",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Logo",
+      "settings": [
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Title",
+          "default": "Logo"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Image",
+          "info": "480 x 480px .jpg recommended"
+        },
+        {
+          "type": "html",
+          "id": "logo_svg",
+          "label": "Image SVG"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "textarea",
+          "id": "productID",
+          "label": "List Product Ids (Separated by Comma)"
+        },
+        {
+          "type": "collection",
+          "id": "collectionId",
+          "label": "Choose Collection",
+          "info": "text"
+        },
+        {
+          "type": "textarea",
+          "id": "pageId",
+          "label": "List Page Ids (Separated by Comma)"
+       }
+      ]
+    }
+  ]
+}
+{% endschema %}

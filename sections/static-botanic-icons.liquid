@@ -1,0 +1,93 @@
+{%- assign border = section.settings.border -%}
+{%- assign showIcons = false -%}
+{%- assign productIDString = product.id | downcase %}
+{%- assign pageIDString = page.id | downcase %}
+{% for block in section.blocks %}
+{% assign productArray = block.settings.productID | split: "," %}
+    {% assign pageArray = block.settings.pageId | split: "," %}
+    {% if productArray contains productIDString or pageArray contains pageIDString or
+        collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+        {%- assign showIcons = true -%}
+    {% endif %}
+{% endfor %}
+{% if showIcons and section.blocks.size > 0 %}
+    <section class="botanic-icons-section {% if border %}show-border{% endif %}">
+        <div class="content-area ">
+            <ul class="botanic-icon__item-wrap">
+                {% for block in section.blocks %}
+                    {% assign productArray = block.settings.productID | split: "," %}
+                    {% assign pageArray = block.settings.pageId | split: "," %}
+                    {% if productArray contains productIDString or pageArray contains pageIDString or
+                        collection.handle == block.settings.collectionId and request.page_type == 'collection' %}
+                        <li class="botanic-icon__item">
+                            <div class="botanic-icon__item-image-wrap">
+                                <div class="botanic-icon__item-image">
+                                    {{block.settings.image}}
+                                </div>
+                            </div>
+                            <div class="botanic-icon__item-heading section-strong">
+                                    {{block.settings.heading}}
+                            </div>
+                            <div class="botanic-icon__item-subheading">
+                                    {{block.settings.subtext}}
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Botanic Icons",
+        "settings": [
+            {
+                "type": "checkbox",
+                "id": "border",
+                "label": "Show border",
+                "default": true
+            }
+        ],
+        "blocks": [
+            {
+                "type":"icon",
+                "name":"Botanic Icon",
+                "settings": [
+                    {
+                        "type": "html",
+                        "id": "image",
+                        "label": "Icon"
+                    },
+                    {
+                        "id": "heading",
+                        "type": "text",
+                        "label": "Heading"
+                    },
+                    {
+                        "id": "subtext",
+                        "type": "textarea",
+                        "label": "Text"
+                    },
+                    {
+                        "type": "textarea",
+                        "id": "productID",
+                        "label": "List Product Ids (Separated by Comma)"
+                    },
+                    {
+                        "type": "collection",
+                        "id": "collectionId",
+                        "label": "Choose Collection"
+                    },
+                    {
+                        "type": "textarea",
+                        "id": "pageId",
+                        "label": "List Page Ids (Separated by Comma)"
+                    }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

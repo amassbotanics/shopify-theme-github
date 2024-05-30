@@ -1,0 +1,106 @@
+<div
+  data-section-id="{{ section.id }}"
+  data-section-type="static-collection-list"
+>
+  {%- assign collectionsPerPage = section.settings.collections-per-row | times: section.settings.rows -%}
+
+  {% assign using-linklist = false %}
+
+  {% if linklists['all-collections'] and linklists['all-collections'].links.size > 0 %}
+    {% assign using-linklist = true %}
+  {% endif %}
+
+  <section class="content content-area">
+    {% render 'breadcrumbs' %}
+
+    <div class="page-title">
+      <h1 class="label">
+        {{ 'collections.listing.header' | t }}
+      </h1>
+    </div>
+
+    {% paginate collections by collectionsPerPage %}
+      <section
+        class="
+          collections
+          row-of-{{ section.settings.collections-per-row }}
+        "
+      >
+        {% if using-linklist %}
+          {% for link in linklists['all-collections'].links limit: collectionsPerPage %}
+            {% render 'collection-list-item', link: link, paginate: paginate %}
+          {% endfor %}
+        {% else %}
+          {% for collection in collections limit: collectionsPerPage %}
+            {% render 'collection-list-item', collection: collection, paginate: paginate %}
+          {% endfor %}
+        {% endif %}
+      </section>
+
+      {% if paginate.previous or paginate.next and using-linklist == false %}
+        {%
+          render 'pagination',
+          paginate: paginate,
+          paginationStyle: section.settings.pagination-style
+        %}
+      {% endif %}
+    {% endpaginate %}
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Collections list page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "label": "Rows",
+      "min": 1,
+      "max": 11,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "collections-per-row",
+      "label": "Number of collections per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Pagination"
+    },
+    {
+      "type": "select",
+      "id": "pagination-style",
+      "label": "Style",
+      "options": [
+        {
+          "value": "standard",
+          "label": "Standard pagination"
+        },
+        {
+          "value": "jump-to-page",
+          "label": "Jump-to-page pagination"
+        }
+      ],
+      "default": "standard"
+    }
+  ]
+}
+
+{% endschema %}

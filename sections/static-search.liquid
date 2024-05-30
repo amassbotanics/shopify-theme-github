@@ -1,0 +1,115 @@
+
+{% assign gwp_tag = settings.sample_product_tag %}
+<div
+  class="static-search {% unless search.performed %}search-no-search-performed{% endunless %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="static-search"
+>
+  <section class="content-area">
+    {% render 'breadcrumbs' %}
+
+    <div class="page-title">
+      <h1 class="label">
+        {%- if search.performed -%}
+          {{ 'general.search.results_header' | t }}
+        {%- else -%}
+          {{ 'general.search.header' | t }}
+        {%- endif -%}
+      </h1>
+    </div>
+
+    <main class="results">
+      {% if search.performed %}
+        {% capture results %}
+          {{ 'general.search.results' | t: count: search.results_count }}
+        {% endcapture %}
+
+        <p class="results-label">{{ 'general.search.results_text' | t: results: results, results_count: search.results_count, search_terms: search.terms }}</p>
+      {% endif %}
+
+      <form
+        class="results-search-form"
+        action="{{ routes.search_url }}"
+        method="get"
+      >
+        <input
+          class="rs-form-input"
+          name="q"
+          type="text"
+          placeholder="{{ 'general.search.input_placeholder' | t }}"
+          value=""
+          data-live-search-form-input
+        >
+
+        <button
+          class="rs-form-button-search"
+          type="submit"
+          aria-label="{{ 'general.search.form_search' | t }}"
+          data-live-search-form-button-search
+        >
+          {% render 'icon' with 'search' %}
+        </button>
+      </form>
+
+      {% paginate search.results by 10 %}
+        {% for item in search.results %}
+          {% if item.tags contains gwp_tag %}
+            {% continue %}
+          {% endif %}
+          {%
+            render 'search-result',
+            item: item,
+            paginate: paginate,
+          %}
+        {% endfor %}
+
+        {% if paginate.previous or paginate.next %}
+          {%
+            render 'pagination',
+            paginate: paginate,
+            paginationStyle: section.settings.pagination-style
+          %}
+        {% endif %}
+      {% endpaginate %}
+    </main>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Search result pages",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Pagination"
+    },
+    {
+      "type": "select",
+      "id": "pagination-style",
+      "label": "Style",
+      "options": [
+        {
+          "value": "standard",
+          "label": "Standard pagination"
+        },
+        {
+          "value": "jump-to-page",
+          "label": "Jump-to-page pagination"
+        }
+      ],
+      "default": "standard"
+    }
+  ]
+}
+
+{% endschema %}

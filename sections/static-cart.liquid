@@ -1,0 +1,277 @@
+{%- assign shippingCalculator = section.settings.shipping-calculator -%}
+{%- assign shippingCalculatorDefaultCountry = section.settings.shipping-calculator-default-country | escape -%}
+
+<script
+  type="application/json"
+  data-section-type="static-cart"
+  data-section-id="{{ section.id }}"
+  data-section-data
+>
+  {
+    "settings": {
+      "stock_limit": {{ 'cart.stock_limit' | t: quantity: '** quantity **', title: '** title **' | json }},
+      "money_format": {{ shop.money_format | strip_html | json }},
+      "shipping": {{ shippingCalculator | json }}
+    }
+  }
+</script>
+
+
+<script type="text/javascript">
+  var invalid_states = {
+    {% for item in cart.items %}
+    '{{ item.variant_id}}': '{{ item.product.metafields.shipment.invalid_states }}',
+    {% endfor %}
+  };
+  var states = {
+    AL: "Alabama",
+    AZ: "Arizona",
+    AR: "Arkansas",
+    CA: "California",
+    CO: "Colorado",
+    CT: "Connecticut",
+    DE: "Delaware",
+    DC: "District Of Columbia",
+    FL: "Florida",
+    GA: "Georgia",
+    HI: "Hawaii",
+    ID: "Idaho",
+    IL: "Illinois",
+    IN: "Indiana",
+    IA: "Iowa",
+    KS: "Kansas",
+    KY: "Kentucky",
+    LA: "Louisiana",
+    ME: "Maine",
+    MD: "Maryland",
+    MA: "Massachusetts",
+    MI: "Michigan",
+    MN: "Minnesota",
+    MS: "Mississippi",
+    MO: "Missouri",
+    MT: "Montana",
+    NE: "Nebraska",
+    NV: "Nevada",
+    NH: "New Hampshire",
+    NJ: "New Jersey",
+    NM: "New Mexico",
+    NY: "New York",
+    WY: "Wyoming",
+    NC: "North Carolina",
+    ND: "North Dakota",
+    OH: "Ohio",
+    OK: "Oklahoma",
+    OR: "Oregon",
+    PA: "Pennsylvania",
+    RI: "Rhode Island",
+    SC: "South Carolina",
+    SD: "South Dakota",
+    TN: "Tennessee",
+    TX: "Texas",
+    UT: "Utah",
+    VT: "Vermont",
+    VA: "Virginia",
+    WA: "Washington",
+    WV: "West Virginia",
+    WI: "Wisconsin",
+  };
+
+  function showInvalidateShipment(shippingProvince) {
+    let hasInvalidItem = false;
+
+    $(".cart-table tr.cart-item").each(function () {
+      const variantId = $(this).attr("data-cart-item-variant-id");
+
+      if (invalid_states[variantId].indexOf(shippingProvince) > -1) {
+        hasInvalidItem = true;
+        $(this).addClass("invalid-shipment");
+      } else {
+        $(this).removeClass("invalid-shipment");
+      }
+    });
+
+    if (hasInvalidItem) {
+      $('button[name="checkout"]').prop("disabled", true);
+      $('button[name="checkout"]').addClass("disabled");
+
+      if ($(".checkout .notice--error").length === 0) {
+        $(".checkout").append(
+          `
+              <div role="alert" data-shipping-warning="" data-banner="true" class="notice notice--error default-background" tabindex="-1" aria-atomic="true" aria-live="polite">
+                  <svg class="icon-svg icon-svg--size-24 notice__icon" aria-hidden="true" focusable="false">
+                      <use xlink:href="#error">
+                          <svg id="error"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm0-2c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm0-16c.552 0 1 .448 1 1v5c0 .552-.448 1-1 1s-1-.448-1-1V7c0-.552.448-1 1-1zm-1.5 10.5c0-.828.666-1.5 1.5-1.5.828 0 1.5.666 1.5 1.5 0 .828-.666 1.5-1.5 1.5-.828 0-1.5-.666-1.5-1.5z"></path></svg></svg>
+                      </use>
+                  </svg>
+                  <div class="notice__content">
+                      <p class="notice__text"></p>
+                  </div>
+              </div>
+          `
+        );
+      }
+
+      var userRegion = states[shippingProvince];
+      $(".notice__text").html(
+        `We're sorry, we currently do not ship alcohol to ${userRegion}. Please remove the selected items from your cart to complete your order.`
+      );
+    } else {
+      $('button[name="checkout"]').prop("disabled", false);
+      $('button[name="checkout"]').removeClass("disabled");
+      $(".checkout .notice--error").remove();
+    }
+  }
+
+  window.addEventListener('load', function() {
+    var shippingProvince = null
+
+    var queryParams = window.location.search.slice(1).split('&')
+    for (var queryParam of queryParams) {
+      var queryParamData = queryParam.split('=')
+      if (queryParamData[0] === 'invalid-shipment') {
+        shippingProvince = queryParamData[1]
+      }
+    }
+
+    if (shippingProvince) {
+      showInvalidateShipment(shippingProvince);
+    }
+
+    function onCartTableChanged(mutations) {
+      console.log(mutations)
+      showInvalidateShipment(shippingProvince);
+    }
+    
+    let cartTableObserver = new MutationObserver(onCartTableChanged);
+    console.log($('.cart-table').get(0))
+    cartTableObserver.observe($('.cart-table').get(0), { childList: true, subtree: true });
+  });
+
+  Shopify.onCartUpdate = function(cart) {
+    alert('There are now ' + cart.item_count + ' items in the cart.');
+  };
+</script>
+
+<section
+  class="
+    content
+    content-area
+  "
+>
+  {% render 'breadcrumbs' %}
+
+  <div class="page-title">
+    <h1 class="label">{{ 'cart.header' | t }}</h1>
+  </div>
+
+  {% if cart.item_count > 0 %}
+    <form class="cart" action="{{ routes.cart_url }}" method="post" data-cart-form>
+      {% render 'cart-table' %}
+
+      {% if shippingCalculator %}
+        {% render 'shipping-calculator', shippingCalculatorDefaultCountry: shippingCalculatorDefaultCountry %}
+      {% endif %}
+
+      <div class="cart-tools clearfix">
+        <div class="instructions">
+          <p>{{ 'cart.note' | t }}</p>
+          <textarea class="field" name="note">{{- cart.note -}}</textarea>
+        </div>
+        <div class="totals">
+          <ul class="cart-discounts" data-cart-discounts>
+            {% render 'cart-discounts' %}
+          </ul>
+          <p class="price">
+            <span class="money" data-cart-total>
+              {{ cart.total_price | money }}
+            </span>
+          </p>
+
+          <p class="message">
+            {{ 'cart.tax_and_shipping' | t }}
+          </p>
+<!-- 			<div class="route-div"></div> -->
+          <div class="checkout">
+            <input
+              class="action-button desaturated cart-update"
+              type="submit"
+              name="update"
+              value="{{ 'cart.update' | t }}"
+            >
+
+            <button
+              class="action-button cart-submit"
+              type="submit"
+              name="checkout"
+              value="{{ 'cart.submit' | t }}"
+            >
+              {% if settings.enable_checkout_lock_icon %}
+                {% render 'icon' with 'checkout-lock' %}
+              {% endif %}
+              <span>{{ 'cart.submit' | t }}</span>
+            </button>
+
+            {% if additional_checkout_buttons %}
+              <span class="additional-checkout-buttons"> 
+                <div class="additional-checkout-buttons">
+                  {{ content_for_additional_checkout_buttons }}
+                </div>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <!-- Begin Mixpanel integration for hidden input to make the ID match between domains -->
+      <!-- <input type="hidden" id="mixpanel_id" name="attributes[mixpanel_id]" value="" /> -->
+      <!-- End Mixpanel integration -->
+    </form>
+  {% else %}
+    <p class="empty">
+      {{ 'cart.empty' | t }}
+
+      <a href="{{ shop.url }}/collections/all">
+        {{ 'cart.continue' | t }}
+      </a>
+    </p>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Cart pages",
+  "class": "section-cart",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Shipping calculator"
+    },
+    {
+      "type": "checkbox",
+      "id": "shipping-calculator",
+      "label": "Enable shipping calculator",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "shipping-calculator-default-country",
+      "label": "Default country selection",
+      "default": "United States"
+    },
+    {
+      "type": "paragraph",
+      "content": "If your customer is logged in, the country in his or her default shipping address will be selected."
+    }
+  ]
+}
+
+{% endschema %}

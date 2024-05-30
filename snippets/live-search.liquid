@@ -1,0 +1,81 @@
+{% comment %}
+@param show_label {Boolean}
+  Whether to show the live search input label
+
+@param alignment {String}
+  Position of the element in the header, depending on header type and logo position.
+  Can be one of: left, right
+
+@param display {String}
+  Which results to display in live search
+{% endcomment %}
+
+{% assign display = display | default: 'product-article-page' %}
+
+<div
+  class="
+    live-search
+    live-search-hidden
+    live-search-results-hidden
+    live-search-results-placeholder
+    live-search-results-footer-hidden
+    live-search-alignment-{{ alignment }}
+  "
+  data-live-search
+>
+  <button
+    id="ls-button-search"
+    class="ls-button-search"
+    type="button"
+    aria-label="{{ 'general.livesearch.form_open' | t }}"
+    data-live-search-button-search
+  >
+    {% render 'icon' with 'search' %}
+  </button>
+
+  {% if show_label %}
+    <label class="ls-label" for="ls-button-search">
+      {{ 'general.livesearch.button_label' | t }}
+    </label>
+  {% endif %}
+
+  <div class="ls-dimmer"></div>
+
+  <form
+    id="ls-form"
+    class="ls-form"
+    action="{{ routes.search_url }}"
+    method="get"
+    autocomplete="off"
+    data-live-search-form
+  >
+    <input
+      class="ls-input"
+      name="q"
+      type="text"
+      placeholder="{{ 'general.livesearch.input_placeholder' | t }}"
+      value=""
+      data-live-search-form-input
+    >
+
+    <button
+      class="ls-form-button-search"
+      type="submit"
+      aria-label="{{ 'general.livesearch.form_search' | t }}"
+      data-live-search-form-button-search
+    >
+      {% render 'icon' with 'search' %}
+    </button>
+
+    <button
+      class="ls-form-button-close"
+      type="button"
+      aria-label="{{ 'general.livesearch.form_close' | t }}"
+      data-live-search-form-button-close
+    >
+      {% render 'icon' with 'close' %}
+    </button>
+  </form>
+
+{% render 'live-search-results', display: display %}
+</div>

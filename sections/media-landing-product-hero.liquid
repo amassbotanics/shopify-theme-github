@@ -1,0 +1,84 @@
+<section>
+    <div class="
+        media-landing-hero__container
+        media-landing-product-hero" 
+        style="background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('{{section.settings.product-image | img_url: "master"}}')">
+        <div class="media-landing-hero__content-wrap landing-content__wrap">
+            <h1 class="media-landing-hero__heading">{{section.settings.product-heading}}</h1>
+            <div class="media-landing-hero__subheading section-strong">
+                {{section.settings.product-subheading}}
+                <div class="media-landing-hero__product-reviews">
+                    <img src="{{ 'five-stars.svg' | asset_url }}" alt="five white stars" width="100" height="20"> 
+                    {{section.settings.product-reviews}} 
+                </div>
+                <div class="media-landing-hero__product-details">
+                    <div class="media-landing-hero__product-price">{{section.settings.product-price}}</div>
+                    <div>{{section.settings.product-quantity}}</div>
+                </div> 
+            </div>
+            <div class="media-landing-hero__links">
+                <a class="landing-cta landing-cta--light" href="{{section.settings.button-url-left}}">{{section.settings.button-text-left}}</a>
+                <a class="landing-cta landing-cta--outline" href="{{section.settings.button-url-right}}">{{section.settings.button-text-right}}</a>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+{% schema %}
+{
+    "name": "Product Hero",
+    "settings": [
+        {
+            "id": "product-heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "product-subheading",
+            "type": "richtext",
+            "label": "Subheading"
+        },
+        {
+            "id": "product-reviews",
+            "type": "richtext",
+            "label": "Reviews"
+        },
+        {
+            "id": "product-price",
+            "type": "richtext",
+            "label": "Price"
+        },
+        {
+            "id": "product-quantity",
+            "type": "richtext",
+            "label": "Quantity"
+        },
+        {
+            "id": "product-image",
+            "type": "image_picker",
+            "label": "Hero Image"
+        },
+        {
+            "id": "button-text-left",
+            "type": "text",
+            "label": "Button Text"
+        },
+        {
+            "id": "button-url-left",
+            "type": "url",
+            "label": "Button URL"
+        },
+        {
+            "id": "button-text-right",
+            "type": "text",
+            "label": "Button Text"
+        },
+        {
+            "id": "button-url-right",
+            "type": "url",
+            "label": "Button URL"
+        }
+    ]
+}
+{% endschema %}

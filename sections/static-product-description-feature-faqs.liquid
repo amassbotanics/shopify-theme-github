@@ -1,0 +1,59 @@
+<section class="product-description-feature__section">
+    <div class="content-area">
+        <div class="product-description-feature__wrap js-toggle-content-wrap">
+             <div class="product-description-feature__heading-wrap js-accordion-toggle-trigger">
+                 <h4 class="product-description-feature__heading-faqs-mobile">FAQS</h4>
+                 <h4 class="product-description-feature__heading product-description-feature__heading-faqs">{{section.settings.title}}</h4>
+                 <div class="accordion-button accordion-button--large js-accordion-button">
+                     +
+                 </div>
+             </div>
+             <div class="product-description-feature__content js-toggle-content">
+                <ul class="product-description-feature__faqs">
+                    {% for block in section.blocks %}
+                     <li class="product-description-feature__faqs-item js-toggle-content-wrap--sub">
+                         <div class="product-description-feature__faqs-item-heading-wrap js-accordion-toggle-trigger--sub">
+                             <h6 class="product-description-feature__faqs-item-heading">{{ block.settings.heading }}</h6>
+                             <div class="accordion-button accordion-button--light js-accordion-button--sub">
+                                 +
+                             </div>
+                         </div>
+                         <p class="product-description-feature__faqs-item-content js-toggle-content--sub">{{ block.settings.content | newline_to_br }}</p>
+                     </li>
+                     {% endfor %}
+                 </ul>
+             </div>
+         </div>
+    </div>
+</section>
+
+{% schema %}
+{
+    "name": "Product Feature FAQS",
+    "settings": [
+        {
+            "id": "title",
+            "type": "text",
+            "label": "Title"
+        }
+    ],
+    "blocks": [
+        {
+            "type":"text",
+            "name":"Description",
+            "settings": [           
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "content",
+                    "type": "textarea",
+                    "label": "Content"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

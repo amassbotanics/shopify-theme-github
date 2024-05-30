@@ -1,0 +1,18 @@
+{{collection.metafields.shogun.above}}
+{% render 'shogun-products', content: collection %}
+{% section 'static-collection-scent-banner' %}
+{% section 'static-collection' %}
+{% section 'static-logo-list' %}
+{% section 'static-awards-list' %}
+
+<!-- Mixpanel Tracking -->
+<!-- <script>
+  window.addEventListener("load", function () {
+    mixpanel.track("Collection Viewed", {
+      name: "{{collection.title}}",
+    });
+  });
+</script> -->
+
+{{collection.metafields.shogun.below}}
+{{ collection.metafields.shogun.optimizer }}

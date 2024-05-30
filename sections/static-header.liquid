@@ -1,0 +1,253 @@
+{%- assign headerLayout = section.settings.header-layout -%}
+{%- assign headerCenter = section.settings.center-header -%}
+{%- assign socialIcons = section.settings.social-icons -%}
+
+{% if socialIcons and headerLayout == 'normal' %}
+  {% assign headerLayout = 'expanded' %}
+{% endif %}
+
+<script
+  type="application/json"
+  data-section-type="static-header"
+  data-section-id="{{ section.id }}"
+  data-section-data
+>
+  {
+    "live_search_enabled": {{ section.settings.live_search_enabled | json }},
+    "live_search_display": {{ section.settings.live_search_display | json }}
+  }
+</script>
+
+<header
+  class="
+    main-header-wrap
+    {% if headerLayout == 'minimal-sticky' %}
+      main-header--{{ headerLayout }}
+      {% assign headerLayout = 'minimal' %}
+    {% endif %}
+    main-header--{{ headerLayout }}
+    {% if headerCenter %}main-header--centered{% endif %}
+  "
+  data-header-layout="{{ headerLayout }}"
+  data-header-alignment="{{ headerCenter }}"
+>
+  <section class="main-header">
+
+    {% if headerLayout != 'minimal' %}
+      <div
+        class="
+          action-links
+          clearfix
+          {% unless headerCenter %}content-area{% endunless %}
+        "
+      >
+        {%
+          render 'header-tools',
+          layout: headerLayout,
+          logoCentered: headerCenter,
+          cartIcon: section.settings.cart-icon
+        %}
+
+        {%
+          render 'header-storetitle',
+          headerLayout: headerLayout,
+          headerCenter: headerCenter,
+          logo: section.settings.image,
+          logoWidth: section.settings.logo-width
+        %}
+      </div>
+    {% endif %}
+
+    {% if headerLayout == 'minimal' %}
+      {%
+        render 'header-minimal',
+        headerLayout: headerLayout,
+        headerCenter: headerCenter
+        logo: section.settings.image,
+        logoWidth: section.settings.logo-width,
+        cartIcon: section.settings.cart-icon
+      %}
+    {% else %}
+      {%
+        render 'header-fullnav',
+        headerLayout: headerLayout,
+        headerCenter: headerCenter
+      %}
+    {% endif %}
+
+    {%
+      render 'header-meganav',
+      topLevelColumns: section.settings.top-level-columns
+    %}
+
+    {% render 'header-mobile-dropdown' %}
+  </section>
+</header>
+
+<script>
+  window.headerJSON = {{ section.settings | json }};
+
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Logo image",
+      "info": "400 x 200px .jpg recommended"
+    },
+    {
+      "type": "text",
+      "id": "logo-width",
+      "label": "Logo width",
+      "info": "Custom logo width (in pixels)",
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "header-layout",
+      "label": "Header Layout",
+      "default": "normal",
+      "options": [
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "minimal",
+          "label": "Minimal"
+        },
+        {
+          "value": "minimal-sticky",
+          "label": "Minimal (sticky)"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "center-header",
+      "label": "Center logo",
+      "info": "The logo is always centered on mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "social-icons",
+      "label": "Show social icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-labels",
+      "label": "Show login and search labels",
+      "info": "Labels can only appear on the Normal header layout",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Cart preview"
+    },
+    {
+      "type": "select",
+      "id": "cart-icon",
+      "label": "Cart icon",
+      "default": "cart",
+      "options": [
+        {
+          "value": "cart",
+          "label": "Cart"
+        },
+        {
+          "value": "bag",
+          "label": "Bag"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "checkbox",
+      "id": "live_search_enabled",
+      "label": "Enable live search",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "live_search_display",
+      "label": "Display results",
+      "options": [
+        {
+          "value": "product",
+          "label": "Products"
+        },
+        {
+          "value": "product-page",
+          "label": "Products and pages"
+        },
+        {
+          "value": "product-article",
+          "label": "Products and posts"
+        },
+        {
+          "value": "product-article-page",
+          "label": "Products, posts, and pages"
+        }
+      ],
+      "default": "product-article-page"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu",
+      "default": "main-menu",
+      "info": "This menu supports dropdowns and mega menus ([?](http://support.pixelunion.net/article/412-how-to-set-up-your-stores-navigation))"
+    },
+    {
+      "type": "link_list",
+      "id": "left-menu",
+      "label": "Left menu",
+      "default": "main-menu",
+      "info": "This menu supports dropdowns and mega menus ([?](http://support.pixelunion.net/article/412-how-to-set-up-your-stores-navigation))"
+    },
+    {
+      "type": "link_list",
+      "id": "right-menu",
+      "label": "Right menu",
+      "default": "main-menu",
+      "info": "This menu supports dropdowns and mega menus ([?](http://support.pixelunion.net/article/412-how-to-set-up-your-stores-navigation))"
+    },
+    {
+      "type": "select",
+      "id": "top-level-columns",
+      "label": "Sub-columns layout",
+      "options": [
+        {
+          "value": "one-column",
+          "label": "One column"
+        },
+        {
+          "value": "two-columns",
+          "label": "Two columns"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

@@ -1,0 +1,83 @@
+<div class="subscription-upsell-modal js-subscription-upsell-modal">
+    <div class="subscription-upsell-modal__content">
+      <div class="modal-icon-close js-subscription-upsell-modal-close">
+        {% render 'icon' with 'close'%}
+      </div>
+      <h1 class="subscription-upsell-modal__heading">
+        One-time Offer
+      </h1>
+      {% for variant in product.variants %}
+        {% if product.variants.size > 1 %}
+           {% assign selectedVariantSubscriptionUpsell = variant %}
+        {% else %}
+            {% assign selectedVariantSubscriptionUpsell = product %}
+        {% endif %}
+        <div data-subscription-modal-variant-name="{% if product.variants.size > 1 %}{{ selectedVariantSubscriptionUpsell.title }}{% else %}{{ variant.id | strip }}{% endif %}"
+            class="subscription-upsell-modal__variant"
+        >
+            <div class="subscription-upsell-modal__image-wrap">
+                {%
+                    render 'rimg',
+                    img: selectedVariantSubscriptionUpsell.featured_image,
+                    size: '100x',
+                    lazy: true,
+                %}
+            </div>
+            <h5>
+                {{ selectedVariantSubscriptionUpsell.title }} Subscription
+            </h5>
+            <p class="subscription-upsell-modal__price product-item__price">
+                        <span 
+                          class="subscription-upsell-modal__price-original original"
+                          data-variant-subscription-price-original="{{ variant.price | money_without_currency }}"
+                        >
+                            {{ variant.price | money }}
+                        </span>
+                        <span 
+                        class="subscription-upsell-modal__price-update"
+                        data-variant-subscription-price-save="{{ variant.selling_plan_allocations[0].price | money_without_currency }}"
+                        >
+                            {{ variant.selling_plan_allocations[0].price | money }}
+                        </span>
+            </p>
+            <div class="subscription-upsell-modal__select-wrap">
+                <select class="subscription-upsell-modal__select">
+                        {% for allocation in variant.selling_plan_allocations %}
+                            <option value="{{ allocation.selling_plan.id }}">
+                            {{ allocation.selling_plan.name }}
+                            </option>
+                        {% endfor %}
+                </select>
+                <div class="subscription-upsell-modal__dropdown">
+                    <div class="subscription-upsell-modal__dropdown-btn js-dropdown-btn">
+                            <span 
+                                class="js-dropdown-item-selected" 
+                                data-selling-plan-id="{{variant.selling_plan_allocations[0].selling_plan.id}}"  
+                                data-variant-id="{{ variant.id }}" >
+                                {{ variant.selling_plan_allocations[0].selling_plan.name | remove: "Delivery" | replace: "every", "Every" }}
+                            </span>
+                        <div class="arrow-drop" >
+                            {% render 'icon' with 'down-arrow'%}
+                        </div>
+                    </div>
+                    <div class="subscription-upsell-modal__dropdown-content">
+                        <ul class="subscription-upsell-modal__dropdown-menu">
+                                {% for allocation in variant.selling_plan_allocations %}
+                                    <li
+                                    class="subscription-upsell-modal__dropdown-item js-subscription-dropdown-item" 
+                                    data-variant-id = "{{ variant.id }}"
+                                    data-selling-plan-id= "{{ allocation.selling_plan.id }}">
+                                        {{ allocation.selling_plan.name | remove: "Delivery" | replace: "every", "Every" }}
+                                    </li>
+                                {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <input type="button" class="action-button action-button--full-width js-subscription-upsell-add-to-cart" value="Add to Cart">
+        <input type="button" class="action-button action-button--no-bg js-subscription-upsell-modal-close" value="No, thanks">
+
+    </div>
+</div>

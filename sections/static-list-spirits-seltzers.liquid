@@ -1,0 +1,64 @@
+<section class="custom-collection-list__section">
+    <div class="content-area">
+        <h1 class="custom-collection-list__heading section-strong">{{ section.settings.title }}</h1>
+        <ul class="custom-collection-list__wrap">
+            {% for block in section.blocks %}
+                <li class="custom-collection-list__item">
+                    <figure class="custom-collection-list__item-image-wrap">
+                        <img class="custom-collection-list__item-image" src="{{ block.settings.collection-image | img_url: 'master'}}" alt="">
+                        <a class="custom-collection-list__item-image-link" href="{{ block.settings.collection-link }}"></a>
+                    </figure>
+                    <h2 class="custom-collection-list__item-title">
+                      <a href="{{ block.settings.collection-link }}">{{ block.settings.collection-name }}</a>
+                    </h2>
+                    <div class="custom-collection-list__item-content">
+                      {{ block.settings.content }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+{% schema %}
+{
+    "name": "Custom Collection List",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Collection Name"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "List",
+            "name": "Collection",
+            "settings": [
+              {   
+                "id": "collection-name",
+                "type": "text",
+                "label": "Title"
+              },
+              {
+                "type": "richtext",
+                "id": "content",
+                "label": "Content"
+              },
+              {
+                "type": "image_picker",
+                "id": "collection-image",
+                "label": "Image",
+                "info": "480 x 480px .jpg recommended"
+              },
+              {
+                "type": "url",
+                "id": "collection-link",
+                "label": "Page URL"
+              }
+            ]
+        }
+    ]
+
+}
+{% endschema %}

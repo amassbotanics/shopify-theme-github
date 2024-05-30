@@ -1,0 +1,89 @@
+<section
+    class="home-section botanics-banner__section
+    {% if section.settings.margin == 'none' %}
+        section-no-margin
+    {% endif %}"
+>
+    <div class="botanics-banner__content-wrap">
+        <div class="botanics-banner__content botanics-banner__heading-wrap">
+            <h2 class="botanics-banner__heading">{{ section.settings.title }}</h2>
+            <a class="botanics-banner__cta"href="{{ section.settings.link }}">
+                <span class="section-strong"> {{ section.settings.link_text }} </span>
+                <img  class="botanics-banner__cta-arrow" src="{{ 'Arrow_Right.svg' | asset_url }}" alt="right arrow">
+            </a>
+        </div>
+        {% for block in section.blocks %}
+        {% assign botanic_image = block.settings.botanic_image %}
+        <div class="botanics-banner__content botanics-banner__image-wrap">
+            <div class="botanics-banner__image">
+                {%
+                    render 'rimg'
+                    img: botanic_image,
+                    size: '300X300',
+                    alt: botanic_image.alt,
+                    lazy: true
+                %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% schema %}
+{
+    "name": "Botanics Banner",
+    "settings": [
+      {
+        "type": "select",
+        "id": "margin",
+        "label": "Show spacing",
+        "options": [
+          {
+            "value": "regular",
+            "label": "Regular"
+          },
+          {
+            "value": "none",
+            "label": "None"
+          }
+        ],
+        "default": "regular"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading"
+      },
+      {
+        "type": "text",
+        "id": "link_text",
+        "label": "link text",
+        "default": "Learn More"
+      },
+      {
+        "type": "url",
+        "id": "link",
+        "label": "link URL"
+      }
+    ],
+    "blocks": [
+      {
+          "type": "Image",
+          "name": "Botanics Image",
+          "settings": [
+            {
+                "type": "image_picker",
+                "id": "botanic_image",
+                "label": "Image"
+            }
+          ]
+      }
+    ],
+    "presets": [
+      {
+        "category": "Banner",
+        "name": "Botanics Banner"
+      }
+    ]
+}
+{% endschema %}

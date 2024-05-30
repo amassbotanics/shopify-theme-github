@@ -1,0 +1,114 @@
+{%- assign footerMessage = section.settings.footer-message -%}
+{%- assign paymentOptions = section.settings.footer-payment-options -%}
+{%- assign mailingList = section.settings.footer-mailing-list -%}
+{%- assign alternateFooter = section.settings.footer-alternate -%}
+{%- assign alternateFooterMenu = section.settings.footer-secondary-menu -%}
+{%- assign currency_selector = section.settings.show_currency_selector -%}
+{%- assign locale_selector = section.settings.show_locale_selector -%}
+
+<script
+  type="application/json"
+  data-section-type="static-footer"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+
+<div class="static-footer">
+	<!-- <a href="" id="chat-button" class="chat-icon">
+		<img src="{{ 'chat-icon.png' | asset_url }}" alt="White Letter A" class="chat-icon-img">
+	</a> -->
+
+  {% unless alternateFooter %}
+    {%
+      render 'footer-one',
+      footerMessage: footerMessage,
+      mailingList: mailingList,
+      paymentOptions: paymentOptions,
+      currency_selector: currency_selector,
+      locale_selector: locale_selector
+    %}
+  {% else %}
+    {%
+      render 'footer-two',
+      alternateFooterMenu: alternateFooterMenu,
+      footerMessage: footerMessage,
+      mailingList: mailingList,
+      paymentOptions: paymentOptions,
+      currency_selector: currency_selector,
+      locale_selector: locale_selector
+    %}
+  {% endunless %}
+
+</div>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "text",
+      "id": "footer-message-title",
+      "label": "Footer message heading"
+    },
+    {
+      "type": "richtext",
+      "id": "footer-message",
+      "label": "Footer message"
+    },
+    {
+      "type": "checkbox",
+      "id": "footer-mailing-list",
+      "label": "Show newsletter form",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "footer-payment-options",
+      "label": "Show payment icons"
+    },
+    {
+      "type": "header",
+      "content": "Alternate footer"
+    },
+    {
+      "type": "checkbox",
+      "id": "footer-alternate",
+      "label": "Use alternate footer layout"
+    },
+    {
+      "type": "link_list",
+      "id": "footer-secondary-menu",
+      "label": "Secondary footer menu",
+      "info": "This menu won't show dropdown items"
+    },
+    {
+      "type": "header",
+      "content": "Language Selector",
+      "info": "To add a language, go to your [language settings.](/admin/settings/languages)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "Show language selector",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Currency Selector",
+      "info": "To add a currency, go to your [payment settings.](/admin/settings/payments)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_selector",
+      "label": "Show currency selector",
+      "default": true
+    }
+  ]
+}
+
+{% endschema %}

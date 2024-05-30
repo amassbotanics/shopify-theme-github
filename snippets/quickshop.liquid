@@ -1,0 +1,34 @@
+{% capture settings_string %}
+  {{ settings.show-brand-names }}
+  {{ settings.quickshop-product-email-link }}
+  {{ settings.media_borders }}
+  {{ settings.quickshop-product-quantity-option }}
+  {{ settings.quickshop_show_spb }}
+  {{ settings.quickshop_enable_cart_redirect }}
+  {{ settings.quickshop_gallery_enable_image_zoom }}
+  {{ 'products.product.add_to_cart' | t }}
+  {{ 'products.product.sold_out' | t }},
+  {{ 'products.product.unavailable' | t }}
+{% endcapture %}
+
+{% assign settings_sha256 = settings_string | sha256 %}
+
+<section
+  class="quickshop"
+  data-quickshop
+  data-quickshop-settings-sha256="{{ settings_sha256 }}"
+>
+  <div class="quickshop-content" data-quickshop-content>
+    <button class="quickshop-close" data-quickshop-close>
+      {% render 'icon' with 'close-thin' %}
+    </button>
+
+    <div class="quickshop-product" data-quickshop-product-inject></div>
+  </div>
+
+  <span class="spinner quickshop-spinner">
+    <span></span>
+    <span></span>
+    <span></span>
+  </span>
+</section>

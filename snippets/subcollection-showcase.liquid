@@ -1,0 +1,113 @@
+{% assign subcollections = ' , ' | split: ',' %}
+{%- assign brandNames = settings.show-brand-names -%}
+{%- assign enable_product_details_overlay = settings.enable_product_details_overlay -%}
+{%- assign media_borders = settings.media_borders -%}
+{%- assign enableQuickshop = settings.enable-quick-shop -%}
+{%- assign enableATC = settings.show_atc -%}
+{%- assign brandNames = settings.show-brand-names -%}
+
+{% unless onboarding %}
+  {% assign subcollections = linklists[collection.handle].links %}
+{% endunless %}
+
+{% for subcollection in subcollections %}
+  {% assign collectionImage = 'collection-5' | placeholder_svg_tag: 'placeholder-svg' %}
+  {% assign collectionTitle = 'onboarding.collection_title' | t %}
+  {% assign collectionDescription = '' %}
+  {% capture collectionProducts %}
+    {% for i in (1..4) %}
+      {% render
+        'product-item'
+        onboarding: onboarding,
+        forloop: forloop,
+        product: nil
+      %}
+    {% endfor %}
+  {% endcapture %}
+
+  {% unless onboarding %}
+    {% assign currentCollection = subcollection.object %}
+
+    {% if currentCollection == blank %}
+      {% continue %}
+    {% endif %}
+
+    {% assign collectionImage = currentCollection.image %}
+    {% assign collectionTitle = currentCollection.title %}
+    {% assign collectionDescription = currentCollection.description %}
+    {% capture collectionProducts %}
+      {% for product in currentCollection.products limit: 4 %}
+        {%
+          render 'product-item'
+          forloop: forloop,
+          onboarding: onboarding,
+          product: product
+        %}
+      {% else %}
+        <p class="empty">
+          {{ 'collections.collection.no_products' | t }}
+        </p>
+      {% endfor %}
+    {% endcapture %}
+  {% endunless %}
+
+  <div
+    class="
+      subcollection
+      content-area
+    "
+  >
+    <div class="subcollection-block">
+      {% if collectionImage %}
+        <div class="subcollection-image">
+          {% if onboarding %}
+            {{ collectionImage }}
+          {% else %}
+            {%
+              render 'rimg'
+              img: collectionImage,
+              class: 'subcollection-featured-image',
+              lazy: true
+            %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="subcollection-content">
+        <div class="subcollection-body">
+          <h1 class="subcollection-heading">
+            {{ collectionTitle }}
+          </h1>
+
+          {% if collectionDescription != blank %}
+            <div
+              class="
+                subcollection-description
+                rte
+              "
+            >
+              {{ collectionDescription }}
+            </div>
+          {% endif %}
+
+          <a
+            class="subcollection-link"
+            href="{{ currentCollection.url }}"
+          >
+            {{ 'collections.collection.shop_collection' | t }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <ul
+      class="
+        subcollection-products
+        product-list
+        row-of-4
+      "
+    >
+      {{ collectionProducts }}
+    </ul>
+  </div>
+{% endfor %}

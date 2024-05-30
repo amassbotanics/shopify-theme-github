@@ -1,0 +1,206 @@
+{% assign media_borders = settings.media_borders %}
+{% assign brandNames = settings.show-brand-names %}
+
+<table class="cart-table table" data-cart-table>
+  <thead>
+    <tr class="table-header">
+      <th class="first" colspan=2">{{ 'general.product' | t }}</th>
+      <th class="cart-item-column-price">{{ 'general.price' | t }}</th>
+      <th class="cart-item-column-quantity">{{ 'general.quantity' | t }}</th>
+      <th class="cart-item-column-total last">{{ 'general.total' | t }}</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for item in cart.items %}
+      {%- assign item_has_discounts = false -%}
+      {%- if item.line_level_discount_allocations.size > 0 -%}
+        {%- assign item_has_discounts = true -%}
+      {%- endif -%}
+      <tr
+        class="
+          table-row
+          cart-item
+          {% render 'for-looper', forloop: forloop %}
+        "
+        data-cart-item
+        data-cart-item-key="{{ item.key }}"
+        data-cart-item-variant-id="{{ item.variant_id }}"
+      >
+        <td
+          class="
+            cart-item-column
+            product-image
+            first
+          "
+        >
+          <div class="image-wrap">
+            <a class="image" href="{{ item.url }}">
+              {%
+                render 'rimg'
+                img: item.image,
+                size: '160x160',
+                lazy: true
+              %}
+              {% if media_borders %}
+                <span class="outline"></span>
+              {% endif %}
+            </a>
+          </div>
+        </td>
+        <td
+          class="
+            cart-item-column
+            product-item
+          "
+        >
+
+          <div class="wrap">
+            {% if brandNames %}
+              <span class="label vendor">{{ item.vendor }}</span>
+            {% endif %}
+
+            <span class="label title">{{ item.product.title | link_to: item.url }}</span>
+
+            {% unless item.product.has_only_default_variant %}
+              <span class="label variant">
+                {{ item.variant.title }}
+              </span>
+            {% endunless %}
+
+            {% if item.properties %}
+              <div class="item-properties">
+                {% for property in item.properties %}
+                  {% unless property.last == blank or property.first == "subscription_id" or property.first == "shipping_interval_frequency" or property.first == "shipping_interval_unit_type" %}
+                    <div class="item-property">
+                      <span class="item-property-label">
+                        {{ property.first }}:
+                      </span>
+
+                      {% if property.last contains '/uploads/' %}
+                        <a
+                          class="item-property-image"
+                          href="{{ property.last }}"
+                        >
+                          {{ property.last | split: '/' | last }}
+                        </a>
+                      {% else %}
+                        <span class="item-property-value">
+                          {{ property.last }}
+                        </span>
+                      {% endif %}
+                    </div>
+                  {% endunless %}
+                {% endfor %}
+                {% if item.selling_plan_allocation and item.selling_plan_allocation.selling_plan and item.selling_plan_allocation.selling_plan.name %}
+                  <span class="item-property-value">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                {% endif %}    
+              </div>
+            {% endif %}
+
+            {%- if item_has_discounts -%}
+              <ul class="cart-item-discounts">
+                {% for discount_allocation in item.line_level_discount_allocations %}
+                  <li>
+                    {% render 'icon' with 'sale-tag' %}
+                    {{ discount_allocation.discount_application.title }}
+                    (-<span class="money">{{ discount_allocation.amount | money }}</span>)
+                  </li>
+                {% endfor %}
+              </ul>
+            {%- endif -%}
+          </div>
+        </td>
+
+        <td
+          class="
+            cart-item-column
+            cart-item-column-price
+            price
+          "
+        >
+          <span class="cart-item-label-mobile">
+            {{ 'general.price' | t }}
+          </span>
+
+          <div class="cart-item-column-contents">
+            {%- if item_has_discounts -%}
+              <s class="cart-item-original-price money">
+                {{ item.original_price | money }}
+              </s>
+            {%- endif -%}
+            <span class="cart-item-final-price money">
+              {{ item.final_price | money }}
+            </span>
+            {% if item.unit_price_measurement %}
+              {% capture total_quantity %}<span>{{ item.unit_price_measurement.quantity_value }}{{ item.unit_price_measurement.quantity_unit }}</span>{% endcapture %}
+              {% capture unit_price %}<span>{{ item.unit_price | money }}</span>{% endcapture %}
+              {% capture unit_measure %}<span>{%- if item.unit_price_measurement.reference_value != 1 -%}{{ item.unit_price_measurement.reference_value }}{%- endif %}{{ item.unit_price_measurement.reference_unit }}</span>{% endcapture %}
+
+              <div class="cart-item__unit-price">
+                {{ 'products.product.price_per_unit_html' | t: total_quantity: total_quantity, unit_price: unit_price, unit_measure: unit_measure | strip_newlines }}
+              </div>
+            {% endif %}
+          </div>
+        </td>
+
+        <td
+          class="
+            cart-item-column
+            cart-item-column-quantity
+            quantity
+          "
+        >
+          <span class="cart-item-label-mobile">
+            {{ 'general.quantity' | t }}
+          </span>
+
+          <div class="cart-item-column-contents">
+            <input
+              class="
+                cart-item-quantity
+                field
+              "
+              type="number"
+              name="updates[]"
+              pattern="\d*"
+              value="{{ item.quantity }}"
+              data-cart-item-quantity
+            >
+            <a
+              class="cart-item-remove"
+              href="/cart/change/{{ item.variant.id }}?line={{ forloop.index }}&quantity=0"
+              data-cart-action="remove"
+            >
+              {{ 'cart.remove' | t }}
+            </a>
+          </div>
+        </td>
+
+        <td
+          class="
+            cart-item-column
+            cart-item-column-total
+            total
+            last
+          "
+        >
+          <span class="cart-item-label-mobile">
+            {{ 'general.total' | t }}
+          </span>
+
+          <div class="cart-item-column-contents">
+            {%- if item_has_discounts -%}
+              <s class="cart-item-original-price money">
+                {{ item.original_line_price | money }}
+              </s>
+            {%- endif -%}
+            <span class="cart-item-final-price money">
+              {{ item.final_line_price | money }}
+            </span>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -1,0 +1,150 @@
+
+{%- assign border = section.settings.border -%}
+{%- assign showCocktails = false -%}
+{% for block in section.blocks %}
+    {% if product.handle == block.settings.productId %}
+        {%- assign showCocktails = true -%}
+    {% endif %}
+{% endfor %}
+{% if showCocktails and section.blocks.size > 0 %}
+    <section class="cocktails-section {% if border %}show-border{% endif %}">
+        <div class="content-area">
+            <div class="cocktail-slider-container">
+                <div class="cocktail-slider__title">
+                    <p>{{section.settings.title}}</p>
+                </div>
+                <div class="cocktail-slider__wrap">
+                    <div class="cocktail-slider">
+                        {% for block in section.blocks %}
+                            {%- assign cocktailImage = block.settings.cocktailImage -%}
+                            {%- assign title = block.settings.title -%}
+                            {%- assign type = block.settings.cocktailType -%}
+                            {%- assign list = block.settings.ingredientList -%}
+                            {%- assign recipe = block.settings.cocktailRecipe -%}
+                            {%- assign isPartnership = block.settings.isPartnership %}
+                            {%- assign partnership = block.settings.partnershipText -%}
+                            {%- assign name = title | downcase | split: ' ' | join: '_' -%}
+                            {% if product.handle == block.settings.productId %}
+                                <div class="cocktail-slider__item{% if isPartnership %} partnership{% endif %}" name="{{ name }}">
+                                    <div class="cocktail-item">
+                                        <div class="cocktail-item__content">
+                                            <div class="cocktail-item__content_header">
+                                                {% if type != blank %}
+                                                    <div class="cocktail-item__content_type section-heading section-heading--medium">
+                                                        ({{type}})
+                                                    </div>
+                                                {% endif %}
+                                                <div class="section-heading section-heading--large cocktail-item__content_title">
+                                                    {{title}}
+                                                </div>
+                                            </div>
+                                           
+                                            <div>
+                                                <div class="section-heading section-heading--small">Ingredients</div>
+                                                <div class="cocktail-item__content_body">{{list}}</div>
+                                            </div>
+                                            <div>
+                                                <div class="section-heading section-heading--small">Recipe</div>
+                                                <div class="cocktail-item__content_body">{{recipe}}</div>
+                                            </div>
+                                            {% if isPartnership %}
+                                            <div>
+                                                <div class="cocktail-item__content_body">{{partnership}}</div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="cocktail-item__image">
+                                            <img data-lazy="{{ cocktailImage | img_url: "master" }}" alt="{{ cocktailImage.alt }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="cocktail-slider__controls">
+                        <div class="cocktail-slider-previous">
+                            {% render 'icon' with 'arrow-thin-left'%}
+                        </div>
+                        <div class="cocktail-slider-next">
+                            {% render 'icon' with 'arrow-thin-right'%}
+                        </div>
+                    </div>
+                   
+                </div>   
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Cocktail Recipes",
+        "settings": [
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Section Title"
+            },
+            {
+                "type": "checkbox",
+                "id": "border",
+                "label": "Show border",
+                "default": true
+            }
+        ],
+        "blocks": [
+            {
+                "type":"cocktail",
+                "name":"Cocktails",
+                "settings": [
+                 {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Cocktail Name",
+                    "default": "Cocktail"
+                  },
+                  {
+                    "type": "text",
+                    "id": "cocktailType",
+                    "label": "Type",
+                    "default": "type",
+                    "info": "Ex: Non-Alc, Lo-Alc"
+                  },
+                  {
+                    "type": "image_picker",
+                    "id": "cocktailImage",
+                    "label": "Image"
+                  },
+                  {
+                    "type": "richtext",
+                    "id": "ingredientList",
+                    "label": "Ingredients",
+                    "info": "Enter one ingredient per line"
+                  },
+                  {
+                    "type": "checkbox",
+                    "id": "isPartnership",
+                    "label": "Partnership"
+                  },
+                  {
+                    "type": "richtext",
+                    "id": "partnershipText",
+                    "label": "Partnership Text",
+                    "info": "Enter partnership text"
+                  },
+                  {
+                    "type": "textarea",
+                    "id": "cocktailRecipe",
+                    "label": "Recipe"
+                  },
+                  {
+                    "type": "product",
+                    "id": "productId",
+                    "label": "Choose Product"
+                 }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

@@ -1,0 +1,12 @@
+{% assign pageHandle = page.handle %}
+{% assign heroHeading = pages[pageHandle].metafields.global.hero_heading %}
+{% assign pageSubheading = pages[pageHandle].metafields.global.page_subheading %}
+<section class="subscription-page__content-wrap">
+    <div class="content-area content-area--larger-padding">
+       <h3 class="subscription-page__content-subheading">{{ pageSubheading }}</h3>
+       <div class="section-strong subscription-page__heading-mobile"> {{ heroHeading }} </div>
+       <div class="section-strong subscription-page__content-body">
+           {{ page.content }}
+       </div>
+    </div>
+</section>

@@ -1,0 +1,74 @@
+{%- assign showImageWithTextBlock = false -%}
+{%- assign productIDString = product.id | downcase %}
+{%- assign pageIDString = page.id | downcase %}
+{% for block in section.blocks %}
+  {% assign productArray = block.settings.productID | split: "," %}
+  {% assign pageArray = block.settings.pageId | split: "," %}
+  {% if productArray contains productIDString or pageArray contains pageIDString %}
+    {%- assign showImageWithTextBlock = true -%}
+  {% endif %}
+{% endfor %}
+
+{% if showImageWithTextBlock and section.blocks.size > 0 %}
+<section class="figure-block__section">
+    <div class="content-area">
+        {% for block in section.blocks %}
+            {% assign productArray = block.settings.productID | split: "," %}
+            {% assign pageArray = block.settings.pageId | split: "," %}
+            {% assign image = block.settings.image %}
+            {% assign content = block.settings.text %}
+            {% if productArray contains productIDString or pageArray contains pageIDString %}
+                <div class="figure-block__wrap">
+                    <div class="figure-block__image">
+                        {%
+                            render 'rimg'
+                            img: image,
+                            alt: heading,
+                            size: '1024x1024',
+                            lazy: true
+                        %}
+                    </div>
+                    <div class="figure-block__content">
+                        {{ content }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</section>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Image with text",
+    "blocks": [
+        {
+            "type": "image",
+            "name": "block",
+            "settings":[
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "id": "text",
+                    "type": "richtext",
+                    "label": "Content"
+                },
+                {
+                    "type": "textarea",
+                    "id": "productID",
+                    "label": "List Product Ids (Separated by Comma)"
+                },
+                {
+                    "type": "textarea",
+                    "id": "pageId",
+                    "label": "List Page Ids (Separated by Comma)"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,215 @@
+<section
+  class="mobile-dropdown"
+  id="main-header--mobile-nav"
+>
+  <div class="mobile-dropdown--wrapper">
+    <div class="mobile-dropdown--content">
+      <div class="mobile-dropdown--tools">
+        <div
+          class="mobile-dropdown--close"
+          data-mobile-nav-close
+        >
+          {% render 'icon' with 'close' %}
+        </div>
+      </div>
+
+      {% comment %} First level {% endcomment %}
+      {% assign menu = linklists[section.settings.menu] %}
+
+      {% if shop.customer_accounts_enabled %}
+          {% if customer %}
+            <a class="account-options" href="{{ routes.account_url }}">
+              <label class="main-header--tools-label">
+                Hi, {{ customer.first_name }}
+              </label>
+            </a>
+          {% else %}
+            <a class="account-options" href="{{ routes.account_login_url }}">
+              <label class="main-header--tools-label">
+                {{ 'layout.header.login' | t }}
+              </label>
+            </a>
+          {% endif %}
+        {% endif %}
+
+
+      <ul
+        class="
+          list
+          primary
+          {% if section.settings.social-icons %}show-social{% endif %}
+        "
+      >
+        {% for link in menu.links %}
+          {% assign first_tier_link = link %}
+          {% comment %}is-dropdown-or-meganav{% endcomment %}
+          {% comment %}
+            A helper snippet for detecting if a link has a mega nav
+            or dropdown associated with it.
+          
+            @param first_tier_link
+          {% endcomment %}
+          
+          {% assign is_dropdown = false %}
+          {% assign is_meganav = true %}
+          
+          {% if first_tier_link.links == blank %}
+            {% assign is_meganav = false %}
+          {% else %}
+            {% assign is_dropdown = true %}
+          {% endif %}
+          
+          {% for second_tier_link in first_tier_link.links %}
+            {% if second_tier_link.links == blank %}
+              {% assign is_meganav = false %}
+            {% else %}
+              {% assign is_dropdown = true %}
+            {% endif %}
+          {% endfor %}
+          
+          {% if is_meganav %}
+            {% assign is_dropdown = false %}
+          {% endif %}
+
+          <li
+            class="
+              list-item
+              {% if forloop.first %}first{% endif %}
+              {% if forloop.last %}last{% endif %}
+              {% if is_meganav or is_dropdown %}dropdown{% endif %}
+            "
+            {% if is_dropdown or is_meganav %}
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="header-mobile-dropdown-{{ link.handle }}"
+            {% endif %}
+          >
+          {% if link.url contains "/account/login" %}
+            {% if shop.customer_accounts_enabled %}
+              {% if customer %}
+                <a href="{{ routes.account_url }}">
+                  <label class="main-header--tools-label">
+                    Hi, {{ customer.first_name }}
+                  </label>
+                </a>
+              {% else %}
+                <a href="{{ routes.account_login_url }}">
+                  <label class="main-header--tools-label">
+                    {{ 'layout.header.login' | t }}
+                  </label>
+                </a>
+              {% endif %}
+            {% endif %}
+          {% else %}
+            <a href="{{ link.url }}">
+              {{ link.title }}
+
+              {% if is_meganav or is_dropdown %}
+                <span class="icon">
+                  <span class="plus">
+                    {% render 'icon' with 'plus' %}
+                  </span>
+
+                  <span class="minus">
+                    {% render 'icon' with 'minus' %}
+                  </span>
+                </span>
+              {% endif %}
+            </a>
+          {% endif %}
+            
+            {% comment %} Second level {% endcomment %}
+            {% if is_meganav or is_dropdown %}
+              <ul
+                class="list secondary"
+                id="header-mobile-dropdown-{{ link.handle }}"
+              >
+                {% for link in link.links %}
+                  {% assign first_tier_link = link %}
+                  {% comment %}is-dropdown-or-meganav{% endcomment %}
+                  {% comment %}
+                    A helper snippet for detecting if a link has a mega nav
+                    or dropdown associated with it.
+                  
+                    @param first_tier_link
+                  {% endcomment %}
+                  
+                  {% assign is_dropdown = false %}
+                  {% assign is_meganav = true %}
+                  
+                  {% if first_tier_link.links == blank %}
+                    {% assign is_meganav = false %}
+                  {% else %}
+                    {% assign is_dropdown = true %}
+                  {% endif %}
+                  
+                  {% for second_tier_link in first_tier_link.links %}
+                    {% if second_tier_link.links == blank %}
+                      {% assign is_meganav = false %}
+                    {% else %}
+                      {% assign is_dropdown = true %}
+                    {% endif %}
+                  {% endfor %}
+                  
+                  {% if is_meganav %}
+                    {% assign is_dropdown = false %}
+                  {% endif %}
+
+                  <li
+                    class="list-item {% if is_dropdown %}dropdown{% endif %}"
+                    {% if is_dropdown %}
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      aria-controls="header-mobile-dropdown-{{ link.handle }}"
+                    {% endif %}
+                  >
+                    <a href="{{ link.url }}">
+                      {{ link.title }}
+
+                      {% if is_dropdown %}
+                        <span class="icon">
+                          <span class="plus">
+                            {% render 'icon' with 'plus' %}
+                          </span>
+
+                          <span class="minus">
+                            {% render 'icon' with 'minus' %}
+                          </span>
+                        </span>
+                      {% endif %}
+                    </a>
+
+                    {% comment %} Third level {% endcomment %}
+                    {% if is_dropdown %}
+                      <ul
+                        class="list tertiary"
+                        id="header-mobile-dropdown-{{ link.handle }}"
+                      >
+                        {% for link in link.links %}
+                          <li class="list-item{% if link.active %} active{% endif %}">
+                            <a href="{{ link.url }}">{{ link.title }}</a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                    {% comment %} End third level {% endcomment %}
+
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            {% comment %} End second level {% endcomment %}
+
+          </li>
+        {% endfor %}
+
+        <li class="list-item" id="coin-container"></li>
+      </ul>
+      {% comment %} End first level {% endcomment %}
+    </div>
+
+    {% if section.settings.social-icons %}
+      {% render 'social-links' %}
+    {% endif %}
+  </div>
+</section>

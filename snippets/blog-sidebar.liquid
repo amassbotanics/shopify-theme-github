@@ -1,0 +1,33 @@
+<div class="blog-sidebar">
+  {% if display_recent_posts %}
+    <div class="blog-sidebar-recentposts">
+      <span class="blog-sidebar-recentposts-title">{{ 'blogs.blog_sidebar.recent_posts' | t }}</span>
+
+      <div class="blog-sidebar-recentposts-posts">
+        {% for article in blog.articles limit: 5 %}
+          <div class="blog-sidebar-recentposts-post">
+            <a class="blog-sidebar-recentposts-post-title" href="{{ article.url }}">{{ article.title }}</a>
+
+            <span class="blog-sidebar-recentposts-post-date">{{ article.published_at | date: format: 'short_month' }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if display_tags and blog.all_tags.size > 0 %}
+    <div class="blog-sidebar-tags">
+      <span class="blog-sidebar-tags-title">{{ 'blogs.blog_sidebar.tags' | t }}</span>
+
+      <div class="blog-sidebar-tags-tags">
+        {% for tag in blog.all_tags %}
+          <div class="blog-sidebar-tags-tag">
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}">
+              {{ tag }}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>

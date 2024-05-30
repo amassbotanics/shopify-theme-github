@@ -1,0 +1,79 @@
+{%- assign productBotanics = product.metafields.global.product_botanics | split: ","  -%}
+{% if productBotanics != blank %}
+    <section class="product-botanic-image-list__section">
+        <div class="content-area product-botanic-image-list__wrap">
+            <div class="product-botanic-image-list__heading-wrap">
+                <h2>{{section.settings.title}}</h2>
+                <a href="https://amass.com/blogs/botanical-glossary" class="product-botanic-image-list__heading-link section-strong">
+                    <span>Explore Our Full Botanical Glossary</span> 
+                    <span class="product-botanic-image-list__heading-link-arrow">
+                        <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="8.5" cy="8.64558" rx="8.5" ry="8.60759" transform="rotate(-180 8.5 8.64558)" fill="#222222"/>
+                            <path d="M8.57125 13.2026L12.5313 8.64567L8.57125 4.08871" stroke="#E4E3DE" stroke-width="2"/>
+                            <path d="M12.5312 8.64575L3.53125 8.64575" stroke="#E4E3DE" stroke-width="2"/>
+                        </svg>
+                    </span>
+                </a>
+            </div>
+            <div class="product-botanic-image-list__content-wrap">
+                <div class="product-botanic-image-list__item-image-slider">
+                    <div class="js-product-botanic-image-list-image-slider">
+                        {% for botanicHandle in productBotanics %}
+                            {% assign botanicHandleStripped =  botanicHandle | strip  %}
+                            {% assign article = articles[botanicHandleStripped] %}
+                            <div>
+                                <div class="product-botanic-image-list__item-image-wrap">
+                                    <img data-lazy="{{ article.image.src | img_url: "master" }}" alt="{{ article.title }}">
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="
+                        product-botanic-image-list__item-previous
+                        js-product-botanic-image-list-item-previous">
+                        {% render 'icon' with 'arrow-thin-left'%}
+                    </div>
+                    <div class="
+                        product-botanic-image-list__item-next
+                        js-product-botanic-image-list-item-next">
+                        {% render 'icon' with 'arrow-thin-right'%}
+                    </div>
+                </div>
+                <div class="product-botanic-image-list__item-description-slider">
+                    <div class="js-product-botanic-image-list-description-slider">
+                        {% for botanicHandle in productBotanics %}
+                            {% assign botanicHandleStripped =  botanicHandle | strip  %}
+                            {% assign article = articles[botanicHandleStripped] %}
+                            <div>
+                                <div class="product-botanic-image-list__item-description-wrap">
+                                    <h3 class="product-botanic-image-list__item-description-heading">
+                                        {{ article.title }}
+                                    </h3>
+                                    <p class="product-botanic-image-list__item-description-content">
+                                        {{ article.excerpt }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+{% endif %}
+
+{% schema %}
+{
+    "name": "Product Botanic List",
+    "settings": [
+        {
+            "id": "title",
+            "type": "text",
+            "label": "Title"
+        }
+    ]
+}
+{% endschema %}
+

@@ -1,0 +1,39 @@
+<ul class="pagination {% if paginationStyle == 'jump-to-page' %}jump-to-page{% endif %}">
+
+  <li class="previous">
+    {% if paginate.previous %}
+      <a href="{{ paginate.previous.url }}" class="pagination-arrow__desktop">{{ 'general.pagination.previous' | t }}</a>
+      <a href="{{ paginate.previous.url }}" class="pagination-arrow__mobile"> &#60; </a>
+    {% else %}
+      <span class="pagination-arrow__desktop" > {{ 'general.pagination.previous' | t }} </span>
+      <span class="pagination-arrow__mobile" > &#60; </span>
+    {% endif %}
+  </li>
+
+  {% if paginationStyle == 'standard' %}
+    <li class="position">{{ 'general.pagination.summary' | t: current_page: paginate.current_page, pages: paginate.pages }}</li>
+  {% else %}
+    {% for part in paginate.parts %}
+      {% if part.is_link %}
+        <li class="jump-to-link">{{ part.title | link_to: part.url }}</li>
+      {% else %}
+        {% if part.title == '&hellip;' %}
+        <li class="jump-to-link ellipsis">{{ part.title }}</li>
+        {% else %}
+        <li class="jump-to-link active">{{ part.title }}</li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <li class="next">
+    {% if paginate.next %}
+      <a href="{{ paginate.next.url }}" class="pagination-arrow__desktop" >{{ 'general.pagination.next' | t }}</a>
+      <a href="{{ paginate.next.url }}" class="pagination-arrow__mobile"> &#62; </a>
+    {% else %}
+      <span class="pagination-arrow__desktop" >   {{ 'general.pagination.next' | t }} </span>
+      <span class="pagination-arrow__mobile" > &#62; </span>
+    {% endif %}
+  </li>
+
+</ul>

@@ -1,0 +1,37 @@
+{% assign collection = collection | default: nil %}
+
+<div
+  class="
+    subcollection
+    content-area
+  "
+>
+  <div
+    class="
+      subcollection-container
+      subcollection-collection
+      collections
+      row-of-3
+    "
+  >
+    {% if onboarding %}
+      {% for i in (1..6) %}
+        {%
+          render 'collection-list-item',
+          onboarding: onboarding,
+          collection: collection,
+          link: false
+        %}
+      {% endfor %}
+    {% else %}
+      {% for link in linklists[collection.handle].links %}
+        {%
+          render 'collection-list-item',
+          onboarding: onboarding,
+          collection: collection,
+          link: link
+        %}
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>

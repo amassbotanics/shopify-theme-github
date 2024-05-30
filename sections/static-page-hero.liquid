@@ -1,0 +1,117 @@
+
+{%- assign pageIDString = page.id | downcase %}
+
+{% for block in section.blocks %}
+    {% assign pageArray = block.settings.pageId | split: "," %}
+    {% assign heroImage = block.settings.heroImage %}
+    {% assign headingAlignment = block.settings.text_alignment %}
+    {% if pageArray contains pageIDString %}
+
+        <div class="page-hero-container">
+            {% if block.settings.embed_video != blank %}
+            <div class="page-hero__video-hero">
+              <div class="page-hero__video-content">
+                <div class="page-hero-text page-hero-text--{{ headingAlignment }}-aligned">
+                  <h1 class="page-hero-heading">{{block.settings.heading}}</h1>
+                  <h2 class="page-hero-subheading">{{block.settings.subheading}}</h2>
+                  <h2 class="page-hero-subheading-mobile">{{block.settings.subheading-mobile}}</h2>
+                </div>
+              </div>
+              <div class="page-hero__video-poster"> 
+                <img src="{{block.settings.heroImage | img_url: 'master'}}" alt=""> 
+              </div>
+              <div class="page-hero__video-wrap">
+                <div class="page-hero__video">
+                  {{ block.settings.embed_video }}
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <div class="page-hero-wrap" style="background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('{{ heroImage | img_url: "master" }}')">
+                <div class="page-hero-text">
+                    <h1 class="page-hero-heading">{{ block.settings.heading }}</h1>
+                    <h2 class="page-hero-subheading">{{ block.settings.subheading }}</h2>
+                    <h2 class="page-hero-subheading-mobile">{{ block.settings.subheading-mobile }}</h2>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+{% endfor %}
+
+
+
+{% schema %}
+    {
+        "name": "Page Hero Section",
+        "blocks": [
+            {
+                "type":"image",
+                "name":"Hero Image",
+                "settings": [
+                 {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Title",
+                    "default": "Image"
+                  },
+                  {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading",
+                    "default": "Heading"
+                  },
+                  {
+                    "id": "subheading",
+                    "type": "textarea",
+                    "label": "Subheading"
+                  },
+                  {
+                    "id": "subheading-mobile",
+                    "type": "textarea",
+                    "label": "Subheading(Mobile)"
+                  },
+                  {
+                    "type": "select",
+                    "id": "text_alignment",
+                    "label": "Text Alignment (Mobile)",
+                    "options": [
+                      {
+                        "value": "left",
+                        "label": "Left"
+                      },
+                      {
+                        "value": "right",
+                        "label": "Right"
+                      },
+                      {
+                        "value": "center",
+                        "label": "Center"
+                      }
+                    ],
+                    "default": "center"
+                  },
+                  {
+                    "type": "image_picker",
+                    "id": "heroImage",
+                    "label": "Image",
+                    "info": "480 x 480px .jpg recommended"
+                  },
+                  {
+                    "type": "html",
+                    "id": "embed_video",
+                    "label": "Custom HTML"
+                  },
+                  {
+                    "type": "textarea",
+                    "id": "pageId",
+                    "label": "List Page Ids (Separated by Comma)"
+                  }
+                ]
+            }
+          ]
+    }
+
+{% endschema %}

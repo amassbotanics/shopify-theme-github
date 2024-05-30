@@ -1,0 +1,59 @@
+{% if section.blocks.size > 0 %}
+    <section class="landing-product-description__section {% if border %}show-border{% endif %}">
+        <div class="landing-product-description__content-wrap content-area">
+                <div class="landing-product-description__title section-strong">
+                    {{section.settings.title}}
+                </div>
+                <ul class="landing-product-description__item-wrap">
+                    {% for block in section.blocks %}
+                            <li class="landing-product-description__item">
+                                <div class="landing-product-description__item-heading section-strong">
+                                    {{block.settings.heading}}
+                                </div>
+                                <div class="landing-product-description__item-subheading">
+                                    {{block.settings.subheading}}
+                                </div>
+                            </li>
+                    {% endfor %}
+                </ul>
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Product Description",
+        "settings": [
+            {
+                "type": "checkbox",
+                "id": "border",
+                "label": "Show border",
+                "default": true
+            },
+            {
+                "id": "title",
+                "type": "text",
+                "label": "Title"
+            }
+        ],
+        "blocks": [
+            {
+                "type":"text",
+                "name":"Description",
+                "settings": [           
+                    {
+                        "id": "heading",
+                        "type": "text",
+                        "label": "Heading"
+                    },
+                    {
+                        "id": "subheading",
+                        "type": "text",
+                        "label": "Subeading"
+                    }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

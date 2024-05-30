@@ -1,0 +1,61 @@
+<div data-section-id="{{ section.id }}" data-section-type="static-404">
+
+  {%- assign productsCollection = section.settings.products-collection -%}
+
+  <main class="content content-area">
+
+    {% render 'breadcrumbs' %}
+
+    <div class="page-title">
+      <h1 class="label">{{ 'general.404.title' | t }}</h1>
+    </div>
+
+    {%- capture link -%}
+    <a href="{{ routes.root_url }}">{{ 'general.404.home_link' | t }}</a>
+    {%- endcapture -%}
+
+    <p class="message empty">
+      {% if productsCollection != blank %}
+        {{ 'general.404.subtext_collection_html' | t: link: link }}
+      {% else %}
+        {{ 'general.404.subtext_html' | t }}
+      {% endif %}
+    </p>
+
+    {% if productsCollection != "" %}
+      <section class="products">
+        <ul class="product-list">
+          {% for product in collections[productsCollection].products limit: 4 %}
+            {%
+              render 'product-item',
+              product: product,
+              onboarding: false,
+            %}
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+  </main>
+
+</div>
+
+{% schema %}
+{
+  "name": "404 pages",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show-breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "products-collection",
+      "label": "Collection"
+    }
+  ]
+}
+
+{% endschema %}

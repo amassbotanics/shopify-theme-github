@@ -1,0 +1,62 @@
+{%- assign border = section.settings.border -%}
+
+<section class="media-landing-traits__container {% if border %}show-border{% endif %}">
+        <div class="media-landing-traits__item-wrap content-area">
+            {% for block in section.blocks %}
+            <div class="media-landing-traits__item">
+                <div class="media-landing-traits__item-image-wrap">
+                    <div class="media-landing-traits__item-image">
+                        {{ block.settings.image }}
+                    </div>
+                </div>
+                <div class="media-landing-traits__item-content-wrap">
+                    <div class="media-landing-traits__item-heading section-strong">
+                        {{ block.settings.heading }}
+                    </div>
+                    <div class="media-landing-traits__item-subheading">
+                        {{ block.settings.subtext }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+</section>
+
+
+
+{% schema %}
+{
+    "name": "Product Traits",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "border",
+            "label": "Show border",
+            "default": true
+        }
+    ],
+    "blocks": [
+        {
+            "name": "Traits",
+            "type": "traits",
+            "settings": [
+                {
+                    "type": "html",
+                    "id": "image",
+                    "label": "Icon"
+                },
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "subtext",
+                    "type": "textarea",
+                    "label": "Text"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

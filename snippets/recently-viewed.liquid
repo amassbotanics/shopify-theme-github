@@ -1,0 +1,42 @@
+<div class="content-area">
+  <ul
+    class="product-list row-of-{{ productsToDisplay }} recents"
+    id="recently-viewed-products"
+  ></ul>
+</div>
+{% raw %}
+<script id="recently-viewed-product-template" type="text/x-jquery-tmpl">
+  <li id="product-${handle}" class="product product-${id}">
+    <div class="product-inner">
+      <figure class="product-card-figure">
+        {{if media.length > 1}}
+          <img src="${Shopify.Products.resizeImage(media[1].src, "600x")}" />
+        {{/if}}
+        <img src="${Shopify.Products.resizeImage(featured_image, "600x")}" />
+        <a href="${url}" class=""></a>
+        <div class="badges-wrapper">
+        </div>
+      </figure>
+      <div class="product-card-footer">
+        <div class="product-card-details">
+          <h2 class="title"><a href="${url}">${title}</a></h2>
+          <div data-oke-reviews-product-listing-rating></div>
+          <div class="product-item__price"><span>${tags.join(", ")}</span></div>
+          <div class="product-item__price"><span>${price}</span></div>
+        </div>
+      </div>
+      <div class="product-card-footer-mobile">
+        <div class="product-card-details">
+          <h2 class="title"><a href="${url}">${title}</a></h2>
+          <div data-oke-reviews-product-listing-rating></div>
+          <div class="product-item__price"><span>${tags.join(", ")}</span></div>
+          <div class="product-item__price"><span>${price}</span></div>
+        </div>
+      </div>
+    </div>
+  </li>
+</script>
+{% endraw %}
+<script>
+  var productsToDisplay = {{ productsToDisplay }};
+</script>

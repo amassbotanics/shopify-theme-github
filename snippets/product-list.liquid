@@ -1,0 +1,89 @@
+{%- assign productsPerRow = section.settings.products_per_row -%}
+{%- assign productsPerPage = productsPerRow | times: section.settings.rows -%}
+{% assign gwp_tag = settings.sample_product_tag %}
+
+{% paginate collection.products by productsPerPage %}
+
+{%- assign collectionProducts = collection.products -%}
+{%- assign collectionSidebar = section.settings.collection-sidebar -%}
+{%- assign sidebarMenu = section.settings.collection-sidebar-menu -%}
+{%- assign collectionSorting = section.settings.enable-sorting -%}
+{%- assign tagFilters = section.settings.enable-tagfilter -%}
+{% if showSubCollection %}
+    {%- assign subCollectionMeta = collection.metafields.has.sub_collection -%}
+    {%- assign collectionProducts = collections[subCollectionMeta].products -%}
+{% endif %}
+
+{% if collectionProducts.size > 0 %}
+    <ul class="product-list row-of-{{ productsPerRow }}
+        {% if collectionSidebar and collectionSorting or sidebarMenu != empty or collection.all_tags.size > 0 and tagFilters %}
+            product-list-withsidebar
+        {% endif %}">
+        {% for product in collectionProducts %}
+            {% if product.tags contains gwp_tag %}
+                {% continue %}
+            {% endif %}
+            {% assign index = forloop.index | downcase %}
+
+            {% if section.blocks.size > 0 %}
+            {% for block in section.blocks %}
+
+                {% if block.settings.position != blank and block.settings.position == index %}
+                {% unless block.settings.collection != empty and block.settings.collection != collection.handle %}
+                    {%
+                    render 'promo-block',
+                    block: block,
+                    enableQuickshop: settings.enable-quick-shop
+                    %}
+                    {% break %}
+                {% endunless %}
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+            {%
+            render 'product-item',
+            product: product,
+            forloop: forloop,
+            paginate: paginate,
+            onboarding: false
+            %}
+        {% endfor %}
+    </ul>
+    {% if paginate.previous or paginate.next %}
+      {%
+        render 'pagination',
+        paginate: paginate,
+        paginationStyle: section.settings.pagination-style
+      %}
+    {% endif %}
+{% endif %}
+
+{% endpaginate %}
+
+<script>
+    window.addEventListener('load', function() {
+        const productSkus = {};
+        {% for product in collectionProducts %}
+            {%- capture variant_skus -%}
+                {%- for variant in product.variants -%}
+                    {{- variant.sku -}}{%- if forloop.last == false -%},{%- endif -%}
+                {%- endfor -%}
+            {%- endcapture -%}
+            productSkus[{{ product.id }}] = '{{ variant_skus }}';
+        {% endfor %}
+
+        const sortParams = location.search.match(/\?sort=([^&]*)/)
+        if (sortParams && sortParams.length > 1) {
+            const skus = sortParams[1].split(',')
+            
+            for (const sku of skus.reverse()) {
+                for (const productId in productSkus) {
+                    if (productSkus[productId].indexOf(sku) !== -1) {
+                        $(`ul.product-list`).prepend($(`li.product-${productId}`))
+                        break;
+                    }
+                }
+            }
+        }
+    })
+</script>

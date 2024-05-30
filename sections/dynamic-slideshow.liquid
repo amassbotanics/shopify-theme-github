@@ -1,0 +1,402 @@
+{% assign fixed_height_mobile = true %}
+{% assign fixed_height_desktop = true %}
+{% assign crop_images = 'center' %}
+{% if section.settings.mobile_height == 'natural' %}
+  {% assign fixed_height_mobile = false %}
+  {% assign crop_images = '' %}
+{% endif %}
+{% if section.settings.desktop_height == 'natural' %}
+  {% assign fixed_height_desktop = false %}
+  {% assign crop_images = '' %}
+{% endif %}
+
+<script
+  type="application/json"
+  data-section-type="dynamic-slideshow"
+  data-section-id="{{ section.id }}"
+  data-section-data
+>
+  {
+    "transition": {{ section.settings.transition | json }},
+    "parallax": {{ section.settings.parallax | json }},
+    "fixedHeightMobile": {{ fixed_height_mobile | json }},
+    "fixedHeightDesktop": {{ fixed_height_desktop | json }}
+  }
+</script>
+
+<section
+  class="
+    home-section
+    slideshow
+    clearfix
+    slideshow--transition-{{ section.settings.transition }}
+    slideshow--desktop-height-{{ section.settings.desktop_height }}
+    slideshow--mobile-height-{{ section.settings.mobile_height }}
+    {% if section.settings.full-width == false %}
+      content-area
+    {% endif %}
+  "
+  {% if section.settings.autoplay_enable %}
+    data-autoplay="{{ section.settings.autoplay_interval | times: 1000 }}"
+  {% endif %}
+  {% if section.settings.parallax %}
+    data-parallax
+  {% endif %}
+  data-full-width="{{ section.settings.full-width }}"
+>
+  <span class="prev">
+    {% render 'icon' with 'arrow-thin-left' %}
+  </span>
+
+  <span class="next">
+    {% render 'icon' with 'arrow-thin-right' %}
+  </span>
+
+  <ul class="jump-to-slide"></ul>
+
+  <div class="slideshow--wrapper">
+    <div
+      class="slideshow--viewport"
+      data-slideshow-viewport
+    >
+      {% for block in section.blocks %}
+        {% assign image = block.settings.image %}
+        {% assign link = block.settings.link %}
+        {% assign heading = block.settings.slide_title | escape %}
+        {% assign caption = block.settings.caption %}
+        {% assign button = block.settings.button | escape %}
+        {% assign button_secondary = block.settings.button_secondary | escape %}
+        {% assign link_secondary = block.settings.link_secondary | escape %}
+        {% assign alignment = block.settings.alignment %}
+        {% assign text_color = block.settings.text_color %}
+        {% assign subheading = block.settings.slide_subtitle | escape %}
+
+        {%- capture image_html -%}
+          {% if image %}
+            {%
+              render 'rimg'
+              img: image,
+              size: '1440x640',
+              crop: crop_images,
+              lazy: true
+            %}
+          {% else %}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+        {%- endcapture -%}
+
+        <div
+          class="
+            slide
+            {% if forloop.index == 1 %}
+              active
+            {% endif %}
+          "
+          {{ block.shopify_attributes }}
+        >
+          <div class="image-wrap">
+            {% if block.settings.show_overlay and block.settings.background != blank %}
+              {% assign opacity = block.settings.opacity | times: 0.01 %}
+              {% assign overlay = block.settings.background | color_modify: 'alpha', opacity %}
+              <div class="image-overlay" style="background-color: {{ overlay }};"></div>
+            {% endif %}
+
+            {% if link != blank %}
+              <a href="{{ link }}">
+                {{- image_html -}}
+              </a>
+            {% else %}
+              {{- image_html -}}
+            {% endif %}
+          </div>
+
+          {% if heading != blank or caption != blank or button != blank %}
+            <div class="content-outer-wrap">
+              <a class="mobile-link" href="{{ link }}"></a>
+
+              <div class="content-inner-wrap {{ alignment }}">
+                <div class="content">
+                  {% if subheading != blank %}
+                    <div class="subtitle section-strong" style="color: {{ text_color }}">{{ subheading }}</div>
+                  {% endif %}
+                  {% if heading != blank %}
+                    <h2 class="title" style="color: {{ text_color }}">{{ heading }}</h2>
+                  {% endif %}
+                  {% if caption != blank %}
+                    <h3 class="tagline" style="color: {{ text_color }}">{{ caption | escape }}</h3>
+                  {% endif %}
+                  {% if button != blank %}
+                    <div class="call-to-action-wrap">
+                      <a class="call-to-action" href="{{ link }}">
+                        {{ button }}
+                      </a>
+                      {% if button_secondary != blank %}
+                      <a class="call-to-action call-to-action--secondary" href="{{ link_secondary }}">
+                        {{ button_secondary }}
+                      </a>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {% unless button_secondary != blank %}
+            {% if link != blank %}
+              <a class="slideshow-link" href="{{ link }}"></a>
+            {% endif %}
+          {% endunless %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Slideshow",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "select",
+      "id": "desktop_height",
+      "label": "Desktop height",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "small",
+          "label": "500px"
+        },
+        {
+          "value": "medium",
+          "label": "600px"
+        },
+        {
+          "value": "large",
+          "label": "700px"
+        },
+        {
+          "value": "extra-large",
+          "label": "800px"
+        }
+      ],
+      "default": "natural"
+    },
+    {
+      "type": "select",
+      "id": "mobile_height",
+      "label": "Mobile height",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "small",
+          "label": "300px"
+        },
+        {
+          "value": "medium",
+          "label": "400px"
+        },
+        {
+          "value": "large",
+          "label": "500px"
+        }
+      ],
+      "default": "natural"
+    },
+    {
+      "type": "checkbox",
+      "id": "full-width",
+      "label": "Enable full width",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "parallax",
+      "label": "Enable parallax",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_enable",
+      "label": "Auto-rotate slides",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "transition",
+      "label": "Slide transition",
+      "options": [
+        {
+          "value": "slide",
+          "label": "Slide"
+        },
+        {
+          "value": "fade",
+          "label": "Fade"
+        }
+      ],
+      "default": "slide"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "label": "Rotation interval",
+      "unit": "sec",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "slide_title",
+          "label": "Heading",
+          "default": "Slideshow"
+        },
+        {
+          "type": "text",
+          "id": "slide_subtitle",
+          "label": "Subheading",
+          "default": "Subtitle"
+        },
+        {
+          "type": "textarea",
+          "id": "caption",
+          "label": "Tagline",
+          "default": "Introduce customers to your shop with lifestyle imagery and product photography."
+        },
+        {
+          "type": "text",
+          "id": "button",
+          "label": "Button text",
+          "default": "Your call to action button"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Slide link URL"
+        },
+        {
+          "type": "text",
+          "id": "button_secondary",
+          "label": "Secondary Button Text"
+        },
+        {
+          "type": "url",
+          "id": "link_secondary",
+          "label": "Secondary Button Link"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Text position",
+          "options": [
+            {
+              "value": "center-center",
+              "label": "Center"
+            },
+            {
+              "value": "center bottom",
+              "label": "Center bottom"
+            },
+            {
+              "value": "center top",
+              "label": "Center top"
+            },
+            {
+              "value": "left middle",
+              "label": "Left center"
+            },
+            {
+              "value": "left bottom",
+              "label": "Left bottom"
+            },
+            {
+              "value": "left top",
+              "label": "Left top"
+            },
+            {
+              "value": "right middle",
+              "label": "Right center"
+            },
+            {
+              "value": "right bottom",
+              "label": "Right bottom"
+            },
+            {
+              "value": "right top",
+              "label": "Right top"
+            }
+          ],
+          "default": "center-center"
+        },
+        {
+          "id": "text_color",
+          "type": "color",
+          "label": "Text Color",
+          "default": "#000"
+        },
+        {
+          "type": "header",
+          "content": "Overlay"
+        },
+        {
+          "id": "show_overlay",
+          "type": "checkbox",
+          "label": "Show overlay"
+        },
+        {
+          "id": "background",
+          "type": "color",
+          "label": "Color",
+          "default": "#000"
+        },
+        {
+          "id": "opacity",
+          "type": "range",
+          "label": "Opacity",
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 20
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Image",
+      "name": "Slideshow",
+      "blocks": [
+        {
+          "type": "feature"
+        },
+        {
+          "type": "feature"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

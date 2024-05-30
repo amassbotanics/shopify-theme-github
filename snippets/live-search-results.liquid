@@ -1,0 +1,72 @@
+{% assign display = 'product-article-page' %}
+{% assign products_placeholder = false %}
+{% assign postspages_placeholder = false %}
+
+{% capture products_placeholder %}
+  <div class="lsrp-content-placeholder">
+    <figure class="lsrpc-placeholder-figure">
+    </figure>
+
+    <div class="lsrpc-placeholder-content">
+      <div class="lsrpcp-content-title">
+      </div>
+
+      <div class="lsrpcp-content-price">
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture postspages_placeholder %}
+  <div class="lsrpp-content-placeholder">
+    <div class="lsrppc-placeholder-title">
+    </div>
+
+    <div class="lsrppc-placeholder-date">
+    </div>
+  </div>
+{% endcapture %}
+
+<div class="ls-results" data-live-search-results>
+  <section class="ls-results-products">
+    <header class="lsr-products-header">
+      <h2 class="lsrp-header-title">{{ 'general.livesearch.products_title' | t }}</h2>
+    </header>
+
+    <div class="lsr-products-content" data-live-search-results-product-content>
+      {% for i in (1..3) %}
+        {{ products_placeholder }}
+      {% endfor %}
+    </div>
+  </section>
+
+  {% unless display == 'product' %}
+    <div class="ls-results-postspages">
+      <header class="lsr-postspages-header">
+        <h2 class="lsrpp-header-title">
+          {% if display == 'product-article' %}
+            {{ 'general.livesearch.posts_title' | t }}
+          {% elsif display == 'product-page' %}
+            {{ 'general.livesearch.pages_title' | t }}
+          {% else %}
+            {{ 'general.livesearch.postspages_title' | t }}
+          {% endif %}
+        </h2>
+      </header>
+
+      <div class="lsr-postspages-content" data-live-search-results-postpages-content>
+        {% for i in (1..2) %}
+          {{ postspages_placeholder }}
+        {% endfor %}
+      </div>
+    </div>
+  {% endunless %}
+
+  <div class="lsr-footer" data-live-search-results-footer>
+    <a
+      class="lsr-footer-viewall"
+      href=""
+      data-live-search-results-footer-viewall
+    >{{ 'general.livesearch.viewall' | t }}</a>
+  </div>
+</div>

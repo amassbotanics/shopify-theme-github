@@ -1,0 +1,141 @@
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="static-track-order"
+></script>
+
+<main class="content track-order">
+    <header class="page-masthead">
+        <div class="page-title">
+            <h1 class="label">{{ page.title }}</h1>
+        </div>
+    </header>
+    <section class="page-content">
+        <div class="section section-form">
+            <div class="section-wrapper content-area">
+                <div class="form-wrapper login-form-wrapper">
+                    <div class="form-title">Account Sign In</div>
+                    {% form 'customer_login' %}
+
+                    {% if form.errors %}
+                    <div class="error-message"><span>{{ 'customer.login.error' | t }}</span></div>
+                    {% endif %}
+
+                    <input type="hidden" name="checkout_url" value="/account">
+                    
+                    <div class="field-wrap email">
+                        <input type="text" placeholder="{{ 'general.email_placeholder' | t }}" value="" name="customer[email]" class="field">
+                    </div>
+                    <div class="field-wrap password">
+                        <input type="password" name="customer[password]" class="field">
+                    </div>
+                    <div class="field-wrap forgot-password">
+                        <a class="forgot-password helper" href="#recover" onclick="showRecoverPasswordForm()">{{ 'customer.login.forgot_password' | t }}</a>
+                    </div>
+                    <div class="field-wrap submit">
+                        <input type="submit" class="action-button submit-button" value="{{ 'general.submit' | t }}">
+                    </div>
+
+                    {% endform %}
+
+                </div>
+                <div class="form-wrapper track-form-wrapper">
+                    <div class="form-title">Continue as Guest</div>
+                    <div id="as-root"></div><script>(function(e,t,n){var r,i=e.getElementsByTagName(t)[0];if(e.getElementById(n))return;r=e.createElement(t);r.id=n;r.src="https://button.aftership.com/all.js";i.parentNode.insertBefore(r,i)})(document,"script","aftership-jssdk")</script>
+                    <div class="as-track-button track-form" data-size="medium" data-domain="amassbotanics.aftership.com" data-look-up-option="order-number-and-email" data-btn-bg-color="#222222" data-btn-label="Continue" data-hide-icon=true></div>
+                </div>
+            </div>  
+            <a class="toggle-button">
+              <span class="login">Or continue as guest</span>
+              <span class="track">Or sign into your account</span>
+            </a>
+        </div>
+        <div class="section section-faq">
+            <div class="section-wrapper content-area">
+                <h2 class="section-header">
+                    <span class="content__text-inner">FAQ</span>
+                </h2>
+                <div class="so-accordion-wrapper">
+                    <hr class="accordion-hr" />
+                    {% for block in section.blocks %}
+                    <div class="so-tab">
+                        <input id="so-tab-{{ forloop.index }}" type="checkbox" name="tabs" />
+                        <label for="so-tab-{{ forloop.index }}" class="strong">{{ block.settings.question }}</label>
+                        <div class="so-tab-content">
+                            <p class="body">
+                                {{ block.settings.answer }}
+                            </p>
+                        </div>
+                    </div>
+                    <hr class="accordion-hr" />
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+  window.addEventListener('load', function() {
+    $('.toggle-button').click(function() {
+      $('.track-order .login-form-wrapper').toggle();
+      $('.track-order .track-form-wrapper').toggle();
+      $('.toggle-button .login').toggle();
+      $('.toggle-button .track').toggle();
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Track Order",
+  "class": "static-section-track-order",
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Want to know anything else?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Save yourself the time and trouble of writing the same email over and over again by listing your most commonly asked questions and answers here. A dedicated FAQ page should help address the basic needs of your customers, cutting down on customer service emails, increasing conversions, and creating a more satisfying shopping experience!</p>"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "faq",
+        "settings": {
+          "question": "Can I track my order?",
+          "answer": "<p>Save yourself the time and trouble of writing the same email over and over again by listing your most commonly asked questions and answers here. A dedicated FAQ page should help address the basic needs of your customers, cutting down on customer service emails, increasing conversions, and creating a more satisfying shopping experience!</p>"
+        }
+      },
+      {
+        "type": "faq",
+        "settings": {
+          "question": "Where do you ship to?",
+          "answer": "<p>Save yourself the time and trouble of writing the same email over and over again by listing your most commonly asked questions and answers here. A dedicated FAQ page should help address the basic needs of your customers, cutting down on customer service emails, increasing conversions, and creating a more satisfying shopping experience!</p>"
+        }
+      },
+      {
+        "type": "faq",
+        "settings": {
+          "question": "What are your shipping rates?",
+          "answer": "<p>Save yourself the time and trouble of writing the same email over and over again by listing your most commonly asked questions and answers here. A dedicated FAQ page should help address the basic needs of your customers, cutting down on customer service emails, increasing conversions, and creating a more satisfying shopping experience!</p>"
+        }
+      }
+    ]
+  }
+}
+
+{% endschema %}

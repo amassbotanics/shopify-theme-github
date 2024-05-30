@@ -1,0 +1,65 @@
+<section class="product-description-feature__section">
+    <div class="product-description-feature__wrap js-toggle-content-wrap">
+        <div class="content-area">
+            <div class="product-description-feature__heading-wrap js-accordion-toggle-trigger">
+                <h4 class="product-description-feature__heading">{{section.settings.title}}</h4>
+                <div class="accordion-button accordion-button--large js-accordion-button">
+                    +
+                </div>
+            </div>
+            <div class="product-description-feature__content js-toggle-content">
+                <div class="product-description-feature__story-content-wrap">
+                    {% for block in section.blocks %}
+                      <div class="product-description-feature__story-image-wrap">
+                          <img class="product-description-feature__story-image" src="{{ block.settings.storyImage | img_url: 'master' }}" alt="">
+                      </div>
+                      <div class="product-description-feature__story-text">
+                          <h4 class="product-description-features__story-text-heading">
+                              {{ block.settings.heading }}
+                          </h4>
+                          <p class="product-description-feature__story-text-content">
+                              {{ block.settings.content | newline_to_br }}
+                          </p>
+                      </div>
+                    {% endfor %}
+                  </div>
+            </div>
+        </div>
+   </div>
+</section>
+
+{% schema %}
+{
+    "name": "Product Feature Story",
+    "settings": [
+        {
+            "id": "title",
+            "type": "text",
+            "label": "Title"
+        }
+    ],
+    "blocks": [
+        {
+            "type":"text",
+            "name":"Description",
+            "settings": [  
+                {
+                    "id": "storyImage",
+                    "type": "image_picker",
+                    "label": "Image"
+                },         
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "content",
+                    "type": "textarea",
+                    "label": "Content"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

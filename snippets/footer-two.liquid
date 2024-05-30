@@ -1,0 +1,151 @@
+{% assign footerModules = 0 %}
+
+{% if linklists.footer.links.size > 0 %}
+  {% assign footerModules = footerModules | plus: 1 %}
+{% endif %}
+
+{% if alternateFooterMenu != blank and linklists[alternateFooterMenu].links.size > 0 %}
+  {% assign footerModules = footerModules | plus: 1 %}
+{% endif %}
+
+{% if footerMessage != blank or mailingList %}
+  {% assign footerModules = footerModules | plus: 1 %}
+{% endif %}
+
+<footer class="main-footer main-footer-alt content-area" id="main-footer">
+
+  <ul class="connect clearfix module-count-{{ footerModules }}">
+    {% if mailingList %}
+      <li class="first newsletter">
+        {% if footerMessage != blank %}
+          {% if section.settings.footer-message-title != blank %}
+            <h2 class="title">{{ section.settings.footer-message-title | escape }}</h2>
+          {% endif %}
+          <div class="footer-message">{{ footerMessage }}</div>
+        {% endif %}
+        <form id="email_signup" action="//manage.kmail-lists.com/subscriptions/subscribe" data-ajax-submit="//manage.kmail-lists.com/ajax/subscriptions/subscribe" method="GET" target="_blank" novalidate="novalidate">
+          <input type="hidden" name="g" value="Xs5gxR">
+          <input type="hidden" name="$fields" value="$consent">
+          <input type="hidden" name="$list_fields" value="$consent">
+          <div class="newsletter-wrap newsletter-wrap--footer">
+            <input class="email" name="email" type="email" placeholder="{{ 'layout.footer.email' | t }}" value="">
+            <input class="newsletter-submit--arrow" name="subscribe" type="submit" value="{{ 'general.submit' | t }}">
+          </div>
+        </form>
+        <!-- <form id="birthday_form" style="display: none;">
+          <div class="newsletter-wrap">
+            <input class="birthday" id="birthday" name="birthday" type="text" placeholder="{{ 'layout.footer.birthday' | t }}" value="" />
+            <input class="newsletter-submit" name="subscribe" type="submit" value="{{ 'general.submit' | t }}">
+            <p class="alert-message success">{{ 'layout.footer.success' | t }}</p>
+          </div>
+          <div class="newsletter-wrap">
+            <p class="alert-message error invalid-date" style="display: none;">Invalid birthdate. Please try again with correct birthdate.</p>
+          </div>
+        </form> -->
+      </li>
+    {% elsif footerMessage != blank %}
+      <li class="first newsletter">
+        <div class="footer-message">{{ footerMessage }}</div>
+      </li>
+    {% endif %}
+    <li></li>
+    {% if linklists.footer.links.size > 0 %}
+    <li class="footer-menu">
+      <ul class="footer-linklist-one">
+        {% for link in linklists.footer.links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+        {% if alternateFooterMenu != "" and linklists[alternateFooterMenu].links.size > 0 %}
+          {% for link in linklists[alternateFooterMenu].links %}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+    
+
+  
+    </li>
+    {% endif %}
+
+
+  </ul>
+
+  <div class="sub-footer">
+    <div class="sub-footer__section--left">
+      {% unless settings.twitter-url.size == 0 and
+        settings.facebook-url.size == 0 and
+        settings.pinterest-url.size == 0 and
+        settings.instagram-url.size == 0 and
+        settings.tumblr-url.size == 0 and
+        settings.youtube-url.size == 0 and
+        settings.vimeo-url.size == 0
+      %}
+        <nav class="social">
+          {% render 'social-links' %}
+        </nav>
+      {% endunless %}
+
+
+    </div>
+
+    <div class="sub-footer__section--right">
+          <div class="vertical-menu">
+             <ul class="footer-linklist-one">
+              {% for link in linklists.legal.links %}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+
+    </div>
+  </div>
+
+</footer>
+<script type="text/javascript" src="https://www.klaviyo.com/media/js/public/klaviyo_subscribe.js"></script>
+<script>
+  // function handleBirthdaySubmit(e) {
+  //   e.preventDefault();
+  //   if (isNaN(new Date($('input[name="birthday"]').val().replace(/ /g, '')).getTime())) {
+  //     $('.error.invalid-date').show();
+  //     return;
+  //   }
+
+  //   _learnq.push(['identify', {'Birthday' : $('input[name="birthday"]').val().replace(/ /g, '')}]);
+  //   $('#birthday_form').find('.newsletter-wrap').addClass('newsletter-submitted');
+  // }
+
+  window.addEventListener('load', function () {
+    // $('#birthday_form').on('submit', handleBirthdaySubmit);
+
+    // $('input[name="birthday"]').keydown(function() {
+    //   $('.error.invalid-date').hide();
+    // });
+    
+    KlaviyoSubscribe.attachToForms('#email_signup', {
+      hide_form_on_success: true,
+      success_url: "https://amass.com/pages/email-signup",
+      success: function ($form) {
+        var email = $form.find('[name="email"]').val();
+        _learnq.push(['identify', { $email: email }]);
+      }
+
+      // success: function ($form) {
+      //   var email = $form.find('[name="email"]').val();
+      //   _learnq.push(['identify', { $email: email }]);
+      //   $('#birthday_form input[name="email"]').val(email);
+      //   $('#email_signup').hide();
+      //   $('#birthday_form').show();
+        // Heap identify
+        // heap.identify($('input[name="email"]').val());
+        // heap.addUserProperties({ email: $('input[name="email"]').val() });
+      // }
+    });
+
+    var script = document.createElement('script');
+    script.onload = function() {
+      $("#birthday").inputmask("99 /99 /9999");
+    };
+    script.src = "{{ 'jquery.inputmask.min.js' | asset_url }}";
+    document.getElementsByTagName('body')[0].appendChild(script);
+  });
+</script>

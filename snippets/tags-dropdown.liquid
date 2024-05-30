@@ -1,0 +1,32 @@
+<div class="collection-sorter">
+  <label class="sidebar-title" for="tags-filter">
+    {{ 'collections.listing.filter-by' | t }}
+  </label>
+
+  <div class="select-wrapper">
+    <select
+      id="tags-filter"
+      class="coll-filter"
+      data-current-href="{{ current_tags }}"
+      {% if collection.handle %}
+        data-window-href='{{ collection.url }}';
+      {% elsif collection.products.first.type == collection.title %}
+        data-window-href='{{ collection.title | url_for_type }}';
+      {% elsif collection.products.first.vendor == collection.title %}
+        data-window-href='{{ collection.title | url_for_vendor }}';
+      {% endif %}
+    >
+      <option value="">
+        {{ 'collections.collection.all_items' | t }}
+      </option>
+
+      {% for tag in collection.all_tags %}
+        {% if current_tags contains tag %}
+          <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+        {% else %}
+          <option value="{{ tag | handle }}">{{ tag }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+</div>

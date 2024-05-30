@@ -1,0 +1,103 @@
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="dynamic-menu-list"
+></script>
+
+<section
+  class="
+    home-section
+    content-area
+    menu-list--container
+    {% if section.settings.border %}has-border{% endif %}
+  "
+>
+  {% if section.settings.title != blank %}
+    <h1 class="section-title">
+      {{ section.settings.title | escape }}
+    </h1>
+  {% endif %}
+
+  {% if section.blocks.size > 0 %}
+    <div
+      class="
+        menu-list-container
+        collections
+        row-of-3
+        menu-list-count-{{ section.blocks.size }}
+      "
+    >
+      {% for block in section.blocks %}
+        {% render 'menu-list-item', block: block %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Menu list",
+  "class": "menu-list--section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Menu list"
+    },
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "Show border",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "id": "menu",
+          "type": "link_list",
+          "label": "Menu"
+        },
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "Image",
+          "info": "360 x 360px .jpg recommended"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Menu list",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "menu"
+        },
+        {
+          "type": "menu"
+        },
+        {
+          "type": "menu"
+        },
+        {
+          "type": "menu"
+        },
+        {
+          "type": "menu"
+        },
+        {
+          "type": "menu"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

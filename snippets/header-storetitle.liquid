@@ -1,0 +1,57 @@
+{% comment %}
+@param headerLayout {String}
+  The header layout setting: can be one of normal, minimal, minimal-sticky, expanded
+
+@param headerCenter {Boolean}
+  The center logo setting
+
+@param logo {Image}
+  Logo image
+
+@param logoWidth {Number}
+  The width of the logo set by the merchant
+{% endcomment %}
+
+{% assign heading = 'h2' %}
+{% if template == 'index' or template contains 'customers' %}
+  {% assign heading = 'h1' %}
+{% endif %}
+
+<{{ heading }}
+  class=" store-title {% if logo != blank %}store-logo{% endif %}"
+  {% if logo != blank %}
+    style="width: {{ logoWidth }}px;"
+  {% endif %}
+>
+  {% if logo != blank %}
+    <a href="{{ routes.root_url }}" style="width: {{ logoWidth }}px;">
+      {%
+        render 'rimg'
+        img: logo,
+        alt: shop.description,
+        size: '800x800'
+      %}
+    </a>
+  {% else %}
+    {{ shop.name | link_to: routes.root_url }}
+  {% endif %}
+</{{ heading }}>
+
+<style>
+  {% if headerLayout != 'normal' and headerCenter == false %}
+    .store-title {
+      width: {{ logoWidth | plus: 30 }}px;
+    }
+
+    .store-title img {
+      width: {{ logoWidth | plus: 30 }}px;
+      height: auto;
+    }
+
+    @media (max-width: 960px) {
+      .store-title {
+        width: auto;
+      }
+    }
+  {% endif %}
+</style>

@@ -1,0 +1,44 @@
+<div class="media-landing-cta__container">
+    <div class="media-landing-cta__wrap landing-content__wrap">
+        <h2>{{section.settings.heading}}</h2>
+        <div class="media-landing-cta__image-wrap">
+            <img src="{{section.settings.image | img_url: "master"}}" alt="">
+        </div>
+        <div class="media-landing-cta__subheading section-strong">{{section.settings.subheading}}</div>
+        <a class="landing-cta" href="{{section.settings.button-url}}">{{section.settings.button-text}}</a>
+    </div>
+</div>
+
+
+{% schema %}
+{
+    "name": "Landing CTA",
+    "settings": [
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "subheading",
+            "type": "richtext",
+            "label": "Subheading"
+        },
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Hero Image"
+        },
+        {
+            "id": "button-text",
+            "type": "text",
+            "label": "Button Text"
+        },
+        {
+            "id": "button-url",
+            "type": "url",
+            "label": "Button URL"
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,94 @@
+<div data-section-id="{{ section.id }}" data-section-type="featured-blog">
+
+  {%- assign sectionHeading = section.settings.title | escape -%}
+  {%- assign border = section.settings.border -%}
+  {%- assign featuredBlog = section.settings.blog -%}
+
+  <section class="home-section content-area
+    {% if sectionHeading != blank %}has-heading{% endif %}
+    {% if border %}has-border{% endif %}">
+
+    {% if sectionHeading != blank %}
+      <h2 class="section-title">{{ sectionHeading }}</h2>
+    {% endif %}
+
+    <ul class="articles">
+      {% if featuredBlog != "" %}
+        {% for article in blogs[featuredBlog].articles limit: 4 %}
+          <li class="article {% render 'for-looper', forloop: forloop %}">
+            <a class="date" href="{{ article.url }}">{{ article.published_at | date: format: 'full_month' }}</a>
+            <a class="title" href="{{ article.url }}">{{ article.title }}</a>
+
+            <div class="rte content">
+              {% if article.image %}
+                <a href="{{ article.url }}" class="article-image image-wrap">
+                  {%
+                    render 'rimg'
+                    img: article.image,
+                    alt: article.title,
+                    size: '600x600',
+                    lazy: true
+                  %}
+                </a>
+              {% endif %}
+
+<!--               {{ article.excerpt_or_content }} -->
+            </div>
+          </li>
+        {% endfor %}
+      {% else %}
+        {% for i in (1..4) %}
+          <li class="article {% render 'for-looper', forloop: forloop %}">
+            <a class="date" href="#">{{'now' | date: "%s" | date: "%B %d, %Y"}}</a>
+            <a class="title" href="#">{{ 'onboarding.blog_title' | t }}</a>
+
+            <div class="rte content">
+              <a href="#" class="article-image image-wrap">
+                {{ 'collection-2' | placeholder_svg_tag: 'placeholder-svg' }}
+              </a>
+
+              {{ 'onboarding.blog_excerpt' | t }}
+            </div>
+          </li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+  </section>
+
+</div>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Blog posts"
+    },
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "Show border",
+      "default": true
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog posts"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Blog",
+      "name": "Blog posts",
+      "settings": {
+        "border":true,
+        "blog": ""
+      }
+    }
+  ]
+}
+
+{% endschema %}

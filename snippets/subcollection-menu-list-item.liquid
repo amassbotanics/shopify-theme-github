@@ -1,0 +1,101 @@
+{% assign collectionImage = 'collection-3' | placeholder_svg_tag: 'placeholder-svg' %}
+{% assign collectionTitle = 'onboarding.collection_title' | t %}
+{% assign collectionDescription = '' %}
+{% capture collectionLinks %}
+  {% for i in (1..6) %}
+      <span class="menu-list-link">{{ 'onboarding.menu_list.item' | t }}</span>
+  {% endfor %}
+{% endcapture %}
+
+{% unless onboarding %}
+  {% assign currentCollection = link.object %}
+
+  {% if currentCollection == blank %}
+    {% continue %}
+  {% endif %}
+
+  {% if currentCollection.image %}
+    {% assign collectionImage = currentCollection.image.src %}
+  {% else %}
+    {% assign collectionImage = currentCollection.products.first.featured_media.preview_image %}
+  {% endif %}
+  {% assign collectionTitle = currentCollection.title %}
+  {% assign collectionDescription = currentCollection.description %}
+  {% capture collectionLinks %}
+    {% for link in link.links %}
+      <a
+        {% if forloop.index > 6 %}
+          class="menu-list-link menu-list-link-hidden"
+          data-menu-list-hidden
+        {% else %}
+          class="menu-list-link"
+        {% endif %}
+        href="{{ link.url }}"
+      >
+        {{ link.title }}
+      </a>
+    {% endfor %}
+  {% endcapture %}
+{% endunless %}
+
+<div class="collection-wrap first">
+  <a href="{{ currentCollection.url }}">
+    {% unless onboarding %}
+      <div
+        class="collection"
+        {%
+          render 'rimg'
+          img: collectionImage,
+          size: '480x480',
+          crop: 'center',
+          background: true,
+          lazy: true
+        %}
+      >
+        {%
+          render 'rimg'
+          img: collectionImage,
+          size: '480x480',
+          crop: 'center',
+          lazy: true
+        %}
+      </div>
+    {% else %}
+      <div class="collection collection-onboarding">
+        {{ collectionImage }}
+      </div>
+    {% endunless %}
+
+    <h2
+      class="
+        menu-list-heading
+        label
+        preload
+      "
+    >
+      {{ collectionTitle }}
+    </h2>
+  </a>
+
+  {{ collectionLinks }}
+
+  {% if onboarding == false and link.links.size > 6 %}
+    <button
+      class="menu-list-link-more"
+      data-menu-list-toggle
+    >
+      <span class="menu-list-link-text">
+        {{ 'collections.collection.more' | t }}
+      </span>
+
+      <span
+        class="
+          menu-list-link-text
+          menu-list-link-hidden
+        "
+      >
+        {{ 'collections.collection.less' | t }}
+      </span>
+    </button>
+  {% endif %}
+</div>

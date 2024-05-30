@@ -1,0 +1,56 @@
+{% assign articleSubheading = article.metafields.global.sub_heading %}
+{% assign articleAuthor = article.metafields.global.article_author %}
+<div class="content-area">
+    <div class="blog-post-cocktail__container">
+        <div class="blog-post-cocktail__details-wrap">
+            <div class="blog-post-cocktail__details-header">
+                <p class="blog-post-cocktail__details-header-subtitle section-strong">{{ articleSubheading }}</p>
+                <h1 class="blog-post-cocktail__details-header-title">{{ article.title }}</h1>
+                <div class="blog-post-cocktail__details-header-byline">
+                    <div class="blog-post-cocktail__details-header-byline-item">
+                        <p class="blog-post-cocktail__details-header-byline-label section-strong">Published</p>
+                        <p class="blog-post-cocktail__details-header-byline-text">{{ article.published_at | date: format: 'date' }}</p>
+                    </div>
+                    <div class="blog-post-cocktail__details-header-byline-item">
+                        <p class="blog-post-cocktail__details-header-byline-label section-strong">Author</p>
+                        <p class="blog-post-cocktail__details-header-byline-text">
+                            {% if articleAuthor != blank %}
+                                {{ articleAuthor }}
+                            {% else %}
+                                {{ article.user.name }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="blog-post-cocktail__details-content rte">
+                {{ article.content }}
+            </div>
+        </div>
+        <div class="blog-post-cocktail__image-wrap">
+            {% if article.image.size > 1 %}
+             {%
+                render 'rimg'
+                img: article.image,
+                alt: article.title,
+                size: '1024x1024',
+                lazy: true,
+              %}
+              {% else %}
+              <a href="{{ article.url }}">
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="blog-post-cocktail__link-wrap">
+      <a href="https://amass.com/blogs/cocktails" class="blog-post-cocktail__link section-strong">
+        <img src="{{ 'Arrow_Left.svg' | asset_url }}" alt="" class="blog-post-cocktail__link-left-arrow-image"> 
+        Back to Cocktails 
+      </a>
+      <a href="https://amass.com/collections/social-rituals" class="blog-post-cocktail__link blog-post-cocktail__link-shop section-strong">
+        Shop All Beverages
+        <img src="{{ 'Arrow_Right.svg' | asset_url }}" alt="" class="blog-post-cocktail__link-right-arrow-image"> 
+      </a>
+    </div>
+</div>

@@ -1,0 +1,194 @@
+{%- assign showProduct = false -%}
+{%- assign pageIDString = page.id | downcase %}
+{% for block in section.blocks %}
+    {% assign pageArray = block.settings.pageId | split: "," %}
+    {% if pageArray contains pageIDString  %}
+        {%- assign showProduct = true -%}
+    {% endif %}
+{% endfor %}
+
+
+{% for block in section.blocks %}
+    {% assign pageArray = block.settings.pageId | split: "," %}
+    {% assign product = all_products[block.settings.product]  %}
+    {%- assign border = block.settings.border -%}
+        {% if pageArray contains pageIDString  %}
+            <section id="{{product.handle}}" class="landing-product-section {% if border %}show-border{% endif %}">
+                <div class="content content-area">
+                  {% if product.handle contains 'riverine' and page.template_suffix contains 'riverine-landing' %}
+                    {%
+                      render 'landing-product-alternate',
+                      product: product,
+                      show_description: true,
+                      show_quantity: true,
+                      show_social_buttons: true,
+                      variant_options_style: block.settings.variant_options_style,
+                      gallery_layout: block.settings.gallery_layout,
+                      enable_image_zoom: block.settings.gallery_enable_image_zoom
+                    %}
+                  {% else %}
+                    {%
+                      render 'landing-product',
+                      product: product,
+                      show_description: true,
+                      show_quantity: true,
+                      show_social_buttons: true,
+                      variant_options_style: block.settings.variant_options_style,
+                      gallery_layout: block.settings.gallery_layout,
+                      enable_image_zoom: block.settings.gallery_enable_image_zoom
+                    %}
+                  {% endif %}
+                </div>
+            </section>
+        {% endif %}
+{% endfor %}
+
+
+
+{% schema %}
+{
+  "name": "Featured product",
+  "class": "featured-product",
+  "settings": [
+    {
+        "id": "cta_url_gin",
+        "type": "text",
+        "label": "CTA URL Gin"
+      },
+      {
+        "id": "cta_url_thirstie_gin",
+        "type": "text",
+        "label": "CTA URL - Thirstie Gin"
+      },
+      {
+        "id": "cta_url_vodka",
+        "type": "text",
+        "label": "CTA URL Vodka"
+      },
+      {
+        "id": "cta_url_thirstie_vodka",
+        "type": "text",
+        "label": "CTA URL - Thirstie Vodka"
+      },
+      {
+        "id": "cta_url_impeachment",
+        "type": "text",
+        "label": "CTA URL - Impeachment"
+      },
+        {
+        "id": "cta_url_surfer_rosso_hard_seltzer",
+        "type": "text",
+        "label": "CTA URL - Surfer Rosso Hard Seltzer"
+      },
+      {
+        "id": "cta_url_thirstie_surfer_rosso_hard_seltzer",
+        "type": "text",
+        "label": "CTA URL - Thirstie Surfer Rosso Hard Seltzer"
+      },
+      {
+        "id": "cta_url_sun_sign_hard_seltzer",
+        "type": "text",
+        "label": "CTA URL - Sun Sign Hard Seltzer"
+      },
+      {
+        "id": "cta_url_thirstie_sun_sign_hard_seltzer",
+        "type": "text",
+        "label": "CTA URL - Thirstie Sun Sign Hard Seltzer"
+      },
+      {
+        "id": "cta_url_faerie_fizz_hard_seltzer",
+        "type": "text",
+        "label": "CTA URL - Faerie Fizz Hard Seltzer"
+      },
+      {
+        "id": "cta_url_thirstie_faerie_fizz_hard_seltzer",
+        "type": "text",
+        "label": "CTA URL - Thirstie Faerie Fizz Hard Seltzer"
+      },
+      {
+        "id": "cta_url_hard_seltzer_variety_pack",
+        "type": "text",
+        "label": "CTA URL - Hard Seltzer Variety Pack"
+      },
+      {
+        "id": "cta_url_thirstie_hard_seltzer_variety_pack",
+        "type": "text",
+        "label": "CTA URL - Thirstie Hard Seltzer Variety Pack"
+      }
+   ],
+  "blocks": [
+  {
+    "type":"product",
+    "name":"Featured Product",
+    "settings": [
+        {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+        },
+        {
+            "type": "textarea",
+            "id": "pageId",
+            "label": "List Page Ids (Separated by Comma)"
+        },
+        {
+          "type": "select",
+          "id": "gallery_layout",
+          "label": "Layout",
+          "options": [
+            {
+              "group": "List",
+              "label": "No thumbnails",
+              "value": "list"
+            },
+            {
+              "group": "Gallery",
+              "label": "Thumbnails left of gallery",
+              "value": "gallery-left"
+            },
+            {
+              "group": "Gallery",
+              "label": "Thumbnails right of gallery",
+              "value": "gallery-right"
+            },
+            {
+              "group": "Gallery",
+              "label": "Thumbnails below gallery",
+              "value": "gallery-below"
+            }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "gallery_enable_image_zoom",
+          "label": "Enable image zoom",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "variant_options_style",
+          "label": "Variant options style",
+          "options": [
+            {
+              "value": "select",
+              "label": "Dropdowns"
+            },
+            {
+              "value": "radio",
+              "label": "Selectable boxes"
+            }
+          ],
+          "default": "radio"
+        },
+        {
+          "type": "checkbox",
+          "id": "border",
+          "label": "Show border",
+          "default": true
+        }
+     ]
+    }
+  ]
+}
+
+{% endschema %}

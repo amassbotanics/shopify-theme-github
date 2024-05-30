@@ -1,0 +1,55 @@
+<div class="media-landing-hero__container" style="background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('{{section.settings.image | img_url: "master"}}')">
+    <div class="media-landing-hero__content-wrap landing-content__wrap">
+        <h1 class="media-landing-hero__heading">{{section.settings.heading}}</h1>
+        <div class="media-landing-hero__subheading section-strong">{{section.settings.subheading}}</div>
+        <div class="media-landing-hero__links">
+            <a class="landing-cta landing-cta--light" href="{{section.settings.button-url-left}}">{{section.settings.button-text-left}}</a>
+            <a class="landing-cta landing-cta--outline js-landing-cta" href="{{section.settings.button-url-right}}">{{section.settings.button-text-right}}</a>
+        </div>
+    </div>
+</div>
+
+
+
+{% schema %}
+{
+    "name": "Page Hero",
+    "settings": [
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "subheading",
+            "type": "richtext",
+            "label": "Subheading"
+        },
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Hero Image"
+        },
+        {
+            "id": "button-text-left",
+            "type": "text",
+            "label": "Button Text"
+        },
+        {
+            "id": "button-url-left",
+            "type": "url",
+            "label": "Button URL"
+        },
+        {
+            "id": "button-text-right",
+            "type": "text",
+            "label": "Button Text"
+        },
+        {
+            "id": "button-url-right",
+            "type": "url",
+            "label": "Button URL"
+        }
+    ]
+}
+{% endschema %}

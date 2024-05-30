@@ -1,0 +1,58 @@
+{% layout none %}
+
+{% assign product_json = product | json %}
+{% assign product_json_sha256 = product_json | sha256 %}
+
+{% capture settings_string %}
+  {{ settings.show-brand-names }}
+  {{ settings.quickshop-product-email-link }}
+  {{ settings.media_borders }}
+  {{ settings.quickshop-product-quantity-option }}
+  {{ settings.quickshop_show_spb }}
+  {{ settings.quickshop_enable_cart_redirect }}
+  {{ settings.quickshop_gallery_enable_image_zoom }}
+  {{ 'products.product.add_to_cart' | t }}
+  {{ 'products.product.sold_out' | t }},
+  {{ 'products.product.unavailable' | t }}
+{% endcapture %}
+{% assign settings_sha256 = settings_string | sha256 %}
+
+<template data-options>
+  {
+    "product": {{ product_json }},
+    "settings": {
+      "enable_cart_redirect": {{ settings.quickshop_enable_cart_redirect | t | json }},
+      "enable_history": false,
+      "gallery_enable_video_autoplay": {{ settings.quickshop_gallery_enable_video_autoplay | json }},
+      "gallery_enable_video_looping": {{ settings.quickshop_gallery_enable_video_looping | json }},
+      "money_format": {{ shop[settings.currency_display_format] | default: shop.money_format | strip_html | json }}
+    },
+    "locale": {
+      "add_to_cart": {{ 'products.product.add_to_cart' | t | json }},
+      "sold_out": {{ 'products.product.sold_out' | t | json }},
+      "unavailable": {{ 'products.product.unavailable' | t | json }}
+    },
+    "product_sha256": {{ product_json_sha256 | json }},
+    "settings_sha256": {{ settings_sha256 | json }}
+  }
+</template>
+
+<template data-html>
+  {%
+    render 'product',
+    fitting_guide_icon: settings.quickshop_fitting_guide_icon,
+    fitting_guide_url: settings.quickshop_fitting_guide_url,
+    show_brand_names: settings.show-brand-names,
+    show_email_link: settings.quickshop-product-email-link,
+    show_media_borders: settings.media_borders,
+    show_quantity: settings.quickshop-product-quantity-option,
+    show_spb: settings.quickshop_show_spb,
+    gallery_layout: settings.quickshop_gallery_layout,
+    show_sku: settings.quickshop_show_variant_sku,
+    enable_image_zoom: settings.quickshop_gallery_enable_image_zoom,
+    show_description: true,
+    callout: true,
+    variant_options_style: settings.quickshop_variant_options_style,
+    show_social_buttons: settings.quickshop_social_sharing_buttons,
+  %}
+</template>

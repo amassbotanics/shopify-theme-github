@@ -1,0 +1,23 @@
+<div class="header-landing">
+  <a class="header-landing__logo-wrap" href="{{ routes.root_url }}">
+    <img class="header-landing__logo" src="{{section.settings.image | img_url: "master"}}" alt="{{ section.settings.image-alt }}" />
+  </a>
+</div>
+
+{% schema %}
+{
+    "name": "Alternative Header",
+    "settings": [
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Logo Image"
+        },
+        {
+            "id": "image-alt",
+            "type": "text",
+            "label": "Image Alt"
+        }
+    ]
+}
+{% endschema %}

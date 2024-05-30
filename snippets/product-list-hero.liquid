@@ -1,0 +1,13 @@
+{%- assign subCollectionMeta = collection.metafields.has.sub_collection -%}
+{%- assign subCollectionImage = collections[subCollectionMeta].metafields.global.image  -%}
+{%- assign subCollectionText = collections[subCollectionMeta].metafields.has.text -%}
+{% if showSubCollection and subCollectionMeta and subCollectionImage %}
+    <div class="product-list-hero">
+        <div class="product-list-hero-wrap" style="background-image: url('{{ subCollectionImage }}')">
+            <div class="product-list-text">
+                <h2 class="product-list-header">{{collections[subCollectionMeta].title}}</h2>
+                <p>{{subCollectionText}}</p>
+            </div>
+        </div>
+    </div>
+{% endif %}

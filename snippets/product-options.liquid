@@ -1,0 +1,119 @@
+{% comment %}
+@param form_id {String}
+  Product form ID
+
+@param selected_variant {Product}
+  Selected variant for product page or featured product section
+
+@param style {String}
+  Variant options style. Can be one of: select, radio
+  {% endcomment %}
+
+<select
+  class="
+    no-js-required
+  "
+  name="id" data-productid="{{ product.id }}"
+  data-productid="{{ product.id }}"
+  id="product-select-{{ form_id }}"
+  data-variants
+>
+  {% for variant in product.variants %}
+    {% if variant.available %}
+      <option
+        {% if variant.id == selected_variant.id %}
+          selected="selected"
+        {% endif %}
+        value="{{ variant.id }}"
+        data-variant-id="{{ variant.id }}"
+      >
+        {{ variant.title }} - {{ variant.price | money }}
+      </option>
+    {% else %}
+      <option
+        disabled="disabled"
+        value="{{ variant.id }}"
+        data-variant-id="{{ variant.id }}"
+      >
+        {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+      </option>
+    {% endif %}
+  {% endfor %}
+</select>
+
+{% for option in product.options_with_values %}
+  {% if style == 'select' %}
+    {% assign option_index = forloop.index %}
+
+    {%- capture option_id -%}
+      single-option-{{ form_id }}-{{ option_index }}
+    {%- endcapture -%}
+
+    <div class="select-header js-required">
+      <label class="option-name" for="{{ option_id }}">{{ option.name }}:</label>
+    </div>
+
+    <div class="js-required select-wrapper">
+      <span data-selected-option></span>
+
+      <select
+        class="single-option-selector"
+        id="{{ option_id }}"
+        data-product-option="{{ 'option' | append: option_index }}"
+      >
+        {% for value in option.values %}
+          <option
+            value="{{ value | escape }}"
+            {% if option.selected_value == value %}
+              selected="selected"
+            {% endif %}
+          >
+            {{ value }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  {% else %}
+    <!-- <div
+      class="
+        option-header
+        js-required
+      "
+    >
+      <span class="option-name">{{ option.name }}:</span>
+    </div> -->
+    {% for variant in product.variants %}
+      {% if variant.metafields.global.variantText != blank %}
+        <div class="variant-option-text" data-variant-name="{{variant.title}}">
+          {{ variant.metafields.global.variantText }}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <div
+      class="
+        option-values
+        js-required
+      "
+    >
+      {% assign optionIndex = forloop.index %}
+
+      {% for value in option.values %}
+        <div class="option-value">
+          <input
+            class="option-value-input"
+            type="radio"
+            name="{{ option.name | url_encode }}"
+            value="{{ value | escape }}"
+            tabindex="0"
+            aria-label="{{ value | escape }}"
+            {% if option.selected_value == value %}checked{% endif %}
+            data-product-option="{{ 'option' | append: optionIndex }}"
+          >
+
+          <span class="option-value-name">{{ value }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endfor %}

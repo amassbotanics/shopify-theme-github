@@ -1,0 +1,50 @@
+{% assign articleSubheading = article.metafields.global.sub_heading %}
+{% assign articleExcerpt = article.metafields.global.article_excerpt %}
+{% assign articleAuthor = article.metafields.global.article_author %}
+<div class="article-item__cocktail">
+    <div class="article-image">
+        {% if article.image.size > 1 %}
+            {% capture article_image %}
+            {%
+                render 'rimg'
+                img: article.image,
+                alt: article.title,
+                size: '1024x1024',
+                lazy: true,
+            %}
+            {% endcapture %}
+
+            {% unless article %}
+            {{ article_image }}
+            {% else %}
+            <a href="{{ article.url }}">
+                {{ article_image }}
+            </a>
+            {% endunless %}
+        {% else %}
+            <a href="{{ article.url }}">
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </a>
+        {% endif %}
+
+    </div>
+    <div class="article-item__cocktail-details">
+        <span class="article-item__cocktail-details-label section-strong">{{ articleSubheading }}</span>
+        <h2 class="article-item__cocktail-details-title">
+           <a href="{{article.url}}">{{article.title}}</a>
+        </h2>
+        <p class="article-item__cocktail-details-subtitle">{{ articleExcerpt }}</p>
+        <div class="article-item__cocktail-details-footer">
+            <span class="article-item__cocktail-details-author">By
+                {% if articleAuthor != blank %}
+                    {{ articleAuthor }}
+                {% else %}
+                    {{ article.user.name }}
+                {% endif %}
+            </span>
+            <span class="article-item__cocktail-details-date">{{ article.published_at | date: format: 'date' }}</span>
+        </div>
+
+    </div>
+
+</div>

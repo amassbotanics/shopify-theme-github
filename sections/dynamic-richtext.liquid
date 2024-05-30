@@ -1,0 +1,105 @@
+<div data-section-id="{{ section.id }}" data-section-type="rich-text">
+
+  {%- assign border = section.settings.border -%}
+  {%- assign featureBorders = section.settings.feature-borders -%}
+
+  <section class="home-section featured-text-container content-area
+    {% if border %}has-border{% endif %}
+    {% if featureBorders %}feature-borders{% endif %}">
+
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}
+        <div class="featured-text">
+          {%- assign heading = block.settings.title | escape -%}
+          {%- assign caption = block.settings.caption -%}
+          {%- assign page = block.settings.page -%}
+
+          {% if page != blank %}
+            <h2>{{ pages[page].title }}</h2>
+            <div class="rte">{{ pages[page].content }}</div>
+          {% else %}
+            {% if heading != blank %}
+              <h2>{{ heading }}</h2>
+            {% endif %}
+
+            {% if caption != blank %}
+              <div class="rte">{{ caption }}</div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="featured-text">
+        <h2>{{ 'onboarding.welcome_title' | t }}</h2>
+        <div class="rte">{{ 'onboarding.welcome_text_html' | t }}</div>
+      </div>
+    {% endif %}
+
+  </section>
+
+</div>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "Show border",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "feature-borders",
+      "label": "Show border between features",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "plain_text",
+      "name": "Rich text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Rich text"
+        },
+        {
+          "type": "richtext",
+          "id": "caption",
+          "label": "Text",
+          "default": "<p>Use this section to welcome customers to your store, say a bit about your brand, or share news and seasonal promotions.</p>"
+        }
+      ]
+    },
+    {
+      "type": "imported_page",
+      "name": "Page",
+      "settings": [
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page",
+          "info": "Content will be imported from this page."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name": "Rich text",
+      "blocks": [
+        {
+          "type": "plain_text"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

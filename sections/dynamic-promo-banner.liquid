@@ -1,0 +1,54 @@
+{%render 'promo-banner',
+bannerHeader: section.settings.textHeader,
+bannerContent: section.settings.textContent,
+bannerLink: section.settings.bannerLink,
+bannerLinkText: section.settings.linktext,
+bannerBorder: section.settings.border,
+bannerPosition: section.settings.banner_position
+%}
+{% schema %}
+{
+   "name":"Banner",
+   "settings":[
+      {
+         "id":"textHeader",
+         "type":"text",
+         "label":"Heading"
+      },
+      {
+         "id":"textContent",
+         "type":"text",
+         "label":"Content"
+      },
+      {
+         "id":"bannerLink",
+         "type":"url",
+         "label":"Button link"
+      },
+      {
+         "id":"linktext",
+         "type":"text",
+         "label":"Button text",
+         "default":"Click here"
+      },
+      {
+         "type": "checkbox",
+         "id": "border",
+         "label": "Show border",
+         "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "banner_position",
+        "label": "Banner on top of footer",
+        "default": false
+     }
+   ],
+   "presets": [
+   {
+     "category": "Banner",
+     "name": "Promo Banner"
+   }
+ ]
+}
+{% endschema %}

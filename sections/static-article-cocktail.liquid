@@ -1,0 +1,19 @@
+<script
+  type="application/json"
+  data-section-type="static-article"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+<section class="static-article-cocktail__section">
+      {% render 'blog-post-cocktail', article: article %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Article pages",
+  "class": "section-article"
+}
+
+{% endschema %}

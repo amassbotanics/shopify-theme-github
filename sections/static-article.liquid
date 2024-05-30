@@ -1,0 +1,88 @@
+{%- assign display_recent_posts = section.settings.recent-posts -%}
+{%- assign display_tags = section.settings.tag-list -%}
+{% assign should_display_sidebar = false %}
+{% if display_recent_posts %}
+  {% assign should_display_sidebar = true %}
+{% elsif display_tags and blog.all_tags.size > 0 %}
+  {% assign should_display_sidebar = true %}
+{% endif %}
+
+<script
+  type="application/json"
+  data-section-type="static-article"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+<section
+  class="
+    content
+    content-area
+    {% if should_display_sidebar %}
+      blog-sidebar-active
+    {% endif %}
+  "
+>
+  {% render 'breadcrumbs' %}
+
+  <div class="page-title">
+    <h2 class="label"><a href="{{ blog.url }}">{{ blog.title }}</a></h2>
+  </div>
+
+  <div class="blog content-wrap">
+    <section class="blog-article">
+      {% render 'article-item', article: article %}
+    </section>
+
+    {% if should_display_sidebar %}
+      {%
+        render 'blog-sidebar',
+        blog: blog,
+        display_recent_posts: section.settings.recent-posts,
+        display_tags: section.settings.tag-list
+      %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Article pages",
+  "class": "section-article",
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "checkbox",
+      "id": "show-breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show-share",
+      "label": "Enable social sharing",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Sidebar"
+    },
+    {
+      "type": "checkbox",
+      "id": "recent-posts",
+      "label": "Show recent posts",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "tag-list",
+      "label": "Show tags",
+      "default": false
+    }
+  ]
+}
+
+{% endschema %}

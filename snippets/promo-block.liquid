@@ -1,0 +1,26 @@
+{% comment %}
+  @param block {Block}
+  @param enableQuickshop {Boolean}
+{% endcomment %}
+
+<div
+  class="
+    promo-block
+    promo-block--{{ block.settings.style }}
+    {% if enableQuickshop %}
+      promo-block--quickshop-enabled
+    {% endif %}
+  "
+>
+  <h3 class="rte promo-block--content">{{ block.settings.text }}</h3>
+
+  {% if block.settings.button != empty %}
+    <span class="promo-block--button">
+      {{ block.settings.button }}
+    </span>
+  {% endif %}
+
+  {% if block.settings.link %}
+    <a class="promo-block--link" href="{{ block.settings.link }}"></a>
+  {% endif %}
+</div>

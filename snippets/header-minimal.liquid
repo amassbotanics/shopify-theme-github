@@ -1,0 +1,58 @@
+
+<div class="header-minimal {% if headerCenter %}header-minimal-centered{% endif %}">
+  {% assign leftMenu = linklists[section.settings.left-menu] %}
+  {% assign rightMenu = linklists[section.settings.right-menu] %}
+  {% assign mainMenu = linklists[section.settings.menu] %}
+  {% if headerCenter %}
+    <div class="nav nav-left">
+      {%
+        render 'header-fullnav',
+        headerLayout: headerLayout,
+        headerCenter: headerCenter,
+        menu: leftMenu
+      %}
+    </div>
+    {%
+      render 'header-storetitle',
+      headerLayout: headerLayout,
+      headerCenter: headerCenter,
+      logo: logo,
+      logoWidth: logoWidth
+    %}
+    <div class="nav nav-right">
+      {%
+        render 'header-fullnav',
+        headerLayout: headerLayout,
+        headerCenter: headerCenter,
+        menu: rightMenu
+      %}
+      {%
+        render 'header-tools',
+        type: 'header-minimal',
+        layout: headerLayout
+        logoCentered: headerCenter,
+        cartIcon: cartIcon
+      %}
+    </div>
+  {% else %}
+    {%
+      render 'header-storetitle',
+      headerLayout: headerLayout,
+      headerCenter: headerCenter,
+      logo: logo,
+      logoWidth: logoWidth
+    %}
+    {% render 'header-fullnav',
+      headerLayout: headerLayout,
+      headerCenter: headerCenter,
+      menu: mainMenu
+    %}
+    {%
+      render 'header-tools',
+      type: 'header-minimal',
+      layout: headerLayout
+      logoCentered: headerCenter,
+      cartIcon: cartIcon
+    %}
+  {% endif %}
+</div?>

@@ -1,0 +1,118 @@
+{% assign results = results | default: false %}
+{% assign terms = terms | default: '' %}
+{% assign products_results_count = 0 %}
+{% assign posts_results_count = 0 %}
+{% assign pages_results_count = 0 %}
+{% assign products = false %}
+{% assign postspages = false %}
+{% assign gwp_tag = settings.sample_product_tag %}
+
+{% if results %}
+  {% for result in results %}
+    {% if result.object_type == 'product' %}
+      {% if result.tags contains gwp_tag %}
+        {% continue %}
+      {% endif %}
+      {% assign products_results_count = products_results_count | plus: 1 %}
+    {% elsif result.object_type == 'article' %}
+      {% assign posts_results_count = posts_results_count | plus: 1 %}
+    {% elsif result.object_type == 'page' %}
+      {% assign pages_results_count = pages_results_count | plus: 1 %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% capture products %}
+  {% if products_results_count > 0 %}
+    {% assign found_products_count = 0 %}
+    {% for result in results %}
+      {% if result.object_type == 'product' and found_products_count < 5 %}
+        {% if result.tags contains gwp_tag %}
+          {% continue %}
+        {% endif %}
+
+        {% assign found_products_count = found_products_count | plus: 1 %}
+
+        <div class="lsrp-content">
+          {% if result.featured_media %}
+            <figure class="lsrpc-figure">
+              {%
+                render 'rimg'
+                img: result.featured_media.preview_image,
+                size: '50x',
+                lazy: true
+              %}
+            </figure>
+          {% endif %}
+
+          <div class="lsrpc-content">
+            {% if result.vendor and settings.show-brand-names %}
+              <span class="lsrpcc-vendor">
+                {{ result.vendor }}
+              </span>
+            {% endif %}
+
+            <span class="lsrpcc-title">
+              {{ result.title }}
+            </span>
+
+            <div class="lsrpcc-price price sale">
+              <span class="money">{{ result.price | money }}</span>
+            </div>
+          </div>
+
+          <a class="lsrpc-url" href="{{ result.url }}"></a>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <span class="lsrp-empty">{{ 'general.livesearch.products_empty' | t: term: terms }}</span>
+    <a class="lsrp-products-viewall" href="{{ routes.all_products_collection_url }}">{{ 'general.livesearch.products_viewall' | t }}</a>
+  {% endif %}
+{% endcapture %}
+
+{% capture postspages %}
+  {% if posts_results_count > 0 or pages_results_count > 0 %}
+    {% assign found_postspages_count = 0 %}
+    {% for result in results %}
+      {% if result.object_type == 'article' or result.object_type == 'page' %}
+        {% if found_postspages_count < 5 %}
+          {% assign found_postspages_count = found_postspages_count | plus: 1 %}
+          <div class="lsrpp-content">
+            <div class="lsrppc-title">
+              {{ result.title }}
+            </div>
+
+            <div class="lsrppc-date">
+              {{ result.published_at | date: "%b %d, %Y" }}
+            </div>
+
+            <a class="lsrppc-url" href="{{ result.url }}"></a>
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <span class="lsrpp-empty">{{ 'general.livesearch.postspages_empty' | t }}</span>
+  {% endif %}
+{% endcapture %}
+
+{% assign view = 'view=' | append: template.suffix %}
+<template data-options>
+  {
+    "hash": {{ terms | json }},
+    "search_url": {{ canonical_url | remove: view | json }},
+    "products_results_count": {{ products_results_count | json }},
+    "posts_results_count": {{ posts_results_count | json }},
+    "pages_results_count": {{ pages_results_count | json }},
+    "moneyFormat": {{ shop[settings.currency_display_format] | default: shop.money_format | strip_html | json }}
+  }
+</template>
+
+<template data-html="products">
+  {{ products }}
+</template>
+
+<template data-html="postpages">
+ {{ postspages }}
+</template>

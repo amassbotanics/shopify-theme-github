@@ -1,0 +1,79 @@
+{% assign media_borders = settings.media_borders %}
+{% assign brandNames = settings.show-brand-names %}
+
+<article class="result" data-type="{{ item.type }}">
+
+  {% if item.object_type == 'product' %}
+
+    <figure>
+      {% if item.featured_media %}
+        {%
+          render 'rimg'
+          img: item.featured_media.preview_image,
+          size: '480x480',
+          lazy: true
+        %}
+      {% else %}
+        {{ 'product-6' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+
+      <a class="{% if media_borders %}overlay{% endif %}" href="{{ item.url }}"></a>
+    </figure>
+
+    <div class="details">
+      {% if brandNames %}
+        <p class="brand">{{ item.vendor | link_to_vendor }}</p>
+      {% endif %}
+
+      <p class="title"><a href="{{ item.url }}">{{ item.title }}</a></p>
+
+      {%- comment -%}
+      {% if item.compare_at_price_min > item.price_min %}
+        <p class="price sale"><span class="label">{{ 'products.product.on_sale' | t }}</span> <span class="original money">{{ item.compare_at_price_min | money }}</span> <span class="money">{{ item.price_min | money }}</span></p>
+      {% else %}
+        <p class="price"><span class="money">{{ item.price_min | money }}</span></p>
+      {% endif %}
+      {%- endcomment -%}
+      <p class="price"><span class="money">{{ item.price_min | money }}</span></p>
+
+      {% assign variant_for_unit_price = item.variants | sort: 'price' | first %}
+      {% if variant_for_unit_price.unit_price_measurement %}
+        {% capture total_quantity %}<span>{{ variant_for_unit_price.unit_price_measurement.quantity_value }}{{ variant_for_unit_price.unit_price_measurement.quantity_unit }}</span>{% endcapture %}
+        {% capture unit_price %}<span>{{ variant_for_unit_price.unit_price | money }}</span>{% endcapture %}
+        {% capture unit_measure %}<span>{%- if variant_for_unit_price.unit_price_measurement.reference_value != 1 -%}{{ variant_for_unit_price.unit_price_measurement.reference_value }}{%- endif %}{{ variant_for_unit_price.unit_price_measurement.reference_unit }}</span>{% endcapture %}
+
+        <div class="search-item__unit-price">
+          {{ 'products.product.price_per_unit_html' | t: total_quantity: total_quantity, unit_price: unit_price, unit_measure: unit_measure | strip_newlines }}
+        </div>
+      {% endif %}
+    </div>
+
+  {% else %}
+    {% if item.image %}
+      <figure>
+        {%
+          render 'rimg'
+          img: item.image,
+          size: '480x480',
+          lazy: true
+        %}
+
+        <a class="{% if media_borders %}overlay{% endif %}" href="{{ item.url }}"></a>
+      </figure>
+    {% endif %}
+
+    <div class="details">
+      <p class="title"><a href="{{ item.url }}">{{ item.title }}</a></p>
+
+      <div class="rte clearfix">
+        {% if item.object_type == 'article' %}
+          <p>{{ item.excerpt_or_content | strip_html | truncatewords: 50 }}</p>
+        {% elsif item.object_type == 'page' %}
+          <p>{{ item.content | strip_html | truncatewords: 50 }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+  {% endif %}
+
+</article>

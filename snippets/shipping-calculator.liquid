@@ -1,0 +1,133 @@
+{% assign default_country = '' %}
+{% assign default_province = '' %}
+{% assign default_zip = '' %}
+
+{% if shippingCalculatorDefaultCountry != '' %}
+  {% assign default_country = shippingCalculatorDefaultCountry %}
+{% endif %}
+
+{% if customer %}
+  {% if customer.default_address.country != '' %}
+    {% assign default_country = customer.default_address.country %}
+  {% endif %}
+
+  {% if customer.default_address.province != '' %}
+    {% assign default_province = customer.default_address.province %}
+  {% endif %}
+
+  {% if customer.default_address.zip != '' %}
+    {% assign default_zip = customer.default_address.zip %}
+  {% endif %}
+{% endif %}
+
+<div
+  class="cart-shipping-calculator"
+  id="shipping-calculator"
+>
+  <div class="cart-shipping-calculator-column">
+    <div class="cart-shipping-calculator-row">
+      <label
+        class="cart-shipping-calculator-label"
+        for="address_country"
+      >
+        {{ 'customer.addresses.country' | t }}
+      </label>
+
+      <div class="cart-shipping-calculator-select-wrapper">
+        <select
+          class="
+            cart-shipping-calculator-select
+            field
+            address-country
+          "
+          name="address[country]"
+          data-default="{{ default_country }}"
+          id="address_country"
+        >
+          {{ country_option_tags }}
+        </select>
+        <div class="cart-shipping-calculator-select-icon">
+          {% render 'icon' with 'down-arrow' %}
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="cart-shipping-calculator-row"
+      style="display:none;"
+      id="address_province_container"
+    >
+      <label
+        class="cart-shipping-calculator-label"
+        for="address_province"
+        id="address_province_label"
+      >
+        {{ 'customer.addresses.province' | t }}
+      </label>
+
+      <div class="cart-shipping-calculator-select-wrapper">
+        <select
+          class="
+            cart-shipping-calculator-select
+            field
+            address-province
+          "
+          name="address[province]"
+          data-default="{{ default_province }}"
+          id="address_province"
+        >
+        </select>
+        <div class="cart-shipping-calculator-select-icon">
+          {% render 'icon' with 'down-arrow' %}
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-shipping-calculator-row">
+      <label
+        class="cart-shipping-calculator-label"
+        for="address_zip"
+      >
+        {{ 'customer.addresses.zip' | t }}
+      </label>
+
+      <input
+        class="
+          cart-shipping-calculator-input
+          field
+          address-zip
+        "
+        type="text"
+        name="address[zip]"
+        {% if default_zip != blank %}
+          value="{{ default_zip }}"
+        {% endif %}
+        id="address_zip"
+      />
+    </div>
+
+    <div class="cart-shipping-calculator-row">
+      <input
+        class="
+          cart-shipping-calculator-button
+          action-button
+          desaturated
+        "
+        type="button"
+        value="{{ 'cart.shipping_calculator.submit' | t }}"
+        data-shipping-calculator-submit
+      />
+    </div>
+  </div>
+
+  <div class="cart-shipping-calculator-column cart-wrapper-response wrapper-response"></div>
+</div>
+
+<script type="application/json" data-shipping-calculator-strings>
+  {
+    "customerIsLoggedIn": {{ customer.default_address.country | default: false | json }},
+    "submitButton": {{ 'cart.shipping_calculator.submit' | t | json }},
+    "submitButtonDisabled": {{ 'cart.shipping_calculator.working' | t | json}},
+    "moneyFormat": {{ shop.money_with_currency_format | json }}
+  }
+</script>

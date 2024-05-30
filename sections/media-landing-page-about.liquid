@@ -1,0 +1,46 @@
+<div class="media-landing-page-about-section">
+    <div class="content-area about-founder-intro">
+        {% if section.settings.image != blank %}
+        <div class="about-founder-intro__image">
+            <img src="{{ section.settings.image | img_url: "master" }}" alt="">
+        </div>
+        {% endif %}
+        <div class="about-founder-intro__header">
+            <h4>{{section.settings.heading}}</h4>
+            <h5>{{section.settings.subheading}}</h5>
+        </div>
+        <div class="about-founder-intro__description">
+            <p>
+                {{section.settings.description}}
+            </p>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "About Section",
+    "settings": [
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Image"
+        },
+        {
+            "id": "heading",
+            "type":"text",
+            "label":"Heading"
+        },
+        {
+            "id": "subheading",
+            "type":"text",
+            "label":"subheading"
+        },
+        {
+            "id": "description",
+            "type":"richtext",
+            "label":"Description"
+        }
+    ]
+}
+{% endschema %}

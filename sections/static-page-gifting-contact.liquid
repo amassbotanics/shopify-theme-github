@@ -1,0 +1,93 @@
+<div data-section-id="{{ section.id }}" data-section-type="static-page-gifting-contact">
+
+    <main class="content content-area">
+
+      <div class="text-content-wrap">
+        {% if page.content != blank %}
+          <div class="rte text-content">
+            {{ page.content }}
+          </div>
+        {% endif %}
+        <div class="gifting-page__cta-wrap">
+          <a href="https://amass-store.wholesale.shopifyapps.com/accounts/sign_in" class="gifting-page__cta" target="_blank">
+            <div class="gifting-page__cta-text section-strong">Place Wholesale Order</div>
+            <div class="gifting-page__cta-icon">
+              <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="8.5" cy="8.64558" rx="8.5" ry="8.60759" transform="rotate(-180 8.5 8.64558)" fill="#222222"/>
+                <path d="M8.57125 13.2026L12.5313 8.64567L8.57125 4.08871" stroke="#E4E3DE" stroke-width="2"/>
+                <path d="M12.5312 8.64575L3.53125 8.64575" stroke="#E4E3DE" stroke-width="2"/>
+                </svg>
+            </div>
+          </a>
+          <a href="#" class="gifting-page__cta gifting-page__cta-download js-gifting-page-cta-download">
+            <div class="gifting-page__cta-text section-strong">Download Wholesale Catalog</div>
+            <div class="gifting-page__cta-icon">
+              <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="8.5" cy="8.64558" rx="8.5" ry="8.60759" transform="rotate(-180 8.5 8.64558)" fill="#222222"/>
+                <path d="M8.57125 13.2026L12.5313 8.64567L8.57125 4.08871" stroke="#E4E3DE" stroke-width="2"/>
+                <path d="M12.5312 8.64575L3.53125 8.64575" stroke="#E4E3DE" stroke-width="2"/>
+                </svg>
+            </div>
+          </a>
+        </div>
+
+        <div id="giftingFormContentWrap" class="gifting-form__content-wrap">
+          <div class="gifting-form__content-information">
+            {{ section.settings.gifting-subtext }}
+          </div>
+          <div class="gifting-form__wrap">
+            {% for block in section.blocks %}
+              {% if page.handle == block.settings.pageId %}
+                {% assign formType = block.settings.form-type-value %}
+                {% render 'gifting-contact-form', formType: formType %}
+              {% endif %}
+            {% endfor %}      
+          </div>
+        </div>
+      </div>
+  
+    </main>
+  
+  </div>
+  
+  {% schema %}
+  {
+    "name": "Corporate Gifting Page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General"
+      },
+      {
+        "type": "text",
+        "id": "cta-heading",
+        "label": "CTA Heading"
+      },
+      {
+        "type": "richtext",
+        "id": "gifting-subtext",
+        "label": "subtext"
+      }
+    ],
+    "blocks":[
+      {
+        "type":"text",
+        "name": "Form Type",
+        "settings": [
+          {
+            "id":"pageId",
+            "type":"page",
+            "label":"Select Page"
+          },
+          {
+            "id":"form-type-value",
+            "type":"text",
+            "label":"Type of form"
+          }
+        ]
+      }
+    ]
+    
+  }
+  
+  {% endschema %}

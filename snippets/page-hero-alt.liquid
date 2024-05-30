@@ -1,0 +1,21 @@
+{% assign pageHandle = page.handle %}
+{% assign heroImage = pages[pageHandle].metafields.global.hero_image %}
+{% assign heroImageAlt = pages[pageHandle].metafields.global.hero_image_alt %}
+{% assign heroHeading = pages[pageHandle].metafields.global.hero_heading %}
+{% assign heroAlignment = pages[pageHandle].metafields.global.hero_vertical_alignment %}
+
+
+ <section class="page-hero-alt__container">
+    <div class="page-hero-alt__wrap">
+        <div class="page-hero-alt__image-wrap">
+            <img class="page-hero-alt__image
+                {% if heroAlignment == 'bottom' %} page-hero-alt__image--bottom-alignment {% endif %}
+                " src="{{ heroImage }}" alt="{{heroImageAlt}}">
+        </div>
+        <div class="content-area">
+                <div class="page-hero-alt__text-wrap">
+                    <h1 class="page-hero-alt__text-heading">{{heroHeading}}</h1>
+                </div>
+        </div>
+    </div>
+ </section>

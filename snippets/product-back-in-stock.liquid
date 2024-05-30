@@ -1,0 +1,336 @@
+<style>
+  #container {
+    position: relative;
+    background: white;
+    padding: 12px 18px 40px 18px;
+  }
+  .fade {
+    opacity: 0;
+    -webkit-transition: opacity 0.15s linear;
+    -o-transition: opacity 0.15s linear;
+    transition: opacity 0.15s linear;
+  }
+  .fade.in {
+    opacity: 1;
+  }
+  .modal {
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+  }
+  .modal-title {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.5;
+  }
+  .clearfix:before,
+  .clearfix:after {
+    content: " ";
+    display: table;
+  }
+  .clearfix:after {
+    clear: both;
+  }
+  .form-control {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #222;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  }
+  .input-lg {
+    font-size: 14px;
+    height: 46px;
+    padding: 10px 16px;
+    line-height: 1.3333333;
+  }
+  .submit-container {
+    margin-top: 20px;
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 8px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 2px;
+  }
+  .btn-success {
+    width: 100%;
+    color: #fff;
+    background-color: #439fdb;
+    border-color: #439fdb;
+  }
+  .btn-lg {
+    line-height: 24px;
+    font-size: 15px;
+    padding: 14px;
+    line-height: 1.3333333;
+  }
+  .close {
+    -webkit-appearance: none;
+    padding: 0;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+    position: absolute;
+    top: 7px;
+    right: 15px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    color: #ccc;
+    text-shadow: 0 1px 0 #fff;
+  }
+  .alert {
+    padding: 6px 11px;
+    font-size: 13px;
+    margin: 15px 0;
+    border: 1px solid transparent;
+    border-radius: 2px;
+  }
+  .alert-success {
+    color: #1b9500;
+    background-color: #d3efcd;
+    border-color: #d3efcd;
+  }
+  .alert-success a {
+    color: #1b9500;
+  }
+  .alert-danger {
+    color: #c72e2f;
+    background-color: #fcd6d7;
+    border-color: #fcd6d7;
+  }
+  .pull-right {
+    float: right;
+  }
+  .text-right {
+    text-align: right;
+  }
+  .small-print {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .small-print a {
+    color: inherit;
+    text-decoration: underline;
+  }
+  .powered-by {
+    opacity: 0.8;
+  }
+  .product-title {
+    margin-bottom: 20px;
+  }
+  .accepts_marketing {
+    opacity: 0.835;
+    font-size: 13px;
+  }
+  .accepts_marketing input {
+    margin-right: 10px;
+  }
+  .completed_message,
+  .error_message {
+    display: none;
+  }
+  .complete .completed_message {
+    display: block;
+  }
+  #klaviyo-bis-modal.in {
+    position: relative;
+    z-index: 999;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media only screen and (min-width: 500px) {
+    #klaviyo-bis-modal {
+      max-width: 460px;
+      margin: auto;
+    }
+    #container {
+      border-radius: 3px;
+      padding: 30px 40px;
+    }
+  }
+  @media only screen and (min-width: 992px) {
+    #container {
+      margin-top: 100px;
+    }
+  }
+  #container {
+    background: #fff;
+  }
+  body {
+    font-family: "Monotype Baskerville", serif;
+    color: #222;
+  }
+  body.fadein {
+    background: rgba(, 0.65);
+  }
+  h3 {
+    font-family: "ITC Franklin Gothic", sans-serif;
+  }
+  .btn {
+    color: #fff;
+    background-color: #000000;
+    border-color: #000000;
+  }
+  .close {
+    color: #ccc;
+  }
+  .alert-danger {
+    border-color: ;
+    background-color: ;
+    color: ;
+  }
+  .alert-success {
+    background-color: #d3efcd;
+    border-color: #d3efcd;
+    color: #1b9500;
+  }
+  .alert-success a {
+    color: #1b9500;
+  }
+  .klaviyo-bis-modal-wrapper {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.65);
+  }
+  .product-form .error-message {
+    display: none;
+  }
+</style>
+<div class="klaviyo-bis-modal-wrapper" style="display: none">
+  <div id="klaviyo-bis-modal">
+    <div class="" id="container">
+      <button
+        type="button"
+        class="close klaviyo-bis-close"
+        data-dismiss="modal"
+      >
+        ×
+      </button>
+      <h3 class="modal-title">EMAIL ME WHEN AVAILABLE</h3>
+      <p>You'll be notified once this product is back in stock</p>
+      <form class="form-horizontal clearfix">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <input
+              type="email"
+              id="email"
+              placeholder="Email"
+              class="form-control input-lg"
+              value=""
+            />
+          </div>
+          <div id="newsletter_subscription">
+            <p>
+              <input
+                type="checkbox"
+                id="subscribe_for_newsletter"
+                checked=""
+              /><label for="subscribe_for_newsletter" style="margin-left: 10px"
+                >Add to mailing list.</label
+              >
+            </p>
+          </div>
+        </div>
+        <div class="control-group clearfix submit-container">
+          <button type="button" class="btn btn-success btn-lg col-xs-12">
+            Email me when available
+          </button>
+        </div>
+        <div id="error_message" class="error_message alert alert-danger"></div>
+        <div
+          id="completed_message"
+          class="completed_message alert alert-success"
+        >
+          You're in! We'll let you know when it's back.
+          <a href="#" class="klaviyo-bis-close">Close</a>
+        </div>
+      </form>
+      <p class="small-print">
+        We will send you an email once the product becomes available. Your email
+        address will not be shared with anyone else.
+      </p>
+    </div>>
+  </div>
+</div>
+
+<script type="text/javascript">
+  window.addEventListener("load", function () {
+    $(".back-in-stock.action-button").attr('disabled', false);
+    $(".back-in-stock.action-button").removeClass('disabled');
+
+    $(".back-in-stock.action-button").click(function (e) {
+      e.preventDefault();
+      $(".klaviyo-bis-modal-wrapper").show();
+    });
+
+    $(".klaviyo-bis-close").click(function (e) {
+      e.preventDefault();
+      $(".klaviyo-bis-modal-wrapper").hide();
+    });
+
+    $("#klaviyo-bis-modal form button.btn-success").click(function (e) {
+      e.preventDefault();
+      $.ajax({
+        type: "POST",
+        url: "https://a.klaviyo.com/onsite/components/back-in-stock/subscribe",
+        data: {
+          a: "WYLXSD",
+          email: $("#klaviyo-bis-modal form #email").val(),
+          variant: "{{selected_variant.id}}",
+          product: "{{product.id}}",
+          platform: "shopify",
+          subscribe_for_newsletter: $(
+            "#klaviyo-bis-modal form #subscribe_for_newsletter"
+          )[0].checked,
+          g: localStorage.getItem("user-location") === "uk" ? "UcvNwS" : "UWc33K",
+        },
+        success: function () {
+          $("#klaviyo-bis-modal form #completed_message").show();
+        },
+        error: function () {
+          $("#klaviyo-bis-modal form #error_message").show();
+        },
+      });
+    });
+  });
+</script>

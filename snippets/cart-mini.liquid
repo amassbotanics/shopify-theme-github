@@ -1,0 +1,25 @@
+<div class="cart-mini" data-cart-mini>
+  <div class="cart-mini-sidebar js-cart-mini-bind-click" data-cart-mini-sidebar>
+    <div class="cart-mini-header">
+      <span class="cart-mini-shipping-countdown" data-cart-cents="{{ cart.total_price }}">
+        {% assign free_shipping_amount = 50 | times: 100 %}
+        {% assign cart_total = cart.total_price %}
+        {% assign remaining_amount = free_shipping_amount | minus: cart_total %}
+        {% if cart_total >= free_shipping_amount %}
+        You are now qualified for free shipping!
+        {% else %}
+        You are {{ remaining_amount | money }} away from free shipping!
+        {% endif %}
+      </span>
+    </div>
+	
+    <div class="cart-mini-content cart-mini-items" data-cart-mini-content></div>
+
+    <div class="cart-mini-footer" data-cart-mini-footer></div>
+    
+    <!-- Route Code Edited  2/4/2021 -->
+<!--     <div class="route-div" watch-add="product-submit action-button submit addtocart-button-active" desktop-align="center" ></div> -->
+    <!-- End Route Code -->
+    
+  </div>
+</div>

@@ -1,0 +1,55 @@
+{%- assign sectionHeading = section.settings.title | escape -%}
+{%- assign border = section.settings.border -%}
+
+
+{% if page %}
+{% assign relatedBlogPosts = page.metafields.global.related_blog_posts | split: "," %}
+{%- elsif article %}
+{% assign relatedBlogPosts = article.metafields.global.related_blog_posts | split: "," %}
+{% endif %}
+
+{% if relatedBlogPosts != blank %}
+  <div data-section-id="{{ section.id }}" data-section-type="featured-blog">
+
+    
+      <section class="
+        static-featured-blog__section
+        {% if sectionHeading != blank %}has-heading{% endif %}
+        {% if border %}show-border{% endif %}">
+          <div class="content-area">
+              {% if sectionHeading != blank %}
+              <h2 class="section-title">{{ sectionHeading }}</h2>
+            {% endif %}
+        
+            <div class="article-item__cocktail-wrap">
+              {% for related_post in relatedBlogPosts limit: 4 %}
+                  {% render 'article-item-cocktail', article: articles[related_post] %}
+              {% endfor %}
+            </div>
+          </div>
+      
+      </section>
+    
+  </div>
+{% endif %}
+
+  {% schema %}
+  {
+    "name": "Blog posts",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Blog posts"
+      },
+      {
+        "type": "checkbox",
+        "id": "border",
+        "label": "Show border",
+        "default": true
+      }
+    ]
+  }
+  
+  {% endschema %}

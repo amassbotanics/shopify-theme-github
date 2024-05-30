@@ -1,0 +1,61 @@
+{% comment %}
+@param share_canonical_url {String}
+  Product or article URL to share
+
+@param email_subject {String}
+  Share-by-email subject line
+
+@param email_body {String}
+  Share-by-email content
+
+@param image {URL}
+  Image associated with the item to be displayed on social media
+
+@param description {String}
+  Item description or summary to be shared on social media
+{% endcomment %}
+
+<div class="sharethis">
+  <button
+    class="sharethis-trigger"
+    data-sharethis
+  >
+    {% render 'icon' with 'share' %}
+    <span class="sharethis-title">{{ 'general.share.sharethis' | t }}</span>
+  </button>
+
+  <div
+    class="sharethis-modal"
+    data-sharethis-modal
+  >
+    <a
+      class="sharethis-link sharethis-facebook"
+      href="http://www.facebook.com/sharer.php?u={{ share_canonical_url | url_encode }}"
+    >
+      {% render 'icon' with 'share-facebook' %}
+    </a>
+
+    <a
+      class="sharethis-link sharethis-twitter"
+      href="http://twitter.com/share?url={{ share_canonical_url | url_encode }}"
+    >
+      {% render 'icon' with 'share-twitter' %}
+    </a>
+
+    <a
+      class="sharethis-link sharethis-pinterest"
+      href="http://pinterest.com/pin/create/button/?url={{ canonical_url | url_encode }}&amp;media=http:{{ image }}&amp;description={{ description }}"
+      data-pin-do="buttonPin"
+      data-pin-custom="true"
+    >
+      {% render 'icon' with 'share-pinterest' %}
+    </a>
+
+    <a
+      class="sharethis-link sharethis-email"
+      href="mailto:?Subject={{ email_subject | escape }}&Body={{ email_body | escape }}"
+    >
+      {% render 'icon' with 'share-email' %}
+    </a>
+  </div>
+</div>

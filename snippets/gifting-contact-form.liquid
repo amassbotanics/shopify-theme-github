@@ -1,0 +1,130 @@
+
+{% form 'contact' %}
+
+  {% if form.errors %}
+    <div class="alert-message error alert-message--margin-bottom"><span>{{ 'contact.error' | t }}</span></div>
+  {% endif %}
+
+  {% if form.posted_successfully? %}
+    <div class="alert-message success alert-message--margin-bottom">
+        <span>Thanks for getting in touch! We'll respond to your inquiry shortly.</span>
+        <a id="jsGiftingCatalogLink" class="gifting-page__catalog-link" href="https://cdn.shopify.com/s/files/1/0354/7329/3371/files/AMASS___Wholesale_Product_Catalogue.pdf?v=1626209262" download="AMASS___Wholesale_Product_Catalogue.pdf" target="_blank">
+            <span>Click to download</span>the product catalog.</a>
+    </div>
+    <script>
+        window.addEventListener("load", function(){
+            document.getElementById('jsGiftingCatalogLink').click();
+            document.getElementById('giftingFormContentWrap').classList.add("gifting-form__content-wrap--active");
+        });
+    </script>
+  {% else %}
+
+  <table class="gifting-form">
+      <tr class="gifting-field">
+          <td class="gifting-field__label">
+             <label for="ContactEmail">Email</label>
+          </td>
+          <td class="gifting-field__input">
+             <input required type="text" value="" id="ContactEmail" name="contact[email]" class="field {% if form.errors contains "email" %}error{% endif %}">
+          </td>
+      </tr>
+      <tr class="gifting-field">
+          <td class="gifting-field__label">
+              <label for="ContactFirstName">First Name</label>
+          </td>
+          <td class="gifting-field__input">
+              <input required type="text" value="" id="ContactFirstName" name="contact[firstName]" class="field {% if form.errors contains "author" %}error{% endif %}">
+          </td>
+      </tr>
+      <tr class="gifting-field">
+          <td class="gifting-field__label">
+              <label for="ContactLastName">Last Name</label>
+          </td>
+          <td class="gifting-field__input">
+              <input required type="text" value="" id="ContactLastName" name="contact[lastName]" class="field {% if form.errors contains "author" %}error{% endif %}">
+          </td>
+       </tr>
+       <!-- <tr class="gifting-field">
+           <td class="gifting-field__label">
+               <label for="ContactCompany">Company</label>
+           </td>
+           <td class="gifting-field__input">
+               <input type="text" value="" id="ContactCompany" name="contact[company]" class="field">
+           </td>
+        </tr>
+       
+        <tr class="gifting-field">
+            <td class="gifting-field__label">
+                <label for="ContactPhone">Phone</label>
+            </td>
+            <td class="gifting-field__input">
+                <input type="text" value="" id="ContactPhone" name="contact[phone]" class="field">
+            </td>
+        </tr>
+        <tr class="gifting-field">
+            <td class="gifting-field__label">
+                <label for="ContactProduct">Products</label>
+            </td>
+            <td class="gifting-field__input gifting-field__select">
+                <select id="ContactProduct" name="contact[product]" class="field">
+                    <option disable selected hidden>Select products of interest</option>
+                    <option value="Hand Sanitizer">Hand Sanitizer</option>
+                    <option value="Soap">Soap</option>
+                    <option value="Lotion">Lotion</option>
+                    <option value="Candles">Candles</option>
+                    <option value="Bath Salts">Bath Salts</option>
+                    <option value="Riverine Non-Alcoholic Spirit">Riverine Non-Alcoholic Spirit</option>
+                </select>
+                <div class="arrow-drop" >
+                    {% render 'icon' with 'down-arrow'%}
+                </div>
+            </td>
+        </tr>
+        <tr class="gifting-field">
+            <td class="gifting-field__label">
+                <label for="ContactQuantity">Quantity</label>
+            </td>
+            <td class="gifting-field__input gifting-field__select">
+                <select id="ContactQuantity" name="contact[quantity]" class="field">
+                    <option disable selected hidden>Select quantity</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>
+                    <option value="60">60</option>
+                    <option value="70">70</option>
+                    <option value="80">80</option>
+                    <option value="90">90</option>
+                    <option value="100">100</option>
+                </select>
+                <div class="arrow-drop" >
+                    {% render 'icon' with 'down-arrow'%}
+                </div>
+            </td>
+        </tr> -->
+        <tr class="gifting-field">
+            <td class="gifting-field__label">
+                <label for="ContactNotes">Notes</label>
+            </td>
+            <td class="gifting-field__input">
+                <textarea id="ContactNotes" name="contact[notes]" class="field {% if form.errors contains "body" %}error{% endif %}"></textarea>
+            </td>
+        </tr>
+        <input type="hidden" id="ContactEmailType" name="contact[emailType]" value="{{formType}}">
+        <input type="hidden" id="ContactUtmSource" name="contact[utm_source]" value="">
+        <input type="hidden" id="ContactUtmMedium" name="contact[utm_medium]" value="">
+        <input type="hidden" id="ContactUtmCampaign" name="contact[utm_campaign]" value="">
+        <input type="hidden" id="ContactUtmContent" name="contact[utm_content]" value="">
+        <input type="hidden" id="ContactUtmTerm" name="contact[utm_term]" value="">
+ </table>
+
+ <div class="gifting-form-submit">
+        <input type="submit" class="gifting-form__cta-submit" value="Download Catalog">
+</div>
+
+  {% endif %}
+
+{% endform %}
+
+

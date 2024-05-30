@@ -1,0 +1,26 @@
+{% assign placeholder_style = 'collection-3' %}
+{% assign color = settings.primary-border-colour %}
+{% assign color_string = 'fill="' | append: color | append: '" xmlns' %}
+
+{% capture demo_image %}{%- render 'placeholder_svg_uri', placeholder: placeholder_style, color_string: color_string -%}{% endcapture %}
+
+<div class="collection-wrap">
+  <div
+    class="collection-wrap-image placeholder-background"
+    style="background-image:url('{{ demo_image }}');"
+  ></div>
+
+  <div class="collection">
+    <a href="#">
+      <span class="collection-overlay">
+        <h3 class="label preload">
+          {{ 'onboarding.collection_title' | t }}
+        </h3>
+
+        <span class="browse">
+          {{ 'collections.collection.browse' | t }}
+        </span>
+      </span>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<section class="product-description-feature__section">
+    <div class="content-area">
+        <div class="product-description-feature__wrap js-toggle-content-wrap">
+            <div class="product-description-feature__heading-wrap js-accordion-toggle-trigger">
+                <h4 class="product-description-feature__heading">{{section.settings.title}}</h4>
+                <div class="accordion-button accordion-button--large js-accordion-button">
+                    +
+                </div>
+            </div>
+            <div class="product-description-feature__content js-toggle-content">
+                <ul class="product-description-feature__notes">
+                    {% for block in section.blocks %}
+                        <li class="product-description-feature__notes-item">
+                            <h5 class="product-description-feature__notes-item-heading">{{block.settings.heading}}</h5>
+                            <p>{{block.settings.subheading}}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+   </div>
+   
+
+</section>
+
+{% schema %}
+{
+    "name": "Product Feature Notes",
+    "settings": [
+        {
+            "id": "title",
+            "type": "text",
+            "label": "Title"
+        }
+    ],
+    "blocks": [
+        {
+            "type":"text",
+            "name":"Description",
+            "settings": [           
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Heading"
+                },
+                {
+                    "id": "subheading",
+                    "type": "text",
+                    "label": "Subeading"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,279 @@
+{% assign articleAuthor = article.metafields.global.article_author %}
+{% capture article_author %}
+    <div class="article-author">
+      {% if article.user.image != empty and article.user.email != blank %}
+<!--         <div class="article-author-avatar">
+          {% capture avatar %}
+            {% if article.user.image %}
+              {%
+                render 'rimg'
+                img: article.user.image,
+                class: 'article-author-image',
+                size: '54x',
+                lazy: true,
+              %}
+            {% else %}
+              <img
+                class="article-author-image"
+                src="//www.gravatar.com/avatar/{{ article.user.email | remove: ' ' | strip_newlines | downcase | md5 }}"
+                alt="{{ 'blogs.article_item.post_author' | t }}"
+              />
+            {% endif %}
+          {% endcapture %}
+
+          {% if article.user.homepage !=  blank %}
+            <a href="{{ article.user.homepage }}">
+              {{ avatar }}
+            </a>
+          {% else %}
+            {{ avatar }}
+          {% endif %}
+        </div> -->
+      {% endif %}
+
+      <span class="article-author-writtenby">{{ 'blogs.article_item.written_by' | t }}</span>
+
+      <span class="article-author-name">
+        {% if articleAuthor != blank %}
+          {{ articleAuthor }}
+        {% else %}
+          {{ article.user.name }}
+        {% endif %}
+      </span>
+    </div>
+{% endcapture %}
+
+<article class="article">
+  <div class="article-meta">
+    {{ article_author }}
+
+    {% if article.tags.size > 0 %}
+      <div class="article-tags">
+        <span class="article-tags-filedunder">{{ 'blogs.article_item.filed_under' | t }}</span>
+
+        <div class="article-tags-tags">
+          {% for tag in article.tags %}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %},{% endunless %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if article_item and article.comments_enabled? and article.comments.size > 0 %}
+      <div class="article-comments">
+        <span class="article-comments-discussion">{{ 'blogs.article_item.discussion' | t }}</span>
+
+        <span class="article-comments-count">
+          <a
+            href="{{ article.url }}#comments"
+          >
+            {{ article.comments_count }} {{ 'blogs.article_item.comment_count' | t: count: article.comments_count }}
+          </a>
+        </span>
+      </div>
+    {% endif %}
+
+    {% if blog.next_article or blog.previous_article %}
+      {% assign current_found = false %}
+      {% assign done = false %}
+      {% for a in blog.articles %}
+        {% if current_found and done == false %}
+          {% assign next_article = a %}
+          {% assign done = true %}
+        {% endif %}
+
+        {% unless done %}
+          {% if a.id == article.id %}
+            {% assign current_found = true %}
+          {% else %}
+            {% assign prev_article = a %}
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+
+      <div class="article-pagination">
+        {% if prev_article %}
+          <a class="article-pagination--prev" href="{{ prev_article.url }}">
+            {{ 'general.pagination.previous' | t }}
+          </a>
+        {% endif %}
+
+        {% if prev_article and next_article %}
+          <span class="sep">/</span>
+        {% endif %}
+
+        {% if next_article %}
+          <a class="article-pagination--next" href="{{ next_article.url }}">
+            {{ 'general.pagination.next' | t }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% unless article %}
+      {% if section.settings.show-share %}
+        <div class="article-share">
+          {% assign article_canonical_url = shop.url | append: article.url %}
+          {% assign article_email_subject = 'articles.article.share_email_subject' | t: article: article.title %}
+          {% assign article_email_body = 'articles.article.share_email_body' | t: article: article.title, article_url: article_canonical_url %}
+          {% assign article_image = article.image | default: page_image | img_url: '1024x1024' %}
+          {% assign article_description = article.title | escape %}
+
+          {%
+            render 'share-this',
+            share_canonical_url: article_canonical_url,
+            email_subject: article_email_subject,
+            email_body: article_email_body,
+            image: article_image,
+            description: article_description,
+          %}
+        </div>
+      {% endif %}
+    {% endunless %}
+  </div>
+
+  <div class="article-content">
+    <header class="article-header">
+      <h1 class="article-title">
+        {% if article %}
+          <a href="{{ article.url }}">{{ article.title }}</a>
+        {% else %}
+          {{ article.title }}
+        {% endif %}
+      </h1>
+
+      <div class="article-date">
+        <label>{{ article.published_at | date: format: 'short_month' }}</label>
+      </div>
+
+      {{ article_author }}
+
+      {% if blog.next_article or blog.previous_article %}
+        {% if prev_article %}
+          <a class="article-pagination--prev" href="{{ prev_article.url }}">
+            {% render 'icon' with 'arrow-thin-left' %}
+          </a>
+        {% endif %}
+
+        {% if next_article %}
+          <a class="article-pagination--next" href="{{ next_article.url }}">
+            {% render 'icon' with 'arrow-thin-right' %}
+          </a>
+        {% endif %}
+      {% endif %}
+    </header>
+
+    {% if article.image %}
+      <div class="article-image">
+        {% capture article_image %}
+          {%
+            render 'rimg'
+            img: article.image,
+            alt: article.title,
+            size: '1024x1024',
+            lazy: true,
+          %}
+        {% endcapture %}
+
+        {% unless article %}
+          {{ article_image }}
+        {% else %}
+          <a href="{{ article.url }}">
+            {{ article_image }}
+          </a>
+        {% endunless %}
+      </div>
+    {% endif %}
+
+    <div class="article-rte rte clearfix">
+      {% unless article %}
+        {{ article.content }}
+      {% else %}
+        {{ article.excerpt_or_content }}
+<!--         <a
+          class="article-rte-continuereading"
+          href="{{ article.url }}"
+        >
+          {{ 'blogs.article_item.continue_reading' | t }}
+        </a> -->
+      {% endunless %}
+    </div>
+
+    {% unless article %}
+      {% if article.comments_enabled? %}
+        {% if article.comments.size > 0 %}
+          <div class="comments-wrap read {% if article.comments_count == 0 %}no-comments{% endif %}" id="comments">
+            <h2 class="title">
+              {% capture comment_count %}
+                {% if comment and comment.created_at %}
+                  <span class="count">({{ article.comments_count | plus: 1 }})</span>
+                {% else %}
+                  <span class="count">({{ article.comments_count }})</span>
+                {% endif %}
+              {% endcapture %}
+              {{ 'blogs.article_item.comments_html' | t: comment_count: comment_count }}
+            </h2>
+
+            {% if article.comments_count > 0 %}
+            <ul class="comments">
+
+              {% if comment and comment.created_at %}
+              <li class="comment" id="comment-{{ comment.id }}">
+                <a href="{{ comment.url }}" class="date">{{ comment.created_at | date: format: 'short_month' }}</a>
+                <div class="body">{{ comment.content }}</div>
+                <p class="author">— {{ comment.author }}</p>
+              </li>
+              {% endif %}
+
+              {% for comment in article.comments %}
+              <li class="comment {% render 'for-looper', forloop: forloop %}" id="comment-{{ comment.id }}">
+                <a href="{{ comment.url }}" class="date">{{ comment.created_at | date: format: 'short_month' }}</a>
+                <div class="body">{{ comment.content }}</div>
+                <p class="author">— {{ comment.author }}</p>
+              </li>
+              {% endfor %}
+
+            </ul>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <div
+          class="comments-wrap submit"
+          {% if article.comments.size == 0 %}
+            id="comments"
+          {% endif %}
+        >
+          <h2 class="title">{{ 'blogs.article_item.leave_comment' | t }}</h2>
+
+          {% form article %}
+            {% if form.errors %}
+              <div class="error-message"><span>{{ 'blogs.article_item.error_message' | t }}</span></div>
+            {% endif %}
+
+            {% if form.posted_successfully? %}
+              <div class="alert-message success"><span>{{ 'blogs.article_item.success_message' | t }}</span></div>
+            {% endif %}
+
+            <div class="field-wrap author">
+              <label>{{ 'general.name' | t }}</label>
+                <input type="text" placeholder="{{ 'general.name_placeholder' | t }}" value="" name="comment[author]" class="field {% if form.errors contains "author" %}error{% endif %}">
+            </div>
+
+            <div class="field-wrap email">
+              <label>{{ 'general.email' | t }}</label>
+              <input type="text" placeholder="{{ 'general.email_placeholder' | t }}" value="" name="comment[email]" class="field {% if form.errors contains "email" %}error{% endif %}">
+            </div>
+
+            <div class="field-wrap body">
+              <label>{{ 'general.message' | t }}</label>
+              <textarea name="comment[body]" class="field {% if form.errors contains "body" %}error{% endif %}"></textarea>
+            </div>
+
+            <input type="submit" class="action-button submit-button" value="{{ 'general.submit' | t }}">
+          {% endform %}
+        </div>
+      {% endif %}
+    {% endunless %}
+  </div>
+</article>

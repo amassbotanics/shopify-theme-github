@@ -1,0 +1,106 @@
+{%- assign border = section.settings.border -%}
+{%- assign showCocktails = false -%}
+{% for block in section.blocks %}
+    {% if page.handle == block.settings.pageId %}
+        {%- assign showCocktails = true -%}
+    {% endif %}
+{% endfor %}
+{% if showCocktails and section.blocks.size > 0 %}
+    <section class="cocktails-section {% if border %}show-border{% endif %} cocktails-section--with-padding">
+        <div class="content-area">
+            <div class="cocktail-slider-container">
+                <div class="cocktail-slider__title">
+                    <p>{{section.settings.title}} <span class="section-heading section-heading--large">{{page.title}}...</span></p>
+                </div>
+                <div class="cocktail-slider--single">
+                    {% for block in section.blocks %}
+                        {%- assign cocktailImage = block.settings.cocktailImage -%}
+                        {%- assign header = block.settings.cocktailHeader -%}
+                        {%- assign list = block.settings.ingredientList -%}
+                        {%- assign recipe = block.settings.cocktailRecipe -%}
+                        {% if page.handle == block.settings.pageId %}
+                            <div class="cocktail-slider__item">
+                                <div class="cocktail-item">
+                                    <div class="cocktail-item__content cocktail-item__content--single">
+                                        <div class="cocktail-item__content--single_header  section-heading section-heading--medium">{{header}}</div>
+                                        <div>
+                                            <div class="section-heading section-heading--small">Ingredients</div>
+                                            <div class="cocktail-item__content_body">{{list}}</div>
+                                        </div>
+                                        <div>
+                                            <div class="section-heading section-heading--small">Recipe</div>
+                                            <div class="cocktail-item__content_body">{{recipe}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="cocktail-item__image">
+                                        <img src="{{ cocktailImage | img_url: "master" }}" alt="{{ cocktailImage.alt }}">
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Cocktail List",
+        "settings": [
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Section Title"
+            },
+            {
+                "type": "checkbox",
+                "id": "border",
+                "label": "Show border",
+                "default": true
+            }
+        ],
+        "blocks": [
+            {
+                "type":"cocktail",
+                "name":"Cocktails",
+                "settings": [
+                 {
+                    "id": "title",
+                    "type": "text",
+                    "label": "Cocktail Name",
+                    "default": "Cocktail"
+                  },
+                  {
+                    "type": "textarea",
+                    "id": "cocktailHeader",
+                    "label": "Header"
+                  },
+                  {
+                    "type": "image_picker",
+                    "id": "cocktailImage",
+                    "label": "Image"
+                  },
+                  {
+                    "type": "richtext",
+                    "id": "ingredientList",
+                    "label": "Ingredients",
+                    "info": "Enter one ingredient per line"
+                  },
+                  {
+                    "type": "richtext",
+                    "id": "cocktailRecipe",
+                    "label": "Recipe"
+                  },
+                  {
+                    "type": "page",
+                    "id": "pageId",
+                    "label": "Choose Page"
+                 }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

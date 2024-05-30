@@ -1,0 +1,63 @@
+<section class="product-cocktail-recommendation__section">
+    <div class="content-area">
+        <div class="product-cocktail-recommendation__content">
+            <div class="product-cocktail-recommendation__image-wrap">
+                <img class="product-cocktail-recommendation__image" src="{{section.settings.image | img_url: "master"}}" alt="">
+            </div>
+            <div class="product-cocktail-recommendation__description">
+                <h2 clas="section-heading">{{section.settings.heading}}</h2>
+                <div class="section-strong section-strong--small">{{section.settings.subheading}}</div>
+                {% if page.template_suffix contains 'riverine-landing' %}
+                    <a class="product-cocktail-recommendation__cta action-button" href="{{section.settings.button-url}}">{{section.settings.button-text}}</a>
+                {% else %}
+                    <div class="product-cocktail-recommendation__serving-heading">{{section.settings.serving-heading}}</div>
+                    <div class="product-cocktail-recommendation__serving-list">{{section.settings.serving-list}}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% schema %}
+{
+    "name": "How To Enjoy",
+    "settings": [
+        {
+            "id": "heading",
+            "type": "text",
+            "label": "Heading"
+        },
+        {
+            "id": "subheading",
+            "type": "richtext",
+            "label": "Subheading"
+        },
+        {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Hero Image"
+        },
+        {
+            "id": "serving-heading",
+            "type": "text",
+            "label": "Serving Heading"
+        },
+        {
+            "id": "serving-list",
+            "type": "richtext",
+            "label": "Serving List"
+        },
+        {
+            "id": "button-text",
+            "type": "text",
+            "label": "Button Text"
+        },
+        {
+            "id": "button-url",
+            "type": "url",
+            "label": "Button URL"
+        }
+    ]
+}
+{% endschema %}

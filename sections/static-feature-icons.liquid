@@ -1,0 +1,69 @@
+{%- assign showIcons = false -%}
+{%- assign productIDString = product.id | downcase %}
+{%- assign pageIDString = page.id | downcase %}
+{% for block in section.blocks %}
+{% assign productArray = block.settings.productID | split: "," %}
+    {% assign pageArray = block.settings.pageId | split: "," %}
+    {% if productArray contains productIDString or pageArray contains pageIDString %}
+        {%- assign showIcons = true -%}
+    {% endif %}
+{% endfor %}
+{% if section.blocks.size > 0 %}
+    <section class="feature-icons-section {% if border %}show-border{% endif %}">
+        <div class="content-area">
+            <ul class="feature-icon__item-wrap">
+                {% for block in section.blocks %}
+                    {% assign productArray = block.settings.productID | split: "," %}
+                    {% assign pageArray = block.settings.pageId | split: "," %}
+                    {% if productArray contains productIDString or pageArray contains pageIDString %}
+                        <li class="feature-icon__item">
+                            <div class="feature-icon__item-image-wrap">
+                                <div class="feature-icon__item-image">
+                                    {{block.settings.image}}
+                                </div>
+                            </div>
+                            <div class="feature-icon__item-heading section-strong section-strong--extra-small">
+                                    {{block.settings.heading}}
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Feature Icons",
+        "blocks": [
+            {
+                "type":"icon",
+                "name":"Feature Icon",
+                "settings": [
+                    {
+                        "type": "html",
+                        "id": "image",
+                        "label": "Icon"
+                    },
+                    {
+                        "id": "heading",
+                        "type": "text",
+                        "label": "Heading"
+                    },
+                    {
+                        "type": "textarea",
+                        "id": "productID",
+                        "label": "List Product Ids (Separated by Comma)"
+                    },
+                    {
+                        "type": "textarea",
+                        "id": "pageId",
+                        "label": "List Page Ids (Separated by Comma)"
+                    }
+                ]
+            }
+        ]
+    }
+
+{% endschema %}

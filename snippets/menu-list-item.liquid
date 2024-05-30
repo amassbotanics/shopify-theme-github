@@ -1,0 +1,97 @@
+{% assign menu = block.settings.menu %}
+{% assign onboard = false %}
+{% assign image = false %}
+
+{% if menu == '' or linklists[menu].links.size == 0 %}
+  {% assign onboard = true %}
+  {% assign menu_title = 'onboarding.menu_list.title' | t %}
+{% else %}
+  {% assign menu_title = linklists[menu].title %}
+{% endif %}
+
+{% if block.settings.image %}
+  {% assign image = block.settings.image %}
+{% elsif menu %}
+  {% for link in linklists[menu].links %}
+    {% if link.object.image %}
+      {% assign image = link.object.image %}
+      {% break %}
+    {% elsif link.object.featured_media.preview_image %}
+      {% assign image = link.object.featured_media.preview_image %}
+    {% elsif collections[link.object.handle].products.first.featured_media.preview_image %}
+      {% assign image = collections[link.object.handle].products.first.featured_media.preview_image %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<div class="collection-wrap">
+  {% if image %}
+    {%
+      render 'rimg',
+      img: image,
+      size: '480x480',
+      lazy: true,
+      canvas: true
+    %}
+  {% else %}
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+  {% endif %}
+
+  <h2
+    class="
+      menu-list-heading
+      label
+      preload
+    "
+  >
+    {% if onboard %}
+      {{ 'home_page.menu_list.title' | t }}
+    {% else %}
+      {{ linklists[menu].title }}
+    {% endif %}
+  </h2>
+
+  <ul>
+    {% for link in linklists[menu].links %}
+      <li
+        {% if forloop.index > 6 %}
+          class="menu-list-link-hidden"
+          data-menu-list-hidden
+        {% endif %}
+      >
+        <a class="menu-list-link" href="{{ link.url }}">
+          {{ link.title }}
+        </a>
+      </li>
+    {% else %}
+      {% for i in (1..6) %}
+        <li>
+          <a class="menu-list-link" href="#">
+            {{ 'home_page.menu_list.link' | t }}
+          </a>
+        </li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
+
+  {% if linklists[menu].links.size > 6 %}
+    <button
+      class="menu-list-link-more"
+      data-menu-list-toggle
+    >
+      <span class="menu-list-link-text">
+        {{ 'collections.collection.more' | t }}
+      </span>
+
+      <span
+        class="
+          menu-list-link-text
+          menu-list-link-hidden
+        "
+      >
+        {{ 'collections.collection.less' | t }}
+      </span>
+    </button>
+  {% endif %}
+</div>

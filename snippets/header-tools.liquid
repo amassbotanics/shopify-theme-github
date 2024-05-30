@@ -1,0 +1,200 @@
+{% comment %}
+@param layout {String}
+  The header layout setting: can be one of normal, expanded, minimal, minimal-sticky
+
+@param logoCentered {Boolean}
+  Whether the logo should be centered
+
+@param cartIcon {String}
+  The setting indicating which icon should be used for the cart. Can be one of: bag, cart
+{% endcomment %}
+
+{% assign type = 'header-minimal' %}
+
+{% if layout == 'normal' %}
+  {% assign type = 'header-normal' %}
+{% elsif layout == 'expanded' %}
+  {% assign type = 'header-expanded' %}
+{% endif %}
+
+<div class="main-header--tools tools clearfix">
+  <div class="main-header--tools-group">
+    <div class="main-header--tools-left">
+      {% if type == 'header-minimal' %}
+        {% if section.settings.social-icons %}
+          {% render 'social-links' %}
+        {% endif %}
+      {% endif %}
+
+      <div class="tool-container">
+        <a
+          class="menu"
+          href=""
+          class="nav-item dropdown first"
+          aria-haspopup="true"
+          aria-controls="main-header--mobile-nav"
+          aria-expanded="false"
+          aria-label="{{ linklists[section.settings.menu].title }}"
+        >
+          {% render 'icon' with 'menu' %}
+        </a>
+
+        {% assign alignment = 'left' %}
+        {% if layout == 'minimal' %}
+          {% assign alignment = 'right' %}
+        {% elsif layout == 'minimal-sticky' %}
+          {% assign alignment = 'right' %}
+        {% elsif layout == 'normal' %}
+          {% if logoCentered %}
+            {% assign alignment = 'left' %}
+          {% else %}
+            {% assign alignment = 'right' %}
+          {% endif %}
+        {% endif %}
+
+        {% if shop.customer_accounts_enabled %}
+          {% if customer %}
+            <a class="account-options" href="{{ routes.account_url }}">
+              <label class="main-header--tools-label">
+                Hi, {{ customer.first_name }}
+              </label>
+            </a>
+          {% else %}
+            <a class="account-options" href="{{ routes.account_login_url }}">
+              <label class="main-header--tools-label">
+                {{ 'layout.header.login' | t }}
+              </label>
+            </a>
+          {% endif %}
+        {% endif %}
+
+        <!-- {%
+          render 'live-search',
+          show_label: section.settings.show-labels,
+          alignment: alignment,
+          display: section.settings.live_search_display
+        %} -->
+        <a class="shop-all-link" href="/collections/shop-all">
+          <label class="main-header--tools-label">
+            Shop All
+          </label>
+        </a>
+        
+<!--         <a class="store-locator" href="/pages/find-us">
+          {% render 'icon' with 'map-marker' %}
+        </a> -->
+      </div>
+
+    {% unless type == 'header-minimal' %}
+    </div>
+
+    <div class="main-header--tools-right">
+    {% endunless %}
+      <div class="tool-container">
+        {% unless type == 'header-minimal' %}
+          {% if section.settings.social-icons %}
+            {% render 'social-links' %}
+          {% endif %}
+        {% endunless %}
+
+        {%
+          render 'live-search',
+          show_label: section.settings.show-labels,
+          alignment: alignment,
+          display: section.settings.live_search_display
+        %}
+
+        {% if shop.customer_accounts_enabled %}
+          {% if customer %}
+            <a class="account-options" href="{{ routes.account_url }}">
+              <label class="main-header--tools-label">
+                Hi, {{ customer.first_name }}
+              </label>
+            </a>
+          {% else %}
+            <a class="account-options" href="{{ routes.account_login_url }}">
+              <label class="main-header--tools-label">
+                {{ 'layout.header.login' | t }}
+              </label>
+            </a>
+          {% endif %}
+        {% endif %}
+
+        <div class="mini-cart-wrap" data-cart-mini-toggle>
+          <span class="item-count" data-cart-mini-count>{%- if cart.item_count != 0 -%}{{- cart.item_count -}}{%- endif -%}</span>
+
+          {% if cartIcon == "cart" %}
+            {% render 'icon' with 'cart' %}
+          {% else %}
+            {% render 'icon' with 'bag' %}
+          {% endif %}
+        </div>
+
+        <div>
+          {% form 'currency' %}
+            <select class="currency-select js-currency-select" name="currency">
+              <option value="EUR">EU €</option>
+              <option value="GBP">GBP £</option>
+              <option value="USD">USD $</option>
+            </select>
+            <div class="currency-dropdown js-currency-dropdown">
+              <button class="currency-dropdown__btn" value="" type="button">
+                  {% for currency in shop.enabled_currencies %}
+                    {% if currency == cart.currency %}
+                        <div class="currency-dropdown__item">
+                          {% assign currencyCode = currency.iso_code %}
+                          {% case currencyCode %}
+                              {% when 'EUR' %}  
+                                {% assign countryFlag = 'flag-EU.svg' %}
+                                {% assign countryName = 'EU' %}
+                              {% when 'GBP' %}    
+                                {% assign countryFlag = 'flag-UK.svg' %}
+                                {% assign countryName = 'UK' %}
+                              {% when 'USD' %}  
+                                {% assign countryFlag = 'flag-US.svg' %}
+                                {% assign countryName = 'US'%}
+                            {% endcase %}
+                              <img class="currency-dropdown__image" src="{{ countryFlag | asset_url }}" alt="{{countryName}} flag icon" />
+                              <span class="currency-dropdown__text">{{countryName}}</span>
+                          </div>
+                      {% endif %}
+                    {% endfor %} 
+                    <div class="arrow-drop" >
+                      {% render 'icon' with 'down-arrow'%}
+                    </div>
+                </button>
+                <div class="currency-dropdown__content">
+                  <ul class="currency-dropdown__menu">
+                    {% assign currencySelectedClass = 'currency-dropdown__item--selected' %}
+                    {% assign euSelectedClass = '' %}
+                    {% assign ukSelectedClass = '' %}
+                    {% assign usSelectedClass = '' %}
+                    {% case countryName %}
+                      {% when 'EU' %}  
+                        {% assign euSelectedClass = currencySelectedClass %}
+                      {% when 'UK' %}    
+                        {% assign ukSelectedClass = currencySelectedClass %}
+                      {% when 'US' %}  
+                        {% assign usSelectedClass = currencySelectedClass %}
+                    {% endcase %}
+                      <li class="currency-dropdown__item js-currency-dropdown-item {{euSelectedClass}}" data-currency-value="EUR" >
+                        <img class="currency-dropdown__image" src="{{ 'flag-EU.svg' | asset_url }}" alt="EU flag icon" />
+                        <span class="currency-dropdown__text">EU (€)</span>
+                      </li>
+                      <li class="currency-dropdown__item js-currency-dropdown-item {{ukSelectedClass}}" data-currency-value="GBP">
+                        <img class="currency-dropdown__image" src="{{ 'flag-UK.svg' | asset_url }}" alt="UK flag icon" />
+                        <span class="currency-dropdown__text">UK (£)</span>
+                      </li>
+                      <li class="currency-dropdown__item js-currency-dropdown-item {{usSelectedClass}}" data-currency-value="USD">
+                        <img class="currency-dropdown__image" src="{{ 'flag-US.svg' | asset_url }}" alt="US flag icon" />
+                        <span class="currency-dropdown__text">US ($)</span>
+                      </li> 
+                  </ul>
+                </div>
+            </div>
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
